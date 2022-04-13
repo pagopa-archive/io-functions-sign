@@ -1,6 +1,10 @@
 {
   "name": "io-functions-sign",
   "version": "0.1.0",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint src/**"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pagopa/io-functions-sign.git"
@@ -12,5 +16,10 @@
   "engines": {
     "node": ">= 16",
     "npm": "^8.6.0"
+  },
+  "devDependencies": {
+    "@pagopa/eslint-config": "^3.0.0",
+    "eslint": "^8.13.0",
+    "prettier": "2.6.2"
   }
 }
