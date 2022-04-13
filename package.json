@@ -8,6 +8,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepare": "husky install",
+    "start": "func start"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "@pagopa/eslint-config": "^3.0.0",
     "@types/jest": "^27.4.1",
     "@types/node": "16.11",
+    "azure-functions-core-tools": "^4.0.4426",
     "eslint": "^8.13.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
