@@ -6,7 +6,6 @@
     "format": "prettier --write .",
     "lint": "eslint src/**",
     "build": "tsc",
-    "prepare": "husky install"
     "build:watch": "tsc -w",
     "prepare": "husky install",
   },
