@@ -4,8 +4,9 @@
     "module": "commonjs",
     "target": "ES2021",
     "strict": true,
-    "skipLibCheck": false,
-    "rootDir": "src/",
-    "outDir": "lib/"
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": "lib",
+    "noEmitOnError": true
   }
 }
