@@ -12,7 +12,7 @@ Install dependencies using `npm`
 npm install
 ```
 
-And create the "local.settings.json" file with the following content
+And create the `local.settings.json` file with the following content
 
 ```json
 {
@@ -30,4 +30,8 @@ Now you can build the TypeScript sources using
 npm run build
 ```
 
+And run the project with
 
+```sh
+npm start
+```
