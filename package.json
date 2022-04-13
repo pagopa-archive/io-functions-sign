@@ -1,0 +1,16 @@
+{
+  "name": "io-functions-sign",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pagopa/io-functions-sign.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pagopa/io-functions-sign/issues"
+  },
+  "homepage": "https://github.com/pagopa/io-functions-sign#readme",
+  "engines": {
+    "node": ">= 16",
+    "npm": "^8.6.0"
+  }
+}
