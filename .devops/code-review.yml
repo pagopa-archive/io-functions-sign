@@ -1,0 +1,49 @@
+# Code review pipeline
+
+trigger: none
+
+variables:
+  nodeVersionSpec: "16.x"
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: ts_type_check
+    displayName: "TypeScript type check"
+    continueOnError: false
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: ${nodeVersionSpec}
+        displayName: "Install Node.js"
+      - script: |
+          npm ci
+          npx tsc --noEmit
+        displayName: "Run TypeScript compiler"
+
+  - job: lint
+    displayName: "Lint"
+    continueOnError: false
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: ${nodeVersionSpec}
+        displayName: "Install Node.js"
+      - script: |
+          npm ci
+          npm run lint
+        displayName: "Run linter"
+
+  - job: test
+    displayName: "Test"
+    continueOnError: false
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: ${nodeVersionSpec}
+        displayName: "Install Node.js"
+      - script: |
+          npm ci
+          npm test
+        displayName: "Execute tests"
