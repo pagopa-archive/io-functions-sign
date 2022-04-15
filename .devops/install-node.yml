@@ -1,13 +1,16 @@
-variables:
-  nodeVersionSpec: "16.x"
-  npmConfigCache: $(Pipeline.Workspace)/.npm
+parameters:
+  - name: nodeVersionSpec
+    type: string
+    default: "16.x"
+  - name: npmConfigCache
+    type: string
+    default: $(Pipeline.Workspace)/.npm
 
 steps:
   - task: NodeTool@0
     inputs:
       versionSpec: $(nodeVersionSpec)
     displayName: "Install Node.js"
-
   - task: Cache@2
     inputs:
       key: 'npm | "$(Agent.OS)" | package-lock.json'
@@ -15,7 +18,6 @@ steps:
         npm | "$(Agent.OS)"
       path: $(npmConfigCache)
     displayName: Cache npm
-
   - task: Npm@1
     inputs:
       command: ci
