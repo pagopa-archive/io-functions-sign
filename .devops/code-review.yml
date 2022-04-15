@@ -10,12 +10,12 @@ pool:
 
 jobs:
   - job: ts_type_check
-    displayName: "TypeScript type check"
+    displayName: "Typecheck"
     continueOnError: false
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: ${nodeVersionSpec}
+          versionSpec: $(nodeVersionSpec)
         displayName: "Install Node.js"
       - script: |
           npm ci
@@ -28,7 +28,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: ${nodeVersionSpec}
+          versionSpec: $(nodeVersionSpec)
         displayName: "Install Node.js"
       - script: |
           npm ci
@@ -41,7 +41,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: ${nodeVersionSpec}
+          versionSpec: $(nodeVersionSpec)
         displayName: "Install Node.js"
       - script: |
           npm ci
