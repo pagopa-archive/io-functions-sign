@@ -20,7 +20,7 @@
   "homepage": "https://github.com/pagopa/io-functions-sign#readme",
   "engines": {
     "node": ">=16.0.0",
-    "npm": "^8.6.0"
+    "npm": ">=8.0.0"
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
