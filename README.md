@@ -3,8 +3,9 @@
 ## <a name="installation-and-usage"></a>Installation and Usage
 
 Prerequisites:
-* [Node.js](https://nodejs.org/) (`>= 16.0.0`)
-* [npm](https://www.npmjs.com) (`8.x`)
+
+- [Node.js](https://nodejs.org/) (`>= 16.0.0`)
+- [npm](https://www.npmjs.com) (`8.x`)
 
 Install dependencies using `npm`
 
