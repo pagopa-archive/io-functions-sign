@@ -10,7 +10,5 @@ steps:
         npm | "$(Agent.OS)"
       path: "$(Pipeline.Workspace)/.npm"
     displayName: Cache npm
-  - task: Npm@1
-    inputs:
-      command: ci
+  - script: npm ci --cache "$(Pipeline.Workspace)/.npm"
     displayName: "Install dependencies"
