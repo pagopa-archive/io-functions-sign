@@ -1,0 +1,286 @@
+openapi: 3.0.3
+
+info:
+  title: Firma con IO
+  version: 1.0.0
+
+paths:
+  /signer/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Signer Id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: GetSigner
+      tags:
+        - Signer
+      responses:
+        200:
+          description: Il profilo del Signer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Signer"
+        404:
+          description: Signer non trovato
+    patch:
+      operationId: EditSigner
+      tags:
+        - Signer
+      responses:
+        200:
+          description: Il profilo modificato del Signer
+        404:
+          description: Signer non trovato
+
+  /signature-requests:
+    post:
+      operationId: CreateSignatureRequest
+      tags:
+        - Signature Request
+      responses:
+        201:
+          description: Richiesta di firma creata correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DraftSignatureRequest"
+    get:
+      operationId: GetSignatureRequest
+      tags:
+        - Signature Request
+      responses:
+        200:
+          description: La richiesta di firma
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DraftSignatureRequest"
+                  - $ref: "#/components/schemas/SignatureRequest"
+                  - $ref: "#/components/schemas/FullfilledSignatureRequest"
+                discriminator:
+                  propertyName: status
+                  mapping:
+                    draft: "#/components/schemas/DraftSignatureRequest"
+                    forwarded: "#/components/schemas/SignatureRequest"
+                    fullfilled: "#/components/schemas/FullfilledSignatureRequest"
+        404:
+          description: Richiesta di firma non trovata
+    patch:
+      operationId: EditSignatureRequest
+      tags:
+        - Signature Request
+      responses:
+        200:
+          description: La richiesta di firma modificata
+        404:
+          description: Richiesta di firma non trovata
+
+  /qtsp-clauses:
+    get:
+      operationId: GetQTSPClauses
+      tags:
+        - QTSP
+      parameters:
+        - name: qtsp
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ["qtsp1", "qtsp2"]
+      responses:
+        200:
+          description: La lista di termini e clausole del QTSP
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+
+  /sessions:
+    post:
+      operationId: CreateSession
+      tags:
+        - QTSP
+      responses:
+        201:
+          description: Sessione di firma creata correttamente
+
+  /sessions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: GetSession
+      tags:
+        - QTSP
+      responses:
+        200:
+          description: La sessione di firma
+        404:
+          description: Sessione di firma non trovata
+    patch:
+      operationId: EditSession
+      tags:
+        - QTSP
+      responses:
+        200:
+          description: La sessione di firma modificata
+        404:
+          description: Sessione di firma non trovata
+
+  /signatures:
+    post:
+      operationId: Sign
+      tags:
+        - QTSP
+      responses:
+        201:
+          description: La firma è stata apposta con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    Signer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    Clause:
+      type: object
+      properties:
+        name:
+          type: string
+
+    DocumentMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+
+    DocumentToBeUploaded:
+      allOf:
+        - $ref: "#/components/schemas/DocumentMetadata"
+        - type: object
+          properties:
+            uploadUrl:
+              type: string
+              format: uri
+            clauses:
+              type: array
+              items:
+                $ref: "#/components/schemas/Clause"
+
+    Document:
+      allOf:
+        - $ref: "#/components/schemas/DocumentMetadata"
+        - type: object
+          properties:
+            url:
+              type: string
+              format: uri
+            clauses:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/Clause"
+                  - type: object
+                    properties:
+                      accepted:
+                        type: boolean
+                        default: false
+                      updatedAt:
+                        type: string
+                        format: date-time
+
+    SignatureRequestMeta:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        signerId:
+          type: string
+          format: uuid
+        serviceId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updateAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+
+    DraftSignatureRequest:
+      allOf:
+        - $ref: "#/components/schemas/SignatureRequestMeta"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: ["draft"]
+            documents:
+              type: array
+              items:
+                oneOf:
+                  - $ref: "#/components/schemas/Document"
+                  - $ref: "#/components/schemas/DocumentToBeUploaded"
+
+    SignatureRequest:
+      allOf:
+        - $ref: "#/components/schemas/SignatureRequestMeta"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: ["forwarded"]
+            forwardedAt:
+              type: string
+              format: date-time
+            documents:
+              type: array
+              items:
+                $ref: "#/components/schemas/Document"
+
+    FullfilledSignatureRequest:
+      allOf:
+        - $ref: "#/components/schemas/SignatureRequestMeta"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: ["fullfilled"]
+            forwardedAt:
+              type: string
+              format: date-time
+            signedAt:
+              type: string
+              format: date-time
+            documents:
+              type: array
+              items:
+                $ref: "#/components/schemas/Document"
