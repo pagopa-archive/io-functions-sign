@@ -8,6 +8,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepare": "husky install",
+    "func:ext-install": "func extensions install",
     "start": "func start"
   },
   "repository": {
