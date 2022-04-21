@@ -20,22 +20,22 @@ paths:
         - Signer
       responses:
         200:
-          description: Il profilo del Signer
+          description: signer profile
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Signer"
         404:
-          description: Signer non trovato
+          description: signer not found
     patch:
       operationId: EditSigner
       tags:
         - Signer
       responses:
         200:
-          description: Il profilo modificato del Signer
+          description: successful operation
         404:
-          description: Signer non trovato
+          description: signer not found
 
   /signature-requests:
     post:
@@ -44,7 +44,7 @@ paths:
         - Signature Request
       responses:
         201:
-          description: Richiesta di firma creata correttamente
+          description: successful operation
           content:
             application/json:
               schema:
@@ -55,7 +55,7 @@ paths:
         - Signature Request
       responses:
         200:
-          description: La richiesta di firma
+          description: signature request
           content:
             application/json:
               schema:
@@ -70,16 +70,16 @@ paths:
                     forwarded: "#/components/schemas/SignatureRequest"
                     fullfilled: "#/components/schemas/FullfilledSignatureRequest"
         404:
-          description: Richiesta di firma non trovata
+          description: signature request not found
     patch:
       operationId: EditSignatureRequest
       tags:
         - Signature Request
       responses:
         200:
-          description: La richiesta di firma modificata
+          description: successful operation
         404:
-          description: Richiesta di firma non trovata
+          description: signature request not found
 
   /qtsp-clauses:
     get:
@@ -95,7 +95,7 @@ paths:
             enum: ["qtsp1", "qtsp2"]
       responses:
         200:
-          description: La lista di termini e clausole del QTSP
+          description: QTSP terms and conditions
           content:
             application/json:
               schema:
@@ -113,7 +113,7 @@ paths:
         - QTSP
       responses:
         201:
-          description: Sessione di firma creata correttamente
+          description: successful operation
 
   /sessions/{id}:
     parameters:
@@ -129,18 +129,18 @@ paths:
         - QTSP
       responses:
         200:
-          description: La sessione di firma
+          description: the session
         404:
-          description: Sessione di firma non trovata
+          description: session not found
     patch:
       operationId: EditSession
       tags:
         - QTSP
       responses:
         200:
-          description: La sessione di firma modificata
+          description: successful operation
         404:
-          description: Sessione di firma non trovata
+          description: session not found
 
   /signatures:
     post:
@@ -149,7 +149,7 @@ paths:
         - QTSP
       responses:
         201:
-          description: La firma è stata apposta con successo
+          description: successful operation
           content:
             application/json:
               schema:
