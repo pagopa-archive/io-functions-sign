@@ -3,8 +3,5 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["@pagopa/eslint-config/recommended"],
-  "rules": {
-    "functional/immutable-data": "off"
-  }
+  "extends": ["@pagopa/eslint-config/recommended"]
 }
