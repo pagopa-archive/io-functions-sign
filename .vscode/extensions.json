@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-vscode.azure-account",
+    "eg2.vscode-npm-script",
+    "redhat.vscode-yaml"
+  ]
+}

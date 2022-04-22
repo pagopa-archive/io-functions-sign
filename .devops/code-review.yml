@@ -1,0 +1,29 @@
+# Code review pipeline
+
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: ts_type_check
+    displayName: "Type check"
+    continueOnError: false
+    steps:
+      - template: install-node.yml
+      - script: npx tsc --noEmit
+        displayName: "Run TypeScript compiler"
+  - job: lint
+    displayName: "Lint"
+    continueOnError: false
+    steps:
+      - template: install-node.yml
+      - script: npm run lint
+        displayName: "Run linter"
+  - job: test
+    displayName: "Test"
+    continueOnError: false
+    steps:
+      - template: install-node.yml
+      - script: npm test
+        displayName: "Execute tests"
