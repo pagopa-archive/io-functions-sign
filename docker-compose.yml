@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  blob-storage:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
