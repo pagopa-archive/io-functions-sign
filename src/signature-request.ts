@@ -10,7 +10,7 @@ import { uuid } from "./uuid";
 export type SignatureRequest = {
   id: string;
   signer: Signer;
-  documents: Array<Document>;
+  documents: Document[];
 };
 
 export type GetSignatureRequestById = (
@@ -23,7 +23,7 @@ export type AddSignatureRequest = (
 
 export const createSignatureRequest = (
   signer: Signer,
-  documents: Array<Document>
+  documents: Document[]
 ): SignatureRequest => ({
   id: uuid(),
   signer,

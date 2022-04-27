@@ -1,6 +1,6 @@
-import { User } from "./user";
 import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
+import { User } from "./user";
 import { FiscalCode } from "./fiscal-code";
 
 export type Signer = {

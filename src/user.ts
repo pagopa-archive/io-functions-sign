@@ -1,6 +1,5 @@
-import { FiscalCode } from "./fiscal-code";
-
 import * as TO from "fp-ts/TaskOption";
+import { FiscalCode } from "./fiscal-code";
 
 export type User = {
   fiscalCode: FiscalCode;

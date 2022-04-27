@@ -1,11 +1,11 @@
 import { pipe } from "fp-ts/lib/function";
-import { Document } from "../document";
-import { SignatureRequest, getDocument } from "../signature-request";
 import * as TE from "fp-ts/TaskEither";
 import * as O from "fp-ts/Option";
+import { Document } from "../document";
+import { SignatureRequest, getDocument } from "../signature-request";
 
-import { GetSignatureRequest } from "./get-signature-request";
 import { GetUploadLinkForDocument } from "../upload-link";
+import { GetSignatureRequest } from "./get-signature-request";
 
 export const getUploadLink =
   (

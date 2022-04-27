@@ -1,5 +1,4 @@
 import * as TO from "fp-ts/TaskOption";
-import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/Either";
 
 import { GetSignatureRequestById } from "../../signature-request";

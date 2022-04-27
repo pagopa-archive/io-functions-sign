@@ -1,9 +1,8 @@
-import { FiscalCode } from "../fiscal-code";
-
 import { pipe } from "fp-ts/function";
 import * as TO from "fp-ts/TaskOption";
 import * as TE from "fp-ts/TaskEither";
 import * as D from "io-ts/Decoder";
+import { FiscalCode } from "../fiscal-code";
 
 import {
   createSignerFromUser,

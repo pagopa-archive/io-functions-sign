@@ -1,5 +1,3 @@
-import { Document } from "../document";
-
 import * as R from "fp-ts/Reader";
 import { pipe } from "fp-ts/function";
 
@@ -8,6 +6,7 @@ import {
   generateBlobSASQueryParameters,
   ContainerSASPermissions,
 } from "@azure/storage-blob";
+import { Document } from "../document";
 
 export const getForDocument = (document: Document) =>
   pipe(
