@@ -7,11 +7,12 @@ export type Signer = {
   id: string;
 };
 
-export const fromUser = (u: User): Signer => ({
+export const createSignerFromUser = (u: User): Signer => ({
   id: `signer-${u.fiscalCode}`,
 });
 
-export interface SignerRepository {
-  add: (signer: Signer) => TE.TaskEither<Error, Signer>;
-  getByFiscalCode: (fiscalCode: FiscalCode) => TO.TaskOption<Signer>;
-}
+export type AddSigner = (signer: Signer) => TE.TaskEither<Error, Signer>;
+
+export type GetSignerByFiscalCode = (
+  fiscalCode: FiscalCode
+) => TO.TaskOption<Signer>;

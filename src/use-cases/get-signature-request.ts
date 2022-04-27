@@ -1,12 +1,12 @@
 import { flow } from "fp-ts/lib/function";
 import * as TE from "fp-ts/TaskEither";
-import { SignatureRequestRepository } from "../signature-request";
+import { GetSignatureRequestById } from "../signature-request";
 
 export const getSignatureRequest = (
-  signatureRequests: SignatureRequestRepository
+  getSignatureRequestById: GetSignatureRequestById
 ) =>
   flow(
-    (id: string) => signatureRequests.getById(id),
+    getSignatureRequestById,
     TE.fromTaskOption(() => new Error("signature request not found"))
   );
 

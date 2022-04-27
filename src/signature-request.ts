@@ -13,10 +13,13 @@ export type SignatureRequest = {
   documents: Array<Document>;
 };
 
-export interface SignatureRequestRepository {
-  add: (req: SignatureRequest) => TE.TaskEither<Error, SignatureRequest>;
-  getById: (id: SignatureRequest["id"]) => TO.TaskOption<SignatureRequest>;
-}
+export type GetSignatureRequestById = (
+  id: SignatureRequest["id"]
+) => TO.TaskOption<SignatureRequest>;
+
+export type AddSignatureRequest = (
+  request: SignatureRequest
+) => TE.TaskEither<Error, SignatureRequest>;
 
 export const createSignatureRequest = (
   signer: Signer,
@@ -28,8 +31,8 @@ export const createSignatureRequest = (
 });
 
 export const getDocument =
-  (documentId: Document["id"]) => (req: SignatureRequest) =>
+  (documentId: Document["id"]) => (request: SignatureRequest) =>
     pipe(
-      req.documents,
-      findFirst((doc) => doc.id === documentId)
+      request.documents,
+      findFirst((document) => document.id === documentId)
     );

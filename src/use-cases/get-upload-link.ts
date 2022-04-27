@@ -4,13 +4,13 @@ import { SignatureRequest, getDocument } from "../signature-request";
 import * as TE from "fp-ts/TaskEither";
 import * as O from "fp-ts/Option";
 
-import { getSignatureRequest as makeGetSignatureRequest } from "./get-signature-request";
-import { UploadLinkInteractor } from "../upload-link";
+import { GetSignatureRequest } from "./get-signature-request";
+import { GetUploadLinkForDocument } from "../upload-link";
 
 export const getUploadLink =
   (
-    getSignatureRequest: ReturnType<typeof makeGetSignatureRequest>,
-    uploadLinks: UploadLinkInteractor
+    getSignatureRequest: GetSignatureRequest,
+    getUploadLinkForDocument: GetUploadLinkForDocument
   ) =>
   (signatureRequestId: SignatureRequest["id"], documentId: Document["id"]) =>
     pipe(
@@ -22,5 +22,5 @@ export const getUploadLink =
           (document) => TE.right(document)
         )
       ),
-      TE.chain(uploadLinks.getForDocument)
+      TE.map(getUploadLinkForDocument)
     );

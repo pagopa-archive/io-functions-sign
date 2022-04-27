@@ -6,6 +6,6 @@ export type User = {
   fiscalCode: FiscalCode;
 };
 
-export interface UserRepository {
-  getByFiscalCode: (fiscalCode: FiscalCode) => TO.TaskOption<User>;
-}
+export type GetUserByFiscalCode = (
+  fiscalCode: FiscalCode
+) => TO.TaskOption<User>;

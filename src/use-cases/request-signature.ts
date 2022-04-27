@@ -5,14 +5,18 @@ import * as TO from "fp-ts/TaskOption";
 import * as TE from "fp-ts/TaskEither";
 import * as D from "io-ts/Decoder";
 
-import { fromUser, SignerRepository } from "../signer";
-import { UserRepository } from "../user";
+import {
+  createSignerFromUser,
+  AddSigner,
+  GetSignerByFiscalCode,
+} from "../signer";
+import { GetUserByFiscalCode } from "../user";
 import { Document } from "../document";
 
 import {
   SignatureRequest,
-  SignatureRequestRepository,
   createSignatureRequest,
+  AddSignatureRequest,
 } from "../signature-request";
 
 const RequestSignaturePayload = D.struct({
@@ -24,23 +28,24 @@ type RequestSignaturePayload = D.TypeOf<typeof RequestSignaturePayload>;
 
 export const requestSignature =
   (
-    signers: SignerRepository,
-    users: UserRepository,
-    signatureRequests: SignatureRequestRepository
+    getSignerByFiscalCode: GetSignerByFiscalCode,
+    getUserByFiscalCode: GetUserByFiscalCode,
+    addSigner: AddSigner,
+    addSignatureRequest: AddSignatureRequest
   ) =>
   (payload: RequestSignaturePayload): TE.TaskEither<Error, SignatureRequest> =>
     pipe(
-      signers.getByFiscalCode(payload.fiscalCode),
+      getSignerByFiscalCode(payload.fiscalCode),
       TO.fold(
         () =>
           pipe(
-            users.getByFiscalCode(payload.fiscalCode),
+            getUserByFiscalCode(payload.fiscalCode),
             TE.fromTaskOption(() => new Error("user not found")),
-            TE.map(fromUser),
-            TE.chain(signers.add)
+            TE.map(createSignerFromUser),
+            TE.chain(addSigner)
           ),
         TE.right
       ),
       TE.map((signer) => createSignatureRequest(signer, payload.documents)),
-      TE.chain(signatureRequests.add)
+      TE.chain(addSignatureRequest)
     );

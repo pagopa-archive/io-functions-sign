@@ -1,6 +1,7 @@
-import * as TE from "fp-ts/TaskEither";
 import { Document } from "../document";
-import { UploadLinkInteractor } from "../upload-link";
+
+import * as R from "fp-ts/Reader";
+import { pipe } from "fp-ts/function";
 
 import {
   StorageSharedKeyCredential,
@@ -8,38 +9,25 @@ import {
   ContainerSASPermissions,
 } from "@azure/storage-blob";
 
-export type AzureBlobStorageCredentials = {
-  accountName: string;
-  accountKey: string;
-};
-
-export class BlobStorageUploadLinkInteractor implements UploadLinkInteractor {
-  private storageSharedKeyCredential: StorageSharedKeyCredential;
-
-  constructor({ accountName, accountKey }: AzureBlobStorageCredentials) {
-    this.storageSharedKeyCredential = new StorageSharedKeyCredential(
-      accountName,
-      accountKey
-    );
-  }
-
-  getForDocument(document: Document) {
-    const expiryDate = new Date();
-    expiryDate.setHours(expiryDate.getHours() + 2);
-
-    const sasKey = generateBlobSASQueryParameters(
-      {
-        containerName: "my-container",
-        blobName: document.id,
-        permissions: ContainerSASPermissions.parse("write"),
-        expiresOn: expiryDate,
-      },
-      this.storageSharedKeyCredential
-    );
-
-    return TE.right({
+export const getForDocument = (document: Document) =>
+  pipe(
+    R.ask<StorageSharedKeyCredential>(),
+    R.map((storageSharedKeyCredential) =>
+      generateBlobSASQueryParameters(
+        {
+          containerName: "my-container",
+          blobName: document.id,
+          permissions: ContainerSASPermissions.parse("write"),
+          expiresOn: pipe(new Date(), (expiryDate) => {
+            expiryDate.setHours(expiryDate.getHours() + 2);
+            return expiryDate;
+          }),
+        },
+        storageSharedKeyCredential
+      )
+    ),
+    R.map((sasKey) => ({
       document,
       url: sasKey.toString(),
-    });
-  }
-}
+    }))
+  );
