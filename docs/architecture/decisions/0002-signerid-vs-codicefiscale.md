@@ -1,66 +1,59 @@
 #[ADR-0002] Signer ID VS Codice Fiscale
 
-## Data: 2022-04-26
+## Date: 2022-04-26
 
-## Stato Proposto
+## State Proposto
 
-##Contesto
+##Context
 
-Abbiamo bisogno di un identificativo univoco per il SIGNER che possa identificare tutte le operazioni effettuate da un singolo USER memorizzate nel DB.
+We need an unique identifier to retrieve all operations saved on DB linked to a single SIGNER.
 
-# Decisione
+# Decision
 
-## Opzione 1
+## Option 1
 
-Usiamo un codice identificativo proprietario del servizio
-
-## Opzione 2
-
-Usiamo il Codice Fiscale del SIGNER
-
-# Decisione
-
-## Opzione 1
+We can use a UID linked only to our service
 
 ###PRO:
-* la possibilità di cambiare identificativo nel caso in cui cambiasse il provider di firma;
-* la possibilità di cambiare identificativo nel caso in cui cambiasse la clausola del servizio;
-* la possibilità, in caso di cambio codice fiscale, di poter recuperare tutte le operazioni effettuate dallo stesso SIGNER  potendo cambiare il suddetto codice fiscale in un'unica entità;
-* la possibilità di creare entità più granulari.
+* the possibility to change the UID if the QTSP should change;
+* the possibility to change the UID if should change the clauses linked to the sign service;
+* the possibility to manage in a simple manner the changement of the generic UID (at this moment the Fiscal Code but we can't be sure that it will not change).
 
 ###CONTRO:
-* la creazione di un'API dedicata per recuperare i SignerID a partire da un certo Codice Fiscale;
-* una maggiore complessità nel raggruppare i dati legati ad un singolo SIGNER.
+* the creation of a specific API to cross the generic UID with the Sign With IO's UID;
+* a major difficult to integrate all data linked to an USER if will be a relation one to many between USER and SIGNER..
 
-## Opzione 2
+## Option 2
+
+We Can use the Fiscal Code of the SIGNER
 
 ###PRO:
-* non c'è bisogno di API ad hoc visto che il codice fiscale è un dato conosciuto da tutti gli interessati (app, issuer e qtsp);
-* i dati sarebbero connessi allo stesso SIGNER in maniera del tutto semplificata.
+* We can retrivie the User Profile directly without a third call to define which is the Fiscal Code (it is true now but could be not tru in the future).
 
 ###CONTRO:
-* l'estrema difficoltà nel mantenere uno storico delle operazioni effettuate da un SIGNER in caso di cambio codice fiscale;
-* entità molto complesse per gestire tutti i cambiamenti che potrebbero avvenire nel tempo (cambio di provider di Firma, cambio di clausole del servizio ... ).
+* It will be very hard manage a correct archive to retrieve all operations done by the same USER if the UID should change.
 
-#Soluzione
+# Decision
+
+#Solution
 
 #UX
 
-#Scalabilità
+#Scalability
 
-#Autonomia
+#Authonomy
 
-#Adattabilità
+#Adattability
 
-#Sicurezza
+#Security
 
-#Semplicità
-
-
+#Semplicity
 
 
-Nel contesto <use case/user story>, risolvendo la problematica <problematica> abbiamo deciso di <opzione scelta> e scartato <altra opzione>, per ottenere <parametri di qualità / requisiti soddisfatti>, accettando che <svantaggi>, poiché <motivazione>.
 
-Consequenze
 
-Descrivi le conseguenze della decisione.
+In the context of <use case/user story>, resolving the problem <problem> we decided <chosen option> and discarded <other option>, to retrieve <quality params / requirements meet>, we accepted that <disadvantages>, because <reasons>.
+
+Consequences
+
+Describe the consequences of the decision
