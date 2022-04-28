@@ -45,6 +45,7 @@
     "*.{js,ts,json,yaml}": "prettier --write"
   },
   "dependencies": {
+    "@azure/cosmos": "^3.15.1",
     "@azure/storage-blob": "^12.9.0",
     "@pagopa/ts-commons": "^10.2.1",
     "fp-ts": "^2.11.10",

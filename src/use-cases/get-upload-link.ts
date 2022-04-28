@@ -24,3 +24,5 @@ export const getUploadLink =
       ),
       TE.map(getUploadLinkForDocument)
     );
+
+export type GetUploadLink = ReturnType<typeof getUploadLink>;

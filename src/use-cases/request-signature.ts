@@ -18,14 +18,14 @@ import {
   AddSignatureRequest,
 } from "../signature-request";
 
-const RequestSignaturePayload = D.struct({
+export const RequestSignaturePayload = D.struct({
   fiscalCode: FiscalCode,
   documents: D.array(Document),
 });
 
 type RequestSignaturePayload = D.TypeOf<typeof RequestSignaturePayload>;
 
-export const requestSignature =
+export const makeRequestSignature =
   (
     getSignerByFiscalCode: GetSignerByFiscalCode,
     getUserByFiscalCode: GetUserByFiscalCode,
