@@ -7,4 +7,4 @@ info:
 
 components:
   schemas:
-$ref: "./openapi-definitions.yaml"
+    $ref: "./openapi-definitions.yaml"

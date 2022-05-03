@@ -20,7 +20,7 @@ DocumentMetadata:
 
 DocumentToBeUploaded:
   allOf:
-    - $ref: "#/DocumentMetadata"
+    - $ref: "#/components/schemas/DocumentMetadata"
     - type: object
       properties:
         uploadUrl:
@@ -29,11 +29,11 @@ DocumentToBeUploaded:
         clauses:
           type: array
           items:
-            $ref: "#/Clause"
+            $ref: "#/components/schemas/Clause"
 
 Document:
   allOf:
-    - $ref: "#/DocumentMetadata"
+    - $ref: "#/components/schemas/DocumentMetadata"
     - type: object
       properties:
         url:
@@ -43,7 +43,7 @@ Document:
           type: array
           items:
             allOf:
-              - $ref: "#/Clause"
+              - $ref: "#/components/schemas/Clause"
               - type: object
                 properties:
                   accepted:
@@ -76,7 +76,7 @@ SignatureRequestMeta:
 
 DraftSignatureRequest:
   allOf:
-    - $ref: "#/SignatureRequestMeta"
+    - $ref: "#/components/schemas/SignatureRequestMeta"
     - type: object
       properties:
         status:
@@ -86,12 +86,12 @@ DraftSignatureRequest:
           type: array
           items:
             oneOf:
-              - $ref: "#/Document"
-              - $ref: "#/DocumentToBeUploaded"
+              - $ref: "#/components/schemas/Document"
+              - $ref: "#/components/schemas/DocumentToBeUploaded"
 
 SignatureRequest:
   allOf:
-    - $ref: "#/SignatureRequestMeta"
+    - $ref: "#/components/schemas/SignatureRequestMeta"
     - type: object
       properties:
         status:
@@ -103,11 +103,11 @@ SignatureRequest:
         documents:
           type: array
           items:
-            $ref: "#/Document"
+            $ref: "#/components/schemas/Document"
 
 FullfilledSignatureRequest:
   allOf:
-    - $ref: "#/SignatureRequestMeta"
+    - $ref: "#/components/schemas/SignatureRequestMeta"
     - type: object
       properties:
         status:
@@ -122,4 +122,4 @@ FullfilledSignatureRequest:
         documents:
           type: array
           items:
-            $ref: "#/Document"
+            $ref: "#/components/schemas/Document"
