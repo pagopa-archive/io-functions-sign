@@ -5,6 +5,130 @@ info:
   description: Any APIs called by IO App
   version: 1.0.0
 
+paths:
+  /signer/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Signer Id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: GetSigner
+      tags:
+        - Signer
+      responses:
+        200:
+          description: signer profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Signer"
+        404:
+          description: signer not found
+    patch:
+      operationId: EditSigner
+      tags:
+        - Signer
+      responses:
+        200:
+          description: successful operation
+        404:
+          description: signer not found
+
+  /signature-requests{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Signature Request Id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getSignatureRequest
+      tags:
+        - Signature Request
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DraftSignatureRequest"
+                  - $ref: "#/components/schemas/SignatureRequest"
+                  - $ref: "#/components/schemas/FullfilledSignatureRequest"
+                discriminator:
+                  propertyName: status
+                  mapping:
+                    draft: "#/components/schemas/DraftSignatureRequest"
+                    forwarded: "#/components/schemas/SignatureRequest"
+                    fullfilled: "#/components/schemas/FullfilledSignatureRequest"
+        404:
+          description: signature request not found
+    patch:
+      operationId: EditSignatureRequest
+      tags:
+        - Signature Request
+      responses:
+        200:
+          description: successful operation
+        404:
+          description: signature request not found
+
+  /qtsp-clauses:
+    get:
+      operationId: GetQTSPClauses
+      tags:
+        - QTSP
+      parameters:
+        - name: qtsp
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ["qtsp1", "qtsp2"]
+      responses:
+        200:
+          description: QTSP terms and conditions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+    patch:
+      operationId: EditQstpClauses
+      tags:
+        - QTSP
+      responses:
+        200:
+          description: successful operation
+        404:
+          description: QTSP clauses not found
+
+  /signatures:
+    post:
+      operationId: Sign
+      tags:
+        - QTSP
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
 components:
   schemas:
     $ref: "./openapi-definitions.yaml"
