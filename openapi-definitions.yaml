@@ -1,132 +1,125 @@
-openapi: 3.0.3
+# This file contains all common components used by all Firma Con IO APIs
+Signer:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
 
-info:
-  title: Firma con IO common Definitions
-  Description: This file contains the object's definitions used in both APIs
-  version: 1.0.0
+Clause:
+  type: object
+  properties:
+    name:
+      type: string
 
-  schemas:
-    Signer:
-      type: object
+DocumentMetadata:
+  type: object
+  properties:
+    name:
+      type: string
+
+DocumentToBeUploaded:
+  allOf:
+    - $ref: "#/DocumentMetadata"
+    - type: object
       properties:
-        id:
+        uploadUrl:
           type: string
-          format: uuid
+          format: uri
+        clauses:
+          type: array
+          items:
+            $ref: "#/Clause"
 
-    Clause:
-      type: object
+Document:
+  allOf:
+    - $ref: "#/DocumentMetadata"
+    - type: object
       properties:
-        name:
+        url:
           type: string
+          format: uri
+        clauses:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/Clause"
+              - type: object
+                properties:
+                  accepted:
+                    type: boolean
+                    default: false
+                  updatedAt:
+                    type: string
+                    format: date-time
 
-    DocumentMetadata:
-      type: object
+SignatureRequestMeta:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    signerId:
+      type: string
+      format: uuid
+    serviceId:
+      type: string
+      format: uuid
+    createdAt:
+      type: string
+      format: date-time
+    updateAt:
+      type: string
+      format: date-time
+    status:
+      type: string
+
+DraftSignatureRequest:
+  allOf:
+    - $ref: "#/SignatureRequestMeta"
+    - type: object
       properties:
-        name:
-          type: string
-
-    DocumentToBeUploaded:
-      allOf:
-        - $ref: "#/components/schemas/DocumentMetadata"
-        - type: object
-          properties:
-            uploadUrl:
-              type: string
-              format: uri
-            clauses:
-              type: array
-              items:
-                $ref: "#/components/schemas/Clause"
-
-    Document:
-      allOf:
-        - $ref: "#/components/schemas/DocumentMetadata"
-        - type: object
-          properties:
-            url:
-              type: string
-              format: uri
-            clauses:
-              type: array
-              items:
-                allOf:
-                  - $ref: "#/components/schemas/Clause"
-                  - type: object
-                    properties:
-                      accepted:
-                        type: boolean
-                        default: false
-                      updatedAt:
-                        type: string
-                        format: date-time
-
-    SignatureRequestMeta:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        signerId:
-          type: string
-          format: uuid
-        serviceId:
-          type: string
-          format: uuid
-        createdAt:
-          type: string
-          format: date-time
-        updateAt:
-          type: string
-          format: date-time
         status:
           type: string
+          enum: ["draft"]
+        documents:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/Document"
+              - $ref: "#/DocumentToBeUploaded"
 
-    DraftSignatureRequest:
-      allOf:
-        - $ref: "#/components/schemas/SignatureRequestMeta"
-        - type: object
-          properties:
-            status:
-              type: string
-              enum: ["draft"]
-            documents:
-              type: array
-              items:
-                oneOf:
-                  - $ref: "#/components/schemas/Document"
-                  - $ref: "#/components/schemas/DocumentToBeUploaded"
+SignatureRequest:
+  allOf:
+    - $ref: "#/SignatureRequestMeta"
+    - type: object
+      properties:
+        status:
+          type: string
+          enum: ["forwarded"]
+        forwardedAt:
+          type: string
+          format: date-time
+        documents:
+          type: array
+          items:
+            $ref: "#/Document"
 
-    SignatureRequest:
-      allOf:
-        - $ref: "#/components/schemas/SignatureRequestMeta"
-        - type: object
-          properties:
-            status:
-              type: string
-              enum: ["forwarded"]
-            forwardedAt:
-              type: string
-              format: date-time
-            documents:
-              type: array
-              items:
-                $ref: "#/components/schemas/Document"
-
-    FullfilledSignatureRequest:
-      allOf:
-        - $ref: "#/components/schemas/SignatureRequestMeta"
-        - type: object
-          properties:
-            status:
-              type: string
-              enum: ["fullfilled"]
-            forwardedAt:
-              type: string
-              format: date-time
-            signedAt:
-              type: string
-              format: date-time
-            documents:
-              type: array
-              items:
-                $ref: "#/components/schemas/Document"
+FullfilledSignatureRequest:
+  allOf:
+    - $ref: "#/SignatureRequestMeta"
+    - type: object
+      properties:
+        status:
+          type: string
+          enum: ["fullfilled"]
+        forwardedAt:
+          type: string
+          format: date-time
+        signedAt:
+          type: string
+          format: date-time
+        documents:
+          type: array
+          items:
+            $ref: "#/Document"

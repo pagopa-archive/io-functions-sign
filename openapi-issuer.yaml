@@ -159,4 +159,6 @@ paths:
                   message:
                     type: string
 
-components: !include openapi-definitions.yaml
+components:
+  schemas:
+    $ref: "./openapi-definitions.yaml"

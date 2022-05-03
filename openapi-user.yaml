@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Firma con IO User APIs
-  Description: Any APIs called by the IO App
+  description: Any APIs called by IO App
   version: 1.0.0
 
-components: !include openapi-definitions.yaml
+components:
+  schemas:
+$ref: "./openapi-definitions.yaml"
