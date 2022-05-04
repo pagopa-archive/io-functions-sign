@@ -129,6 +129,42 @@ paths:
                   message:
                     type: string
 
+  /sessions:
+    post:
+      operationId: CreateSession
+      tags:
+        - QTSP
+      responses:
+        201:
+          description: successful operation
+
+  /sessions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: GetSession
+      tags:
+        - QTSP
+      responses:
+        200:
+          description: the session
+        404:
+          description: session not found
+    patch:
+      operationId: EditSession
+      tags:
+        - QTSP
+      responses:
+        200:
+          description: successful operation
+        404:
+          description: session not found
+
 components:
   schemas:
     $ref: "./openapi-definitions.yaml"
