@@ -3,3 +3,4 @@ lib
 .eslintcache
 local.settings.json
 .env*
+.ds_store
