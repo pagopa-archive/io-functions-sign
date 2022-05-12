@@ -4,3 +4,4 @@ lib
 local.settings.json
 .env*
 .ds_store
+.vscode/settings.json
