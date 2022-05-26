@@ -6,15 +6,9 @@ info:
   version: 1.0.0
 
 paths:
-  /signer/{id}:
+  /signer/{fiscalCode}:
     parameters:
-      - name: id
-        in: path
-        description: Signer Id
-        required: true
-        schema:
-          type: string
-          format: uuid
+      $ref: "#/components/schemas/FiscalCode"
     get:
       operationId: GetSigner
       tags:
@@ -84,25 +78,16 @@ paths:
       operationId: GetQTSPClauses
       tags:
         - QTSP
-      parameters:
-        - name: qtsp
-          in: query
-          required: true
-          schema:
-            type: string
-            enum: ["qtsp1", "qtsp2"]
       responses:
         200:
           description: QTSP terms and conditions
           content:
             application/json:
               schema:
+                name: QtspClauses
                 type: array
                 items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
+                  $ref: "#/components/schemas/QtspClause"
     patch:
       operationId: EditQstpClauses
       tags:
@@ -168,3 +153,24 @@ paths:
 components:
   schemas:
     $ref: "./openapi-definitions.yaml"
+    QtspClause:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        qtspId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          required: true
+        text:
+          type: string
+          required: false
+        mandatory:
+          type: boolean
+          required: true
+        signed:
+          type: boolean
+          required: true
