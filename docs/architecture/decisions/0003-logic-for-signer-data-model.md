@@ -1,6 +1,5 @@
-# 1. ADR title Logic for Signer Data Model
+# 3. Signer Data Model
 
-Authors: Danilo Spinelli & Filippo Tenaglia
 
 Date: 2022-05-23
 
@@ -8,13 +7,13 @@ Date: 2022-05-23
 
 Draft
 
-##Glossary
+## Glossary
 
 SIGNER: the IO user who uses the signature services;
 QTSP: provider that places a qualified electronic signature on documents;
 TOS: Terms Of Service specific to a QTSP.
 
-##Logical model
+## Logical model
 
 Before being able to proceed in the flow of signing documents the SIGNER is required to accept specific TOS.
 
@@ -28,18 +27,18 @@ The data model must make it possible to verify at any time that the SIGNER was a
 
 Accepted TOS contain the identifier of the QTSP to which they refer. In this way it is possible to programmatically verify that they refer to the QTSP currently set in the configuration phase.
 
-##Open points
-be invalidated or if, alternatively, the TOS have a time duration (expire) that keeps them valid regardless of the fact that new ones are configured.
-mustunderstand if the expire date is static (fixed) or depends on the time when the ToS have been accepted
-We do not know if the TOS will be provided via an API from the QTSP or will be statically configured
-We do not know if the email must be retrieved from the User registry or an ad hoc service to be queried via tax code
+## Open points
+- we need to know if for every new configured TOS, the old ones must be invalidated or if, alternatively, the TOS have a time duration (expire) that keeps them valid regardless of the fact that new ones are configured.
+- we must understand if the expire date is static (fixed) or depends on the time when the ToS have been accepted
+- we do not know if the TOS will be provided via an API from the QTSP or will be statically configured
+- we do not know if the SIGNER email must be retrieved from the User registry or an ad hoc service to be queried via tax code
 
-##Structure of the entities involved
+## Structure of the entities involved
 
-###Configuration (static)
+### Configuration (static)
 Identifier of the QTSP currently used
 
-###ToS ToS
+### ToS
 identifier (Pk)
 
 QTSP identifier
@@ -53,7 +52,7 @@ Duration in seconds?
 IsValid
 (boolean that indicates whether the specific ToS are valid or not for the current QTSP)
 
-###Signer
+### Signer
 Identifier (Pk)
 (obtained from the tokenizer of the Personal data vault) P
 Ersonal data
@@ -62,7 +61,7 @@ Stored in the User registry?
 Email
 From IO user profile or User registry?
 
-###Accepted ToS
+### Accepted ToS
 Signer identifier (Pk)
 
 Date of acceptance
