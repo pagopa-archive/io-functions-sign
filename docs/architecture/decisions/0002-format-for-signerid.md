@@ -4,7 +4,7 @@ Date: 2022-05-12
 
 ## State
 
-Proposed
+Accepted
 
 ## Context
 
@@ -28,7 +28,7 @@ Moreover, we don't have to write our storage to keep the lookup table
 In the context of choosing a format for the identifier, facing the need of decoupling
 the IO App generic user from the Signer entity and meeting PagoPA and GDPR constraints,
 we decided to use an opaque identifier[^UID] (_uuid_) obtained from the Personal Data Vault
-service[^PDVDR] and neglected to use the Tax Number as ID.
+tokenizer service[^PDVDR] and neglected to use the Tax Number as ID.
 
 [^PDV]: https://pagopa.atlassian.net/wiki/spaces/usrreg/pages/480772446/Autenticazione+di+un+utente+nel+mio+sistema+tramite+SPID+CIE
 [^UID]: https://pagopa.atlassian.net/wiki/spaces/LEG/pages/412354243/Re-engineering+UIDs
