@@ -6,9 +6,15 @@ info:
   version: 1.0.0
 
 paths:
-  /signer/{fiscalCode}:
+  /signer/{id}:
     parameters:
-      $ref: "#/components/schemas/FiscalCode"
+      - name: id
+        in: path
+        description: Signature Request Id
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       operationId: GetSigner
       tags:

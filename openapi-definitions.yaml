@@ -123,14 +123,3 @@ FullfilledSignatureRequest:
           type: array
           items:
             $ref: "#/components/schemas/Document"
-fiscalCode:
-  name: fiscal_code
-  in: path
-  type: string
-  maxlength: 16
-  minlength: 16
-  required: true
-  description: the fiscal code of the user. All upper case
-  pattern: >-
-    [A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]
-  X-example: ABCDEF99S01A555Z
