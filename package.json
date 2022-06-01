@@ -2,7 +2,7 @@
   "name": "io-functions-sign",
   "version": "0.1.0",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "jest --verbose --coverage",
     "format": "prettier --write .",
     "lint": "eslint src/**",
     "lint:fix": "eslint --fix src/**",
@@ -47,6 +47,8 @@
   "dependencies": {
     "@azure/cosmos": "^3.15.1",
     "@azure/storage-blob": "^12.9.0",
+    "@pagopa/handler-kit": "github:pagopa/handler-kit",
+    "@pagopa/io-functions-commons": "^24.3.0",
     "@pagopa/ts-commons": "^10.2.1",
     "fp-ts": "^2.11.10",
     "io-ts": "^2.2.16",

@@ -25,5 +25,5 @@ jobs:
     continueOnError: false
     steps:
       - template: install-node.yml
-      - script: npm test
+      - script: npx jest --ci
         displayName: "Execute tests"

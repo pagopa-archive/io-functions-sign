@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../lib/functions/info.js"
+  "scriptFile": "../lib/ui/functions/info.js"
 }

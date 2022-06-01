@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "route": "signature-requests",
-      "methods": ["get"]
+      "methods": ["post"]
     },
     {
       "type": "http",
@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../lib/functions/request-signature.js"
+  "scriptFile": "../lib/ui/functions/request-signature.js"
 }
