@@ -20,7 +20,7 @@ import {
   HttpRequest,
   errorResponse,
   withStatus,
-} from "@pagopa/handler-kit/lib/http/index";
+} from "@pagopa/handler-kit/lib/http";
 
 import { BadRequestError } from "@pagopa/handler-kit/lib/http/errors";
 
