@@ -103,11 +103,6 @@ stages:
               yarn build
             displayName: "Build"
 
-          # Install functions extensions
-          - task: DotNetCoreCLI@2
-            inputs:
-              command: "build"
-              arguments: "-o bin"
           # Copy application to
           - task: CopyFiles@2
             inputs:
