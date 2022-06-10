@@ -5,10 +5,8 @@ import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/Either";
-import * as RTE from "fp-ts/ReaderTaskEither";
 import * as RE from "fp-ts/ReaderEither";
 
-import * as t from "io-ts";
 import { failure } from "io-ts/PathReporter";
 import { sequenceS } from "fp-ts/lib/Apply";
 
@@ -16,67 +14,75 @@ import { pipe, flow } from "fp-ts/function";
 
 import {
   jsonResponse,
-  requireBody,
   HttpRequest,
   errorResponse,
   withStatus,
 } from "@pagopa/handler-kit/lib/http";
 
-import { BadRequestError } from "@pagopa/handler-kit/lib/http/errors";
+import { badRequestError } from "@pagopa/handler-kit/lib/http/errors";
 
-import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import {
   makeRequestSignature,
   RequestSignaturePayload,
 } from "../../app/use-cases/request-signature";
 
-import { DocumentList } from "../../signature-request/document";
-
 import { requireSubscriptionId } from "../http";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 import { addSignatureRequest } from "../../infra/azure/cosmos/signature-request";
+import { RequestSignatureBody } from "../api-models/RequestSignatureBody";
+import { getProduct } from "../../infra/azure/cosmos/product";
+import { SignatureRequestDetailView } from "../api-models/SignatureRequestDetailView";
 
 const mockGetSignerByFiscalCode: GetSignerByFiscalCode = (fiscalCode) =>
   TE.right({ id: `Signer-${fiscalCode}` });
 
 const requestSignature = makeRequestSignature(
   mockGetSignerByFiscalCode,
+  getProduct,
   addSignatureRequest
 );
 
-const RequestSignatureBodyPayload = t.type({
-  fiscalCode: FiscalCode,
-  documents: DocumentList,
-});
+const requireRequestSignatureBody = (
+  req: HttpRequest
+): E.Either<Error, RequestSignatureBody> =>
+  pipe(
+    RequestSignatureBody.decode(req.body),
+    E.mapLeft(flow(failure, (errors) => errors.join("\n"), badRequestError))
+  );
 
-const requireRequestSignatureBodyPayload = flow(
-  requireBody(RequestSignatureBodyPayload),
-  E.mapLeft((errors) => failure(errors).join("\n")),
-  E.mapLeft((detail) => new BadRequestError(detail))
-);
-
-export const requestSignatureDecoder: RE.ReaderEither<
+export const extractRequestSignaturePayload: RE.ReaderEither<
   HttpRequest,
   Error,
   RequestSignaturePayload
 > = pipe(
   sequenceS(RE.Apply)({
     subscriptionId: requireSubscriptionId,
-    payload: requireRequestSignatureBodyPayload,
+    payload: requireRequestSignatureBody,
   }),
   RE.map(({ subscriptionId, payload }) => ({
     subscriptionId,
     fiscalCode: payload.fiscalCode,
-    documents: payload.documents,
+    productId: payload.productId,
   }))
+);
+
+const decodeRequest = flow(
+  azure.fromHttpRequest,
+  TE.chainEitherK(extractRequestSignaturePayload)
+);
+
+const encodeSuccessResponse = flow(
+  SignatureRequestDetailView.decode,
+  E.mapLeft(() => new Error("Serialization error")),
+  E.fold(errorResponse, flow(jsonResponse, withStatus(201)))
 );
 
 export const run: AzureFunction = pipe(
   createHandler(
-    pipe(azure.fromHttpRequest, RTE.chainEitherK(requestSignatureDecoder)),
+    decodeRequest,
     requestSignature,
     errorResponse,
-    flow(jsonResponse, withStatus(201))
+    encodeSuccessResponse
   ),
   azure.unsafeRun
 );
