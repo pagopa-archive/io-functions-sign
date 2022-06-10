@@ -2,14 +2,38 @@ import * as t from "io-ts";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
 import { ClauseList } from "./clause";
+import { Id } from "../id";
 
 export const DocumentTitle = NonEmptyString;
 
-export const Document = t.type({
-  id: t.string,
+export const DocumentMetadata = t.type({
   title: DocumentTitle,
   clauses: ClauseList,
 });
+
+export type DocumentMetadata = t.TypeOf<typeof Document>;
+
+interface DocumentMetadataListBrand {
+  readonly DocumentMetadataList: unique symbol;
+}
+
+export const DocumentMetadataList = t.brand(
+  t.array(DocumentMetadata),
+  (
+    documents
+  ): documents is t.Branded<DocumentMetadata[], DocumentMetadataListBrand> =>
+    documents.length >= 1,
+  "DocumentMetadataList"
+);
+
+export type DocumentMetadataList = t.TypeOf<typeof DocumentMetadataList>;
+
+export const Document = t.intersection([
+  t.type({
+    id: Id,
+  }),
+  DocumentMetadata,
+]);
 
 export type Document = t.TypeOf<typeof Document>;
 
