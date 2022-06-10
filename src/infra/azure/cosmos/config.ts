@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 
 import * as RE from "fp-ts/ReaderEither";
+import { pipe } from "fp-ts/function";
 
 import { sequenceS } from "fp-ts/lib/Apply";
 
@@ -19,5 +20,8 @@ export const getCosmosConfigFromEnvironment: RE.ReaderEither<
   CosmosConfig
 > = sequenceS(RE.Apply)({
   connectionString: readFromNodeEnv("CosmosDbConnectionString"),
-  dbName: readFromNodeEnv("CosmosDbDatabaseName"),
+  dbName: pipe(
+    readFromNodeEnv("CosmosDbDatabaseName"),
+    RE.orElse(() => RE.right("db"))
+  ),
 });
