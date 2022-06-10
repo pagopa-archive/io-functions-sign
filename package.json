@@ -10,7 +10,8 @@
     "build:watch": "tsc -w",
     "prepare": "husky install",
     "func:ext-install": "func extensions install",
-    "start": "func start"
+    "start": "func start",
+    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/ui/api-models"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@azure/functions": "^3.0.0",
     "@pagopa/eslint-config": "^3.0.0",
+    "@pagopa/openapi-codegen-ts": "^11.0.0",
     "@types/jest": "^27.4.1",
     "@types/node": "16.11",
     "@types/uuid": "^8.3.4",
