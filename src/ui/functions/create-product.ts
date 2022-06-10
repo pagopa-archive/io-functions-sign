@@ -4,7 +4,6 @@ import { createHandler } from "@pagopa/handler-kit";
 import {
   jsonResponse,
   HttpRequest,
-  errorResponse,
   withStatus,
 } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
@@ -25,12 +24,12 @@ import {
   makeCreateProduct,
 } from "../../app/use-cases/create-product";
 
-import { requireSubscriptionId } from "../http";
+import { requireSubscriptionId, errorResponse } from "../http";
 import { CreateProductBody } from "../api-models/CreateProductBody";
 
 import { DocumentMetadataList } from "../../signature-request/document";
 import { addProduct } from "../../infra/azure/cosmos/product";
-import { ProductDetailView } from "../api-models/ProductDetailVieW";
+import { ProductDetailView } from "../api-models/ProductDetailView";
 
 const createProduct = makeCreateProduct(addProduct);
 

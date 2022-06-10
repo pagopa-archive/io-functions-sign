@@ -7,19 +7,14 @@ import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 
 import { createHandler } from "@pagopa/handler-kit";
-import {
-  jsonResponse,
-  HttpRequest,
-  errorResponse,
-  path,
-} from "@pagopa/handler-kit/lib/http";
+import { jsonResponse, HttpRequest, path } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 import {
   BadRequestError,
   NotFoundError,
 } from "@pagopa/handler-kit/lib/http/errors";
 
-import { requireSubscriptionId } from "../http";
+import { requireSubscriptionId, errorResponse } from "../http";
 
 import { Subscription } from "../../signature-request/subscription";
 

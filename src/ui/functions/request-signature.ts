@@ -15,7 +15,6 @@ import { pipe, flow } from "fp-ts/function";
 import {
   jsonResponse,
   HttpRequest,
-  errorResponse,
   withStatus,
 } from "@pagopa/handler-kit/lib/http";
 
@@ -26,7 +25,7 @@ import {
   RequestSignaturePayload,
 } from "../../app/use-cases/request-signature";
 
-import { requireSubscriptionId } from "../http";
+import { requireSubscriptionId, errorResponse } from "../http";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 import { addSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 import { RequestSignatureBody } from "../api-models/RequestSignatureBody";

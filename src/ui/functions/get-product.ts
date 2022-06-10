@@ -7,12 +7,7 @@ import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 
 import { createHandler } from "@pagopa/handler-kit";
-import {
-  jsonResponse,
-  HttpRequest,
-  errorResponse,
-  path,
-} from "@pagopa/handler-kit/lib/http";
+import { jsonResponse, HttpRequest, path } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 import {
   BadRequestError,
@@ -20,7 +15,7 @@ import {
 } from "@pagopa/handler-kit/lib/http/errors";
 
 import { ProductDetailView } from "../api-models/ProductDetailView";
-import { requireSubscriptionId } from "../http";
+import { requireSubscriptionId, errorResponse } from "../http";
 
 import { Product, ProductId } from "../../signature-request/product";
 import { Subscription } from "../../signature-request/subscription";
