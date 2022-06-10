@@ -55,7 +55,7 @@ const signatureRequestModelTE = TE.fromEither(signatureRequestModel);
 export const addSignatureRequest: AddSignatureRequest = (request) =>
   pipe(
     NewSignatureRequest.decode(request),
-    E.mapLeft(() => new Error("invalid request")),
+    E.mapLeft(() => new Error("Invalid Signature Request")),
     TE.fromEither,
     TE.chain((newRequest) =>
       pipe(
@@ -63,7 +63,7 @@ export const addSignatureRequest: AddSignatureRequest = (request) =>
         TE.chain((model) =>
           pipe(
             model.create(newRequest),
-            TE.mapLeft(() => new Error("error creating the signature request"))
+            TE.mapLeft(() => new Error("Error creating the Signature Request"))
           )
         )
       )
@@ -73,7 +73,7 @@ export const addSignatureRequest: AddSignatureRequest = (request) =>
 export const getSignatureRequest: GetSignatureRequest = (id, serviceId) =>
   pipe(
     NonEmptyString.decode(id),
-    E.mapLeft(() => new Error("invalid id")),
+    E.mapLeft(() => new Error("Invalid Signature Request Id")),
     TE.fromEither,
     TE.chain((id) =>
       pipe(
@@ -81,7 +81,7 @@ export const getSignatureRequest: GetSignatureRequest = (id, serviceId) =>
         TE.chain((model) =>
           pipe(
             model.find([id, serviceId]),
-            TE.mapLeft(() => new Error("error getting the signature request"))
+            TE.mapLeft(() => new Error("Error getting the Signature Request"))
           )
         )
       )

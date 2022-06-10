@@ -53,7 +53,7 @@ const productModelTE = TE.fromEither(productModel);
 export const addProduct: AddProduct = (product) =>
   pipe(
     NewProduct.decode(product),
-    E.mapLeft(() => new Error("invalid product")),
+    E.mapLeft(() => new Error("Invalid Product")),
     TE.fromEither,
     TE.chain((newProduct) =>
       pipe(
@@ -61,7 +61,7 @@ export const addProduct: AddProduct = (product) =>
         TE.chain((model) =>
           pipe(
             model.create(newProduct),
-            TE.mapLeft(() => new Error("error creating the product"))
+            TE.mapLeft(() => new Error("Error creating the product"))
           )
         )
       )
@@ -71,7 +71,7 @@ export const addProduct: AddProduct = (product) =>
 export const getProduct: GetProduct = (id, subscriptionId) =>
   pipe(
     NonEmptyString.decode(id),
-    E.mapLeft(() => new Error("invalid id")),
+    E.mapLeft(() => new Error("Invalid Product Id")),
     TE.fromEither,
     TE.chain((id) =>
       pipe(
@@ -79,7 +79,7 @@ export const getProduct: GetProduct = (id, subscriptionId) =>
         TE.chain((model) =>
           pipe(
             model.find([id, subscriptionId]),
-            TE.mapLeft(() => new Error("error getting the product"))
+            TE.mapLeft(() => new Error("Error getting the Product"))
           )
         )
       )
