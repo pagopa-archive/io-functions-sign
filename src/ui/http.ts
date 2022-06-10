@@ -5,16 +5,19 @@ import {
   errorResponse as httpErrorResponse,
 } from "@pagopa/handler-kit/lib/http";
 
-import { NotFoundError } from "@pagopa/handler-kit/lib/http/errors";
+import {
+  ForbiddenError,
+  NotFoundError,
+} from "@pagopa/handler-kit/lib/http/errors";
 import { SubscriptionId } from "../signature-request/subscription";
 
 export const requireSubscriptionId = flow(
   header("x-subscription-id"),
-  E.fromOption(() => new Error(`Missing X-Subscription-Id header`)),
+  E.fromOption(() => new ForbiddenError(`Missing X-Subscription-Id header`)),
   E.chain(
     flow(
       SubscriptionId.decode,
-      E.mapLeft(() => new Error("Invalid Subscription Id"))
+      E.mapLeft(() => new ForbiddenError("Invalid Subscription Id"))
     )
   )
 );
