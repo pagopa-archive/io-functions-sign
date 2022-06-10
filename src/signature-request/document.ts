@@ -1,8 +1,8 @@
 import * as t from "io-ts";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
-import { ClauseList } from "./clause";
 import { Id } from "../id";
+import { ClauseList } from "./clause";
 
 export const DocumentTitle = NonEmptyString;
 

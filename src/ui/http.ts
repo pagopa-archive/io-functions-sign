@@ -5,8 +5,8 @@ import {
   errorResponse as httpErrorResponse,
 } from "@pagopa/handler-kit/lib/http";
 
-import { SubscriptionId } from "../signature-request/subscription";
 import { NotFoundError } from "@pagopa/handler-kit/lib/http/errors";
+import { SubscriptionId } from "../signature-request/subscription";
 
 export const requireSubscriptionId = flow(
   header("x-subscription-id"),
