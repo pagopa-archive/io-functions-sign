@@ -90,7 +90,7 @@ paths:
       summary: Get a Signature Request By Id
       parameters:
         - in: path
-          name: productId
+          name: signatureRequestId
           schema:
             type: string
             format: uuid
