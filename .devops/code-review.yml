@@ -1,29 +1,49 @@
-# Code review pipeline
+# Azure DevOps pipeline to build, check source codes and run tests.
+#
+# To make Danger JS run on a pull request you need to add the following pipeline
+# variable and set it with a GitHub access token (scope public_repo); otherwise
+# set its value to 'skip' without marking it secret:
+# - DANGER_GITHUB_API_TOKEN
+#
 
+variables:
+  NODE_VERSION: "16.13.0"
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+
+# Automatically triggered on PR
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema%2Cparameter-schema#pr-trigger
 trigger: none
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: "ubuntu-latest"
+
+resources:
+  repositories:
+    - repository: pagopaCommons
+      type: github
+      name: pagopa/azure-pipeline-templates
+      ref: refs/tags/v19
+      endpoint: "io-azure-devops-github-ro"
 
 jobs:
   - job: ts_type_check
     displayName: "Type check"
     continueOnError: false
     steps:
-      - template: install-node.yml
-      - script: npx tsc --noEmit
+      - template: templates/node-job-setup/template.yaml@pagopaCommons
+      - script: yarn tsc --noEmit
         displayName: "Run TypeScript compiler"
   - job: lint
     displayName: "Lint"
     continueOnError: false
     steps:
-      - template: install-node.yml
-      - script: npm run lint
+      - template: templates/node-job-setup/template.yaml@pagopaCommons
+      - script: yarn run lint
         displayName: "Run linter"
   - job: test
     displayName: "Test"
     continueOnError: false
     steps:
-      - template: install-node.yml
-      - script: npm test
+      - template: templates/node-job-setup/template.yaml@pagopaCommons
+      - script: yarn jest --ci
         displayName: "Execute tests"

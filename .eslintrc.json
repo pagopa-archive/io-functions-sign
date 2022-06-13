@@ -3,5 +3,13 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["@pagopa/eslint-config/recommended"]
+  "extends": ["@pagopa/eslint-config/recommended"],
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts"],
+      "rules": {
+        "functional/no-let": "off"
+      }
+    }
+  ]
 }
