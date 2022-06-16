@@ -31,7 +31,6 @@
     "@pagopa/openapi-codegen-ts": "^11.0.0",
     "@types/jest": "^27.4.1",
     "@types/node": "16.11",
-    "@types/uuid": "^8.3.4",
     "azure-functions-core-tools": "^4.0.4426",
     "eslint": "^8.13.0",
     "fast-check": "^2.24.0",
@@ -50,6 +49,6 @@
     "@pagopa/ts-commons": "^10.2.1",
     "fp-ts": "^2.11.10",
     "io-ts": "^2.2.16",
-    "uuid": "^8.3.2"
+    "ulid": "^2.3.0"
   }
 }
