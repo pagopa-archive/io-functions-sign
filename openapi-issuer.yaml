@@ -40,7 +40,7 @@ paths:
           name: productId
           schema:
             type: string
-            format: uuid
+            format: ulid
           required: true
       responses:
         "200":
@@ -93,7 +93,7 @@ paths:
           name: signatureRequestId
           schema:
             type: string
-            format: uuid
+            format: ulid
           required: true
       responses:
         "200":
@@ -225,13 +225,13 @@ components:
           properties:
             id:
               type: string
-              format: uuid
+              format: ulid
           required:
             - id
         - $ref: "#/components/schemas/DocumentMetadata"
     ProductId:
       type: string
-      format: uuid
+      format: ulid
     CreateProductBody:
       type: object
       properties:
@@ -270,10 +270,10 @@ components:
       properties:
         id:
           type: string
-          format: uuid
+          format: ulid
         productId:
           type: string
-          format: uuid
+          format: ulid
         documents:
           type: array
           items:
