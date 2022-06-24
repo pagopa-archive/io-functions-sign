@@ -5,11 +5,7 @@ const recordScope = {
   projectToScope: {
     SFEQS: "Firma con IO",
   },
-  tagToScope: {
-    development: "Development",
-    backend: "Backend",
-    dependency: "Dependency",
-  },
+  tagToScope: {},
   minLenPrDescription: 10,
   updateLabel: false,
   updateTitle: false,
