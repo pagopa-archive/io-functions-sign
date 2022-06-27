@@ -17,7 +17,9 @@ import {
   Product,
   GetProduct,
   ProductNotFoundError,
+  getDocumentsByMetadata,
 } from "../../signature-request/product";
+import { timestamps } from "../../timestamps";
 
 export type RequestSignaturePayload = {
   subscriptionId: Subscription["id"];
@@ -38,14 +40,7 @@ export const makeRequestSignature =
         documents: pipe(
           getProduct(payload.productId, payload.subscriptionId),
           TE.chain(TE.fromOption(() => new ProductNotFoundError())),
-          TE.map((product) => product.documents),
-          TE.map(map((metadata) => ({ id: id(), ...metadata }))),
-          TE.chainEitherK(
-            flow(
-              DocumentList.decode,
-              E.mapLeft(() => new Error("Invalid Product"))
-            )
-          )
+          TE.chainEitherK(getDocumentsByMetadata)
         ),
       }),
       TE.map(
@@ -55,6 +50,7 @@ export const makeRequestSignature =
           productId: payload.productId,
           signerId: signer.id,
           documents,
+          ...timestamps(),
         })
       ),
       TE.chainFirst(addSignatureRequest)

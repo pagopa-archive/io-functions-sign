@@ -6,16 +6,20 @@ import { SignerId } from "../signer/signer";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
+import { Timestamps } from "../timestamps";
 
 export const SignatureRequestId = t.string;
 
-export const SignatureRequest = t.type({
-  id: SignatureRequestId,
-  signerId: SignerId,
-  subscriptionId: SubscriptionId,
-  productId: ProductId,
-  documents: DocumentList,
-});
+export const SignatureRequest = t.intersection([
+  t.type({
+    id: SignatureRequestId,
+    signerId: SignerId,
+    subscriptionId: SubscriptionId,
+    productId: ProductId,
+    documents: DocumentList,
+  }),
+  Timestamps,
+]);
 
 export type SignatureRequest = t.TypeOf<typeof SignatureRequest>;
 
