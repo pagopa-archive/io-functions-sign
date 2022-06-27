@@ -1,22 +1,27 @@
 import * as t from "io-ts";
 
 import { TaskEither } from "fp-ts/TaskEither";
+import * as E from "fp-ts/Either";
 
 import { Option } from "fp-ts/Option";
 import { flow } from "fp-ts/lib/function";
 
 import { map } from "fp-ts/Array";
 import { id, Id } from "../id";
+import { timestamps, Timestamps } from "../timestamps";
 import { SubscriptionId } from "./subscription";
 import { DocumentList, DocumentMetadataList } from "./document";
 
 export const ProductId = Id;
 
-export const Product = t.type({
-  id: ProductId,
-  subscriptionId: SubscriptionId,
-  documents: DocumentMetadataList,
-});
+export const Product = t.intersection([
+  t.type({
+    id: ProductId,
+    subscriptionId: SubscriptionId,
+    documents: DocumentMetadataList,
+  }),
+  Timestamps,
+]);
 
 export type Product = t.TypeOf<typeof Product>;
 
@@ -32,8 +37,10 @@ export const getDocumentsByMetadata = flow(
   map((metadata) => ({
     id: id(),
     ...metadata,
+    ...timestamps(),
   })),
-  DocumentList.decode
+  DocumentList.decode,
+  E.mapLeft(() => new Error("Invalid Product"))
 );
 
 export class ProductNotFoundError extends Error {

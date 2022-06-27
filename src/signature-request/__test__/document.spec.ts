@@ -27,6 +27,8 @@ describe("DocumentList", () => {
               required: false,
             },
           ],
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       ],
       expected: true,

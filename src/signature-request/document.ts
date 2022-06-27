@@ -2,6 +2,7 @@ import * as t from "io-ts";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
 import { Id } from "../id";
+import { Timestamps } from "../timestamps";
 import { ClauseList } from "./clause";
 
 export const DocumentTitle = NonEmptyString;
@@ -33,6 +34,7 @@ export const Document = t.intersection([
     id: Id,
   }),
   DocumentMetadata,
+  Timestamps,
 ]);
 
 export type Document = t.TypeOf<typeof Document>;

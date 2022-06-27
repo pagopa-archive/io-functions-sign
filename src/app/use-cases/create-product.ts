@@ -5,6 +5,7 @@ import { Subscription } from "../../signature-request/subscription";
 import { AddProduct, Product } from "../../signature-request/product";
 
 import { id } from "../../id";
+import { timestamps } from "../../timestamps";
 
 export type CreateProductPayload = {
   subscriptionId: Subscription["id"];
@@ -19,6 +20,7 @@ export const makeCreateProduct =
         id: id(),
         subscriptionId: payload.subscriptionId,
         documents: payload.documents,
+        ...timestamps(),
       }),
       TE.chainFirst(addProduct)
     );
