@@ -1,10 +1,7 @@
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { flow, pipe } from "fp-ts/lib/function";
+import { pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/TaskEither";
-import * as E from "fp-ts/Either";
-import { map } from "fp-ts/Array";
 import { sequenceS } from "fp-ts/lib/Apply";
-import { DocumentList } from "../../signature-request/document";
 import { Subscription } from "../../signature-request/subscription";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 

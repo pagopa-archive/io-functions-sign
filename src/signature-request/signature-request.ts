@@ -3,10 +3,10 @@ import * as t from "io-ts";
 import { TaskEither } from "fp-ts/lib/TaskEither";
 import { Option } from "fp-ts/lib/Option";
 import { SignerId } from "../signer/signer";
+import { Timestamps } from "../timestamps";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
-import { Timestamps } from "../timestamps";
 
 export const SignatureRequestId = t.string;
 

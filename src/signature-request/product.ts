@@ -8,9 +8,9 @@ import { flow } from "fp-ts/lib/function";
 
 import { map } from "fp-ts/Array";
 import { id, Id } from "../id";
+import { timestamps, Timestamps } from "../timestamps";
 import { SubscriptionId } from "./subscription";
 import { DocumentList, DocumentMetadataList } from "./document";
-import { timestamps, Timestamps } from "../timestamps";
 
 export const ProductId = Id;
 
