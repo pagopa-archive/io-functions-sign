@@ -1,0 +1,185 @@
+openapi: 3.0.3
+
+info:
+  title: Firma con IO QTSP
+  description: Any APIs called by IO Backend to QTSP
+  version: 1.0.0
+
+paths:
+
+  /tos:
+    summary: Request terms of service
+    get:
+      operationId: GetTos
+      tags:
+        - QTSP
+
+      responses:
+        '200':
+          description: Terms of service to be accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TOS"
+        
+        default:
+          description: Generic error
+      
+      
+      
+  /login:
+    summary: Request login to QTSP
+    post:
+      operationId: GetChallenge
+      tags:
+        - QTSP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+      responses:
+        '200':
+          description: Challenge generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+        400:
+          description: Bad request
+        401:
+          description: SAML assertion not verified
+        404:
+          description: User not found
+        default:
+          description: Generic error
+      
+  /sign:
+    summary: Send signature request
+    post:
+      operationId: GetSignature
+      tags:
+        - QTSP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignatureRequest'
+      responses:
+        '200':
+          description: Challenge generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignatureResponse"
+        400:
+          description: Bad request
+        401:
+          description: Challenge sign invalid
+        404:
+          description: Challenge not found
+        default:
+          description: Generic error
+
+        
+          
+components:
+  schemas:
+  
+    TOS:
+      type: object
+      required:
+        - tos
+      properties:
+        tos:
+          type: array
+          items: 
+            type: string
+          description: "List of terms of service"
+        privacyLink:
+          type: string
+          format: uri
+          description: "Link to privacy policy"
+
+          
+    Auth:
+      type: object
+      required:
+        - SAMLAssertion
+        - publicKey
+      properties:
+        SAMLAssertion:
+          type: string
+          format: byte
+          description: "SAML assertion in base64"
+        publicKey:
+          type: string
+          format: byte
+          description: "User public key in base64 PEM encoded"
+
+
+    Challenge:
+      type: object
+      required:
+        - challengeToSign
+      properties:
+        challengeId:
+          type: string
+          format: uuid
+        challengeToSign:
+          type: string
+          format: byte
+          
+    SignatureRequest:
+      type: object
+      required:
+        - signedChallenge
+        - tosAccepted
+        - hashToSign
+        - challengeId
+        - personalData
+      properties:
+        tosAccepted:
+          type: boolean
+        challengeId:
+          type: string
+          format: uuid
+        signedChallenge:
+          type: string
+          format: byte
+        hashToSign:
+          type: array
+          items: 
+            type: string
+        personalData:
+          $ref: "#/components/schemas/PersonalData"
+          
+          
+    PersonalData:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - fiscalCode
+        - email
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        fiscalCode:
+          type: string
+        email:
+          type: string
+          
+    SignatureResponse:
+      type: object
+      required:
+        - signedHash
+      properties:
+        signedHash:
+          type: array
+          items: 
+            type: string  
