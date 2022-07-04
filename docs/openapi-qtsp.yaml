@@ -27,7 +27,7 @@ paths:
       
       
       
-  /login:
+  /challenge:
     summary: Request login to QTSP
     post:
       operationId: GetChallenge
