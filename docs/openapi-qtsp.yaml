@@ -27,7 +27,7 @@ paths:
           $ref: "#/components/responses/Unexpected"
       
       
-  /challenge:
+  /challenges:
     summary: Request a challenge to QTSP 
     post:
       operationId: getChallenge
@@ -40,7 +40,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateChallengeBody'
       responses:
-        "200":
+        "201":
           description: Challenge generated
           content:
             application/json:
@@ -54,7 +54,7 @@ paths:
           $ref: "#/components/responses/Unexpected"
       
   /signature:
-    summary: Send a signature request
+    summary: Get signatures for the provided hashes
     post:
       operationId: getSignature
       tags:
@@ -66,8 +66,8 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateSignatureBody'
       responses:
-        '200':
-          description: Challenge generated
+        '201':
+          description: Signature hash generated
           content:
             application/json:
               schema:
@@ -84,10 +84,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           description: Challenge not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemJson"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -206,12 +202,12 @@ components:
     CreateChallengeBody:
       type: object
       required:
-        - fiscalCode
-        - hashesToSign
+        - fiscal_code
+        - hashes_to_sign
       properties:
-        fiscalCode:
+        fiscal_code:
           $ref: "#/components/schemas/FiscalCode"
-        hashesToSign:
+        hashes_to_sign:
           type: array
           items: 
             $ref: "#/components/schemas/DocumentHash"
@@ -232,52 +228,52 @@ components:
     Challenge:
       type: object
       required:
-        - challengeToSign
+        - challenge
       properties:
-        challengeToSign:
+        challenge:
           type: string
           format: byte
           
     CreateSignatureBody:
       type: object
       required:
-        - tosAccepted
-        - signedChallenge
-        - SAMLAssertion
-        - publicKey
-        - fiscalCode
-        - hashesToSign
-        - userEmail
+        - tos_accepted
+        - signed_challenge
+        - SAML_assertion
+        - public_key
+        - fiscal_code
+        - hashes_to_sign
+        - user_email
       properties:
-        tosAccepted:
+        tos_accepted:
           type: array
           items: 
             $ref: "#/components/schemas/TermsOfServiceAccepted"
-        signedChallenge:
+        signed_challenge:
           type: string
           format: byte
-        SAMLAssertion:
+        SAML_assertion:
           type: string
           format: byte
-        publicKey:
+        public_key:
           type: string
           format: byte
-        fiscalCode:
+        fiscal_code:
           $ref: "#/components/schemas/FiscalCode"
-        hashesToSign:
+        hashes_to_sign:
           type: array
           items: 
             $ref: "#/components/schemas/DocumentHash"
-        userEmail:
+        user_email:
           type: string
           format: byte
           
     SignatureResponse:
       type: object
       required:
-        - signedHash
+        - signed_hash
       properties:
-        signedHash:
+        signed_hash:
           type: array
           items: 
             type: string  
