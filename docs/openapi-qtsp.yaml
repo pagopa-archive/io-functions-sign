@@ -230,7 +230,7 @@ components:
       type: object
       required:
         - tos_accepted
-        - signed_challenge
+        - signature
         - SAML_assertion
         - public_key
         - fiscal_code
@@ -241,9 +241,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TermOfServiceAccepted"
-        signed_challenge:
+        signature:
           type: string
           format: byte
+          description: Signature of challenge and hashes_to_sign
         SAML_assertion:
           type: string
           format: byte
