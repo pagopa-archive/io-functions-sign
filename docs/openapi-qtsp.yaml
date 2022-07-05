@@ -25,10 +25,9 @@ paths:
           $ref: "#/components/responses/Forbidden"
         default:
           $ref: "#/components/responses/Unexpected"
-      
-      
+
   /challenges:
-    summary: Request a challenge to QTSP 
+    summary: Request a challenge to QTSP
     post:
       operationId: getChallenge
       tags:
@@ -38,7 +37,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateChallengeBody'
+              $ref: "#/components/schemas/CreateChallengeBody"
       responses:
         "201":
           description: Challenge generated
@@ -52,8 +51,8 @@ paths:
           $ref: "#/components/responses/Forbidden"
         default:
           $ref: "#/components/responses/Unexpected"
-      
-  /signature:
+
+  /signatures:
     summary: Get signatures for the provided hashes
     post:
       operationId: getSignature
@@ -64,9 +63,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSignatureBody'
+              $ref: "#/components/schemas/CreateSignatureBody"
       responses:
-        '201':
+        "201":
           description: Signature hash generated
           content:
             application/json:
@@ -87,8 +86,6 @@ paths:
         default:
           $ref: "#/components/responses/Unexpected"
 
-        
-          
 components:
   responses:
     NotFound:
@@ -163,17 +160,12 @@ components:
         - title
         - status
         - detail
-        
+
     TermsOfService:
-      type: object
-      required:
-        - tos
-      properties:
-        tos:
-          type: array
-          items: 
-            $ref: "#/components/schemas/TermOfService"
-          description: "List of terms of service"
+      type: array
+      items:
+        $ref: "#/components/schemas/TermOfService"
+      description: "List of terms of service"
 
     TermOfService:
       type: object
@@ -198,7 +190,7 @@ components:
     TermsOfServiceAccepted:
       type: string
       format: uuid
-          
+
     CreateChallengeBody:
       type: object
       required:
@@ -209,7 +201,7 @@ components:
           $ref: "#/components/schemas/FiscalCode"
         hashes_to_sign:
           type: array
-          items: 
+          items:
             $ref: "#/components/schemas/DocumentHash"
 
     FiscalCode:
@@ -233,7 +225,7 @@ components:
         challenge:
           type: string
           format: byte
-          
+
     CreateSignatureBody:
       type: object
       required:
@@ -247,7 +239,7 @@ components:
       properties:
         tos_accepted:
           type: array
-          items: 
+          items:
             $ref: "#/components/schemas/TermsOfServiceAccepted"
         signed_challenge:
           type: string
@@ -262,12 +254,12 @@ components:
           $ref: "#/components/schemas/FiscalCode"
         hashes_to_sign:
           type: array
-          items: 
+          items:
             $ref: "#/components/schemas/DocumentHash"
         user_email:
           type: string
           format: byte
-          
+
     SignatureResponse:
       type: object
       required:
@@ -275,5 +267,5 @@ components:
       properties:
         signed_hash:
           type: array
-          items: 
-            type: string  
+          items:
+            type: string
