@@ -29,7 +29,7 @@ paths:
   /challenges:
     summary: Request a challenge to QTSP
     post:
-      operationId: getChallenge
+      operationId: createChallenge
       tags:
         - QTSP
       requestBody:
@@ -55,7 +55,7 @@ paths:
   /signatures:
     summary: Get signatures for the provided hashes
     post:
-      operationId: getSignature
+      operationId: createSignature
       tags:
         - QTSP
       requestBody:
@@ -258,7 +258,9 @@ components:
             $ref: "#/components/schemas/DocumentHash"
         user_email:
           type: string
-          format: byte
+          format: EmailString
+          x-import: "@pagopa/ts-commons/lib/strings"
+          example: example@domain.com
 
     SignatureResponse:
       type: object
