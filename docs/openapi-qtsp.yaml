@@ -29,7 +29,7 @@ paths:
   /challenges:
     summary: Request a challenge to QTSP
     post:
-      operationId: createChallenge
+      operationId: requestChallenge
       tags:
         - QTSP
       requestBody:
@@ -37,7 +37,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateChallengeBody"
+              $ref: "#/components/schemas/RequestChallengeBody"
       responses:
         "201":
           description: Challenge generated
@@ -53,9 +53,9 @@ paths:
           $ref: "#/components/responses/Unexpected"
 
   /signatures:
-    summary: Get signatures for the provided hashes
+    summary: Request signatures for the provided hashes
     post:
-      operationId: createSignature
+      operationId: requestSignatures
       tags:
         - QTSP
       requestBody:
@@ -63,14 +63,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateSignatureBody"
+              $ref: "#/components/schemas/RequestSignaturesBody"
       responses:
         "201":
           description: Signature hash generated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignatureResponse"
+                $ref: "#/components/schemas/RequestSignaturesResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -187,11 +187,11 @@ components:
           format: uri
           description: "Link to TOS"
 
-    TermsOfServiceAccepted:
+    TermOfServiceAccepted:
       type: string
       format: uuid
 
-    CreateChallengeBody:
+    RequestChallengeBody:
       type: object
       required:
         - fiscal_code
@@ -226,7 +226,7 @@ components:
           type: string
           format: byte
 
-    CreateSignatureBody:
+    RequestSignaturesBody:
       type: object
       required:
         - tos_accepted
@@ -240,7 +240,7 @@ components:
         tos_accepted:
           type: array
           items:
-            $ref: "#/components/schemas/TermsOfServiceAccepted"
+            $ref: "#/components/schemas/TermOfServiceAccepted"
         signed_challenge:
           type: string
           format: byte
@@ -262,7 +262,7 @@ components:
           x-import: "@pagopa/ts-commons/lib/strings"
           example: example@domain.com
 
-    SignatureResponse:
+    RequestSignaturesResponse:
       type: object
       required:
         - signed_hash
