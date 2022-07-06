@@ -27,11 +27,13 @@
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
+    "@pagopa/danger-plugin": "^2.0.1",
     "@pagopa/eslint-config": "^3.0.0",
     "@pagopa/openapi-codegen-ts": "^11.0.0",
     "@types/jest": "^27.4.1",
     "@types/node": "16.11",
     "azure-functions-core-tools": "^4.0.4426",
+    "danger": "^11.1.1",
     "eslint": "^8.13.0",
     "fast-check": "^2.24.0",
     "husky": "^7.0.4",
