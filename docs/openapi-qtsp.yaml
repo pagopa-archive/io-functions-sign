@@ -186,6 +186,27 @@ components:
           type: string
           format: uri
           description: "Link to TOS"
+        clauses:
+          type: array
+          items:
+            $ref: "#/components/schemas/TermOfServiceClause"
+          description: "List of terms of service"
+
+    TermOfServiceClause:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          format: string
+        anchor:
+          type: string
+          format: string
 
     TermOfServiceAccepted:
       type: string
