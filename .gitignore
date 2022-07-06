@@ -3,5 +3,5 @@ lib
 .eslintcache
 local.settings.json
 .env*
-.ds_store
-.vscode/settings.json
+.DS_Store
+coverage

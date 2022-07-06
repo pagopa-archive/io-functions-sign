@@ -3,5 +3,14 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["@pagopa/eslint-config/recommended"]
+  "ignorePatterns": ["Dangerfile.js"],
+  "extends": ["@pagopa/eslint-config/recommended"],
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts"],
+      "rules": {
+        "functional/no-let": "off"
+      }
+    }
+  ]
 }

@@ -1,120 +1,92 @@
 openapi: 3.0.3
+
 info:
-  title: IO Sign - Issuer API
-  version: 0.1.0
-servers:
-  - url: https://api.io.pagopa.it/api/v1/sign
-    description: Production
-security:
-  - SubscriptionKey: []
+  title: Firma con IO QTSP
+  description: Any APIs called by IO Backend to QTSP
+  version: 1.0.0
+
 paths:
-  /products:
-    post:
-      operationId: createProduct
-      summary: Create a Product
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateProductBody"
-      responses:
-        "201":
-          description: Product created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProductDetailView"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        default:
-          $ref: "#/components/responses/Unexpected"
-  /products/{productId}:
+  /tos:
+    summary: Request terms of service
     get:
-      operationId: getProductById
-      summary: Get a Product by Id
-      parameters:
-        - in: path
-          name: productId
-          schema:
-            type: string
-            format: ulid
-          required: true
+      operationId: getTos
+      tags:
+        - QTSP
       responses:
         "200":
-          description: The product detail
+          description: Terms of service to be accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProductDetailView"
+                $ref: "#/components/schemas/TermsOfService"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
-  /signature-requests:
+
+  /challenges:
+    summary: Request a challenge to QTSP
     post:
-      operationId: requestSignature
-      summary: Request a Signature (creating a Signature Request)
+      operationId: requestChallenge
+      tags:
+        - QTSP
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RequestSignatureBody"
+              $ref: "#/components/schemas/RequestChallengeBody"
       responses:
         "201":
-          description: RequestSignature created
+          description: Challenge generated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignatureRequestDetailView"
+                $ref: "#/components/schemas/Challenge"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "404":
-          description: Product not found
+        default:
+          $ref: "#/components/responses/Unexpected"
+
+  /signatures:
+    summary: Request signatures for the provided hashes
+    post:
+      operationId: requestSignatures
+      tags:
+        - QTSP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestSignaturesBody"
+      responses:
+        "201":
+          description: Signature hash generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestSignaturesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Challenge signature invalid
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProblemJson"
-        default:
-          $ref: "#/components/responses/Unexpected"
-  /signature-requests/{signatureRequestId}:
-    get:
-      operationId: getSignatureRequestById
-      summary: Get a Signature Request By Id
-      parameters:
-        - in: path
-          name: signatureRequestId
-          schema:
-            type: string
-            format: ulid
-          required: true
-      responses:
-        "200":
-          description: The Signature Request detail
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignatureRequestDetailView"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
-          $ref: "#/components/responses/NotFound"
+          description: Challenge not found
         default:
           $ref: "#/components/responses/Unexpected"
+
 components:
-  securitySchemes:
-    SubscriptionKey:
-      type: apiKey
-      name: Ocp-Apim-Subscription-Key
-      in: header
-      description: The API key obtained through the developer portal
   responses:
     NotFound:
       description: The specified resource was not found
@@ -140,6 +112,7 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ProblemJson"
+
   schemas:
     ProblemJson:
       type: object
@@ -158,9 +131,7 @@ components:
           description: >-
             A short, summary of the problem type. Written in english and
             readable
-
             for engineers (usually not suited for non technical stakeholders and
-
             not localized); example: Service Unavailable
         status:
           type: integer
@@ -189,96 +160,136 @@ components:
         - title
         - status
         - detail
+
+    TermsOfService:
+      type: array
+      items:
+        $ref: "#/components/schemas/TermOfService"
+      description: "List of terms of service"
+
+    TermOfService:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+        link:
+          type: string
+          format: uri
+          description: "Link to TOS"
+        clauses:
+          type: array
+          items:
+            $ref: "#/components/schemas/TermOfServiceClause"
+          description: "List of terms of service"
+
+    TermOfServiceClause:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          format: string
+        anchor:
+          type: string
+          format: string
+
+    TermOfServiceAccepted:
+      type: string
+      format: uuid
+
+    RequestChallengeBody:
+      type: object
+      required:
+        - fiscal_code
+        - hashes_to_sign
+      properties:
+        fiscal_code:
+          $ref: "#/components/schemas/FiscalCode"
+        hashes_to_sign:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentHash"
+
     FiscalCode:
       type: string
       description: User's fiscal code.
       format: FiscalCode
       x-import: "@pagopa/ts-commons/lib/strings"
       example: SPNDNL80R13C555X
-    Clause:
-      type: object
-      properties:
-        title:
-          type: string
-        required:
-          type: boolean
-      required:
-        - title
-        - required
-    DocumentMetadata:
-      type: object
-      properties:
-        title:
-          type: string
-        clauses:
-          type: array
-          items:
-            $ref: "#/components/schemas/Clause"
-          minItems: 1
-          uniqueItems: true
-      required:
-        - title
-        - clauses
-    Document:
-      allOf:
-        - type: object
-          properties:
-            id:
-              type: string
-              format: ulid
-          required:
-            - id
-        - $ref: "#/components/schemas/DocumentMetadata"
-    ProductId:
+
+    DocumentHash:
       type: string
-      format: ulid
-    CreateProductBody:
+      description: Digest of a file.
+      format: byte
+      example: uU0nuZNNPgilLlLX2n2r+sSE7+N6U4DukIj3rOLvzek=
+
+    Challenge:
       type: object
+      required:
+        - challenge
       properties:
-        documents:
+        challenge:
+          type: string
+          format: byte
+
+    RequestSignaturesBody:
+      type: object
+      required:
+        - tos_accepted
+        - signature
+        - SAML_assertion
+        - public_key
+        - fiscal_code
+        - hashes_to_sign
+        - user_email
+      properties:
+        tos_accepted:
           type: array
           items:
-            $ref: "#/components/schemas/DocumentMetadata"
-          minItems: 1
-          uniqueItems: true
-      required:
-        - documents
-    ProductDetailView:
-      type: object
-      properties:
-        id:
-          $ref: "#/components/schemas/ProductId"
-        documents:
-          type: array
-          items:
-            $ref: "#/components/schemas/DocumentMetadata"
-      required:
-        - id
-        - documents
-    RequestSignatureBody:
-      type: object
-      properties:
-        productId:
-          $ref: "#/components/schemas/ProductId"
-        fiscalCode:
+            $ref: "#/components/schemas/TermOfServiceAccepted"
+        signature:
+          type: string
+          format: byte
+          description: Signature of challenge and hashes_to_sign
+        SAML_assertion:
+          type: string
+          format: byte
+        public_key:
+          type: string
+          format: byte
+        fiscal_code:
           $ref: "#/components/schemas/FiscalCode"
-      required:
-        - productId
-        - fiscalCode
-    SignatureRequestDetailView:
-      type: object
-      properties:
-        id:
-          type: string
-          format: ulid
-        productId:
-          type: string
-          format: ulid
-        documents:
+        hashes_to_sign:
           type: array
           items:
-            $ref: "#/components/schemas/Document"
+            $ref: "#/components/schemas/DocumentHash"
+        user_email:
+          type: string
+          format: EmailString
+          x-import: "@pagopa/ts-commons/lib/strings"
+          example: example@domain.com
+
+    RequestSignaturesResponse:
+      type: object
       required:
-        - id
-        - productId
-        - documents
+        - signed_hash
+      properties:
+        signed_hash:
+          type: array
+          items:
+            type: string

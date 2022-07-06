@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "info",
-      "methods": ["get"]
+      "route": "products",
+      "methods": ["post"]
     },
     {
       "type": "http",
@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../lib/ui/functions/info.js"
+  "scriptFile": "../lib/ui/functions/create-product.js"
 }

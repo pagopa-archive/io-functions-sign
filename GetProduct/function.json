@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "info",
+      "route": "products/{productId}",
       "methods": ["get"]
     },
     {
@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../lib/ui/functions/info.js"
+  "scriptFile": "../lib/ui/functions/get-product.js"
 }
