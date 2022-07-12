@@ -6,13 +6,16 @@
 
 import { ProductId } from "./ProductId";
 import { FiscalCode } from "./FiscalCode";
+import { ExpirationDateTime } from "./ExpirationDateTime";
 import * as t from "io-ts";
 
 // required attributes
 const RequestSignatureBodyR = t.interface({
   productId: ProductId,
 
-  fiscalCode: FiscalCode
+  fiscalCode: FiscalCode,
+
+  expiryAt: ExpirationDateTime
 });
 
 // optional attributes

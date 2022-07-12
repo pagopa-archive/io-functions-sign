@@ -60,6 +60,7 @@ export const extractRequestSignaturePayload: RE.ReaderEither<
   }),
   RE.map(({ subscriptionId, payload }) => ({
     subscriptionId,
+    expiryAt: payload.expiryAt,
     fiscalCode: payload.fiscalCode,
     productId: payload.productId,
   }))

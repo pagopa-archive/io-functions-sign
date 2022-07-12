@@ -232,6 +232,9 @@ components:
     ProductId:
       type: string
       format: ulid
+    ExpirationDateTime:
+      type: string
+      format: date-time
     CreateProductBody:
       type: object
       properties:
@@ -262,9 +265,12 @@ components:
           $ref: "#/components/schemas/ProductId"
         fiscalCode:
           $ref: "#/components/schemas/FiscalCode"
+        expiryAt:
+          $ref: "#/components/schemas/ExpirationDateTime"
       required:
         - productId
         - fiscalCode
+        - expiryAt
     SignatureRequestDetailView:
       type: object
       properties:
@@ -272,13 +278,15 @@ components:
           type: string
           format: ulid
         productId:
-          type: string
-          format: ulid
+          $ref: "#/components/schemas/ProductId"
+        expiryAt:
+              $ref: "#/components/schemas/ExpirationDateTime"
         documents:
           type: array
           items:
             $ref: "#/components/schemas/Document"
       required:
         - id
+        - expiryAt
         - productId
         - documents

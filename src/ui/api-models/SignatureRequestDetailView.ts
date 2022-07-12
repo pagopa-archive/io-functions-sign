@@ -4,6 +4,8 @@
  */
 /* eslint-disable  */
 
+import { ProductId } from "./ProductId";
+import { ExpirationDateTime } from "./ExpirationDateTime";
 import { Document } from "./Document";
 import * as t from "io-ts";
 
@@ -11,7 +13,9 @@ import * as t from "io-ts";
 const SignatureRequestDetailViewR = t.interface({
   id: t.string,
 
-  productId: t.string,
+  productId: ProductId,
+
+  expiryAt: ExpirationDateTime,
 
   documents: t.readonlyArray(Document, "array of Document")
 });
