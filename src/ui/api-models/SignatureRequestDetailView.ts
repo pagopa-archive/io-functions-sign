@@ -15,12 +15,12 @@ const SignatureRequestDetailViewR = t.interface({
 
   productId: ProductId,
 
-  documents: t.readonlyArray(Document, "array of Document"),
+  documents: t.readonlyArray(Document, "array of Document")
 });
 
 // optional attributes
 const SignatureRequestDetailViewO = t.partial({
-  expiryAt: ExpirationDateTime,
+  expiryAt: ExpirationDateTime
 });
 
 export const SignatureRequestDetailView = t.exact(

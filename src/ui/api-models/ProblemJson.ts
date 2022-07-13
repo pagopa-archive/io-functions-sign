@@ -8,7 +8,7 @@ import { withDefault } from "@pagopa/ts-commons/lib/types";
 import * as t from "io-ts";
 import {
   IWithinRangeIntegerTag,
-  WithinRangeInteger,
+  WithinRangeInteger
 } from "@pagopa/ts-commons/lib/numbers";
 
 // required attributes
@@ -17,17 +17,17 @@ const ProblemJsonR = t.interface({
 
   status: t.union([
     WithinRangeInteger<100, 599, IWithinRangeIntegerTag<100, 599>>(100, 599),
-    t.literal(599),
+    t.literal(599)
   ]),
 
-  detail: t.string,
+  detail: t.string
 });
 
 // optional attributes
 const ProblemJsonO = t.partial({
   type: withDefault(t.string, "about:blank"),
 
-  instance: t.string,
+  instance: t.string
 });
 
 export const ProblemJson = t.exact(
