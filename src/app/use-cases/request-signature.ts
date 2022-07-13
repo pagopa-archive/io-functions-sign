@@ -2,13 +2,13 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/TaskEither";
 import { sequenceS } from "fp-ts/lib/Apply";
-import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { Subscription } from "../../signature-request/subscription";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 
 import {
   SignatureRequest,
   AddSignatureRequest,
+  SignatureExpirationDateTime,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
 import {
@@ -20,7 +20,7 @@ import {
 import { timestamps } from "../../timestamps";
 
 export type RequestSignaturePayload = {
-  expiryAt: UTCISODateFromString;
+  expiryAt: SignatureExpirationDateTime;
   subscriptionId: Subscription["id"];
   fiscalCode: FiscalCode;
   productId: Product["id"];

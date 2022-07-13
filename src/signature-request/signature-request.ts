@@ -10,16 +10,25 @@ import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
 
 export const SignatureRequestId = t.string;
-export const SignatureExpirationDateTime = UTCISODateFromString;
+export const SignatureExpirationDateTime = t.union([
+  UTCISODateFromString,
+  t.null,
+  t.undefined,
+]);
+export type SignatureExpirationDateTime = t.TypeOf<
+  typeof SignatureExpirationDateTime
+>;
 
 export const SignatureRequest = t.intersection([
   t.type({
     id: SignatureRequestId,
-    expiryAt: SignatureExpirationDateTime,
     signerId: SignerId,
     subscriptionId: SubscriptionId,
     productId: ProductId,
     documents: DocumentList,
+  }),
+  t.partial({
+    expiryAt: SignatureExpirationDateTime,
   }),
   Timestamps,
 ]);

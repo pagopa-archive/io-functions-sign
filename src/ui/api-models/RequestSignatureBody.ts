@@ -14,12 +14,12 @@ const RequestSignatureBodyR = t.interface({
   productId: ProductId,
 
   fiscalCode: FiscalCode,
-
-  expiryAt: ExpirationDateTime
 });
 
 // optional attributes
-const RequestSignatureBodyO = t.partial({});
+const RequestSignatureBodyO = t.partial({
+  expiryAt: ExpirationDateTime,
+});
 
 export const RequestSignatureBody = t.exact(
   t.intersection(
