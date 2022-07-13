@@ -8,7 +8,7 @@ Accepted / Proposed / Deprecated / Superseded
 
 ## Context
 
-Describe which problem are you trying to solve and the possibile
+Describe which problem are you trying to solve and the possibile 
 solutions in terms of UX, Scalability, Autonomy, Adaptability,Security,
 Privacy, Simplicity.
 
