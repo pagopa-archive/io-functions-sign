@@ -1,31 +1,30 @@
-# 1. ADR title (choice to make)
+# 1. Choose the best HTTP Client library on Node JS
 
-Date: YYYY-MM-DD
+Date: 2022-07-12
 
 ## Status
 
-Accepted / Proposed / Deprecated / Superseded
+Accepted
 
 ## Context
 
-Describe which problem are you trying to solve and the possibile 
-solutions in terms of UX, Scalability, Autonomy, Adaptability,Security,
-Privacy, Simplicity.
+We must choose a library to implements the external API call that we will develop.
 
 ### Option 1
 
-Describe option 1
+Undici ( https://github.com/nodejs/undici ()
 
-### Option 2
+###Option 2
+Fetch ( https://www.npmjs.com/package/node-fetch )
 
-Describe option 2
+### Option 3
+
+AXIOS ( https://axios-http.com/docs/intro )
 
 ## Decision
 
-In the context of <use case/user story u>, facing <concern c> we decided for <option o> and neglected <other options>
+In the context of Firma Con IO, facing against the the implements of call of http external API (backend IO, Tokenizer and QTSP) we decided for Undici because:
 
-## Consequences
-
-To achieve <system qualities/desired consequences>
-we accept <downside d/undesired consequences>
-because <additional rationale>.
+1. it is an official evolution of Fetch;
+2. it follow the javascritp standards;
+   3( it will be include directly on Node.JS in v. 18)
