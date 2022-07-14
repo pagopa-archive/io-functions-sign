@@ -24,10 +24,3 @@ export const FutureDate = new t.Type<Date, string, unknown>(
 
 export const ExpirationDateTime = t.union([FutureDate, t.null, t.undefined]);
 export type ExpirationDateTime = t.TypeOf<typeof ExpirationDateTime>;
-
-export class ExpirationDateTimeNotValid extends Error {
-  name = "ExpirationDateTimeNotValidError";
-  constructor() {
-    super("The specified expiration datetime is not valid");
-  }
-}
