@@ -2,22 +2,14 @@ import * as t from "io-ts";
 
 import { TaskEither } from "fp-ts/lib/TaskEither";
 import { Option } from "fp-ts/lib/Option";
-import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
+import { ExpirationDateTime } from "./expiration-datetime";
 
 export const SignatureRequestId = t.string;
-export const SignatureExpirationDateTime = t.union([
-  UTCISODateFromString,
-  t.null,
-  t.undefined,
-]);
-export type SignatureExpirationDateTime = t.TypeOf<
-  typeof SignatureExpirationDateTime
->;
 
 export const SignatureRequest = t.intersection([
   t.type({
@@ -28,7 +20,7 @@ export const SignatureRequest = t.intersection([
     documents: DocumentList,
   }),
   t.partial({
-    expiryAt: SignatureExpirationDateTime,
+    expiryAt: ExpirationDateTime,
   }),
   Timestamps,
 ]);

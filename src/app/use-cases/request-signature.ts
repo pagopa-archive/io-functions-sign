@@ -4,11 +4,9 @@ import * as TE from "fp-ts/TaskEither";
 import { sequenceS } from "fp-ts/lib/Apply";
 import { Subscription } from "../../signature-request/subscription";
 import { GetSignerByFiscalCode } from "../../signer/signer";
-
 import {
   SignatureRequest,
   AddSignatureRequest,
-  SignatureExpirationDateTime,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
 import {
@@ -18,9 +16,10 @@ import {
   getDocumentsByMetadata,
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
+import { ExpirationDateTime } from "../../signature-request/expiration-datetime";
 
 export type RequestSignaturePayload = {
-  expiryAt: SignatureExpirationDateTime;
+  expiryAt: ExpirationDateTime;
   subscriptionId: Subscription["id"];
   fiscalCode: FiscalCode;
   productId: Product["id"];
