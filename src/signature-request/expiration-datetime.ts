@@ -5,8 +5,8 @@ import { pipe } from "fp-ts/lib/function";
 import { isBefore } from "date-fns";
 
 const isDate = (m: unknown): m is Date => m instanceof Date;
-export const DateFromString = new t.Type<Date, string, unknown>(
-  "DateFromString",
+export const FutureDate = new t.Type<Date, string, unknown>(
+  "FutureDate",
   isDate,
   (u, c) =>
     isDate(u)
@@ -21,11 +21,7 @@ export const DateFromString = new t.Type<Date, string, unknown>(
   (a) => a.toISOString()
 );
 
-export const ExpirationDateTime = t.union([
-  DateFromString,
-  t.null,
-  t.undefined,
-]);
+export const ExpirationDateTime = t.union([FutureDate, t.null, t.undefined]);
 
 export type ExpirationDateTime = t.TypeOf<typeof ExpirationDateTime>;
 
