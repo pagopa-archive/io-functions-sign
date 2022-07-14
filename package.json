@@ -49,6 +49,7 @@
     "@pagopa/handler-kit": "^0.2.3",
     "@pagopa/io-functions-commons": "^24.3.0",
     "@pagopa/ts-commons": "^10.2.1",
+    "date-fns": "^2.28.0",
     "fp-ts": "^2.11.10",
     "io-ts": "^2.2.16",
     "ulid": "^2.3.0"

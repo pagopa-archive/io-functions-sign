@@ -1,8 +1,28 @@
 import * as t from "io-ts";
-import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
+
+import * as E from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
+import { isBefore } from "date-fns";
+
+const isDate = (m: unknown): m is Date => m instanceof Date;
+export const DateFromString = new t.Type<Date, string, unknown>(
+  "DateFromString",
+  isDate,
+  (u, c) =>
+    isDate(u)
+      ? t.success(u)
+      : pipe(
+          t.string.validate(u, c),
+          E.chain((s) => {
+            const d = new Date(s);
+            return isBefore(d, new Date()) ? t.failure(u, c) : t.success(d);
+          })
+        ),
+  (a) => a.toISOString()
+);
 
 export const ExpirationDateTime = t.union([
-  UTCISODateFromString,
+  DateFromString,
   t.null,
   t.undefined,
 ]);
