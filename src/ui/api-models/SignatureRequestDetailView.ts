@@ -13,7 +13,7 @@ const SignatureRequestDetailViewR = t.interface({
 
   productId: t.string,
 
-  documents: t.readonlyArray(Document, "array of Document")
+  documents: t.readonlyArray(Document, "array of Document"),
 });
 
 // optional attributes

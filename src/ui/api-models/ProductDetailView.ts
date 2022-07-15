@@ -12,7 +12,7 @@ import * as t from "io-ts";
 const ProductDetailViewR = t.interface({
   id: ProductId,
 
-  documents: t.readonlyArray(DocumentMetadata, "array of DocumentMetadata")
+  documents: t.readonlyArray(DocumentMetadata, "array of DocumentMetadata"),
 });
 
 // optional attributes

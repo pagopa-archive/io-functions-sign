@@ -9,7 +9,7 @@ import { DocumentMetadata } from "./DocumentMetadata";
 
 // required attributes
 const Document1R = t.interface({
-  id: t.string
+  id: t.string,
 });
 
 // optional attributes
