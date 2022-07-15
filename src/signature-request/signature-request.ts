@@ -31,3 +31,20 @@ export type GetSignatureRequest = (
 export type AddSignatureRequest = (
   request: SignatureRequest
 ) => TaskEither<Error, SignatureRequest>;
+
+interface SignatureRequestListBrand {
+  readonly SignatureRequestList: unique symbol;
+}
+
+export const SignatureRequestList = t.brand(
+  t.array(SignatureRequest),
+  (
+    signatureRequests
+  ): signatureRequests is t.Branded<
+    SignatureRequest[],
+    SignatureRequestListBrand
+  > => signatureRequests.length >= 1,
+  "SignatureRequestList"
+);
+
+export type SignatureRequestList = t.TypeOf<typeof SignatureRequestList>;
