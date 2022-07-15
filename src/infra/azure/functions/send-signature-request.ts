@@ -1,3 +1,5 @@
+import * as t from "io-ts";
+
 import { AzureFunction } from "@azure/functions";
 
 import { createHandler } from "@pagopa/handler-kit";
@@ -16,31 +18,40 @@ import * as RE from "fp-ts/lib/ReaderEither";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 import { errorResponse } from "../../../ui/http";
-import { SignatureRequestList } from "../../../signature-request/signature-request";
+import { SignatureRequestId } from "../../../signature-request/signature-request";
 import { SignatureRequestDetailView } from "../../../ui/api-models/SignatureRequestDetailView";
 import { sendSignatureRequest } from "../../../app/use-cases/send-signature-request";
+import { SubscriptionId } from "../../../signature-request/subscription";
 
-const getSignatureRequestList = (
+export const SendSignatureRequestBody = t.type({
+  id: SignatureRequestId,
+  subscriptionId: SubscriptionId,
+});
+export type SendSignatureRequestBody = t.TypeOf<
+  typeof SendSignatureRequestBody
+>;
+
+const getSignatureRequestBody = (
   req: HttpRequest
-): E.Either<Error, SignatureRequestList> =>
+): E.Either<Error, SendSignatureRequestBody> =>
   pipe(
-    SignatureRequestList.decode(req.body),
+    SendSignatureRequestBody.decode(req.body),
     E.mapLeft(flow(failure, (errors) => errors.join("\n"), badRequestError))
   );
 
-export const extractSignatureRequestListPayload: RE.ReaderEither<
+export const extractSignatureRequestPayload: RE.ReaderEither<
   HttpRequest,
   Error,
-  { signatureRequests: SignatureRequestList }
+  { sendSignatureRequestBody: SendSignatureRequestBody }
 > = pipe(
   sequenceS(RE.Apply)({
-    signatureRequests: getSignatureRequestList,
+    sendSignatureRequestBody: getSignatureRequestBody,
   })
 );
 
 const decodeRequest = flow(
   azure.fromHttpRequest,
-  TE.chainEitherK(extractSignatureRequestListPayload)
+  TE.chainEitherK(extractSignatureRequestPayload)
 );
 
 const encodeSuccessResponse = flow(
@@ -52,7 +63,8 @@ const encodeSuccessResponse = flow(
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
-    ({ signatureRequests }) => sendSignatureRequest(signatureRequests),
+    ({ sendSignatureRequestBody }) =>
+      sendSignatureRequest(sendSignatureRequestBody),
     errorResponse,
     encodeSuccessResponse
   ),
