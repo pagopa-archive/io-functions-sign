@@ -16,29 +16,25 @@ import * as RE from "fp-ts/lib/ReaderEither";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 import { errorResponse } from "../../../ui/http";
-import {
-  SignatureRequest,
-  SignatureRequestList,
-} from "../../../signature-request/signature-request";
+import { SignatureRequestList } from "../../../signature-request/signature-request";
 import { SignatureRequestDetailView } from "../../../ui/api-models/SignatureRequestDetailView";
-import { sendSignatureRequest } from "../../../app/use-cases/send-signature";
+import { sendSignatureRequest } from "../../../app/use-cases/send-signature-request";
 
-const getFirstSignatureRequest = (
+const getSignatureRequestList = (
   req: HttpRequest
-): E.Either<Error, SignatureRequest> =>
+): E.Either<Error, SignatureRequestList> =>
   pipe(
     SignatureRequestList.decode(req.body),
-    E.map((sr) => sr[0]),
     E.mapLeft(flow(failure, (errors) => errors.join("\n"), badRequestError))
   );
 
 export const extractSignatureRequestListPayload: RE.ReaderEither<
   HttpRequest,
   Error,
-  { signatureRequest: SignatureRequest }
+  { signatureRequests: SignatureRequestList }
 > = pipe(
   sequenceS(RE.Apply)({
-    signatureRequest: getFirstSignatureRequest,
+    signatureRequests: getSignatureRequestList,
   })
 );
 
@@ -56,7 +52,7 @@ const encodeSuccessResponse = flow(
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
-    ({ signatureRequest }) => sendSignatureRequest(signatureRequest),
+    ({ signatureRequests }) => sendSignatureRequest(signatureRequests),
     errorResponse,
     encodeSuccessResponse
   ),
