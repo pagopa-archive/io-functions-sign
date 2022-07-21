@@ -32,28 +32,28 @@ paths:
                 $ref: "#/components/schemas/MessageCreatedResponse"
 
         "400":
-          $ref: "./openapi-global-components.yaml#/components/responses/InvalidPayload"
+          $ref: "./components.yaml#/components/responses/InvalidPayload"
         "401":
-          $ref: "./openapi-global-components.yaml#/components/responses/Unauthorized"
+          $ref: "./components.yaml#/components/responses/Unauthorized"
         "403":
-          $ref: "./openapi-global-components.yaml#/components/responses/Forbidden"
+          $ref: "./components.yaml#/components/responses/Forbidden"
         "429":
-          $ref: "./openapi-global-components.yaml#/components/responses/TooManyRequests"
+          $ref: "./components.yaml#/components/responses/TooManyRequests"
         "500":
-          $ref: "./openapi-global-components.yaml#/components/responses/Undelivered"
+          $ref: "./components.yaml#/components/responses/Undelivered"
 
 components:
   securitySchemes:
     SubscriptionKey:
-      $ref: "./openapi-global-components.yaml#/components/securitySchemes/SubscriptionKey"
+      $ref: "./components.yaml#/components/securitySchemes/SubscriptionKey"
   schemas:
     FiscalCode:
-      $ref: "./openapi-global-components.yaml#/components/schemas/FiscalCode"
+      $ref: "./components.yaml#/components/schemas/FiscalCode"
     NewMessage:
       type: object
       properties:
         time_to_live:
-          $ref: "./openapi-global-components.yaml#/components/schemas/TimeToLiveSeconds"
+          $ref: "./components.yaml#/components/schemas/TimeToLiveSeconds"
         content:
           $ref: "#/components/schemas/MessageContent"
         default_addresses:
@@ -73,7 +73,7 @@ components:
       required:
         - content
     ProblemJson:
-      $ref: "./openapi-global-components.yaml#/components/schemas/ProblemJson"
+      $ref: "./components.yaml#/components/schemas/ProblemJson"
     MessageContent:
       allOf:
         - $ref: "#/components/schemas/MessageContentBase"
