@@ -11,17 +11,36 @@ import { badRequestError } from "@pagopa/handler-kit/lib/http/errors";
 import { failure } from "io-ts/PathReporter";
 
 import { pipe, flow } from "fp-ts/lib/function";
-
+import * as S from "fp-ts/lib/string";
 import { sequenceS } from "fp-ts/lib/Apply";
 
 import * as RE from "fp-ts/lib/ReaderEither";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
+import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { errorResponse } from "../../../ui/http";
 import { SignatureRequestId } from "../../../signature-request/signature-request";
-import { SignatureRequestDetailView } from "../../../ui/api-models/SignatureRequestDetailView";
 import { sendSignatureRequest } from "../../../app/use-cases/send-signature-request";
 import { SubscriptionId } from "../../../signature-request/subscription";
+import { getSignatureRequest } from "../cosmos/signature-request";
+import { GetFiscalCodeBySignerId } from "../../../signer/signer";
+import { getProduct } from "../cosmos/product";
+import { MessageCreatedResponse } from "../../../ui/api-models/MessageCreatedResponse";
+
+const mockGetFiscalCodeBySignerId: GetFiscalCodeBySignerId = (signerId) =>
+  pipe(
+    signerId,
+    S.replace("Signer-", ""),
+    FiscalCode.decode,
+    TE.fromEither,
+    TE.mapLeft(() => new Error("Invalid fiscal code"))
+  );
+
+const sendSignature = sendSignatureRequest(
+  getSignatureRequest,
+  mockGetFiscalCodeBySignerId,
+  getProduct
+);
 
 export const SendSignatureRequestBody = t.type({
   id: SignatureRequestId,
@@ -55,7 +74,7 @@ const decodeRequest = flow(
 );
 
 const encodeSuccessResponse = flow(
-  SignatureRequestDetailView.decode,
+  MessageCreatedResponse.decode,
   E.mapLeft(() => new Error("Serialization error")),
   E.fold(errorResponse, jsonResponse)
 );
@@ -63,8 +82,7 @@ const encodeSuccessResponse = flow(
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
-    ({ sendSignatureRequestBody }) =>
-      sendSignatureRequest(sendSignatureRequestBody),
+    ({ sendSignatureRequestBody }) => sendSignature(sendSignatureRequestBody),
     errorResponse,
     encodeSuccessResponse
   ),

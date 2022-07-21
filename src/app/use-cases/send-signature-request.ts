@@ -1,56 +1,70 @@
-import * as t from "io-ts";
-
 import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
+import { flow } from "fp-ts/function";
 
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { sequenceS } from "fp-ts/lib/Apply";
 
-import { SignatureRequest } from "../../signature-request/signature-request";
+import {
+  GetSignatureRequest,
+  SignatureRequest,
+} from "../../signature-request/signature-request";
 
 import { SendSignatureRequestBody } from "../../infra/azure/functions/send-signature-request";
-import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
-export const MessageSubject = NonEmptyString;
-export const MessageMarkdown = NonEmptyString;
+import { GetProduct, Product } from "../../signature-request/product";
+import { GetFiscalCodeBySignerId } from "../../signer/signer";
+import { NewMessage } from "../../ui/api-models/NewMessage";
+import { sendMessage } from "../../infra/services/send-message";
+import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
 
-export const ContentMessage = t.type({
-  subject: MessageSubject,
-  markdown: MessageMarkdown,
+const makeMessage = (
+  signatureRequest: SignatureRequest,
+  product: Product
+): NewMessage => ({
+  content: {
+    subject: `Richiesta di firma`,
+    markdown: `---\n- SubscriptionId: \`${signatureRequest.subscriptionId}\`\n- SignatureRequestId: \`${signatureRequest.id}\`\n- ProductId: \`${product.id}\`\n- n. documents: \`${signatureRequest.documents.length}\`\n `,
+  },
 });
 
-export const MessagePayload = t.type({
-  content: ContentMessage,
-});
-
-export type MessagePayload = t.TypeOf<typeof MessagePayload>;
-/*
-export const makeRequestSignature =
+const prepareAndSendMessage =
   (getFiscalCodeBySignerId: GetFiscalCodeBySignerId, getProduct: GetProduct) =>
-  (payload: SignatureRequest): TE.TaskEither<Error, MessagePayload> =>
+  (
+    signatureRequest: SignatureRequest
+  ): TE.TaskEither<Error, MessageCreatedResponse> =>
     pipe(
       sequenceS(TE.ApplySeq)({
-        signer_cf: getFiscalCodeBySignerId(payload.signerId),
+        signer_cf: getFiscalCodeBySignerId(signatureRequest.signerId),
         product: pipe(
-          getProduct(payload.productId, payload.subscriptionId),
-          TE.chain(TE.fromOption(() => new ProductNotFoundError()))
+          getProduct(
+            signatureRequest.productId,
+            signatureRequest.subscriptionId
+          ),
+          TE.chain(TE.fromOption(() => new Error("Product not found")))
         ),
       }),
-      TE.map(
-        ({ signer_cf, product }): MessagePayload => ({
-          content: {
-            subject: "a",
-            markdown: "a",
-          },
-        })
+      TE.chain(({ signer_cf, product }) =>
+        pipe(makeMessage(signatureRequest, product), sendMessage(signer_cf))
       )
     );
-*/
-export const sendSignatureRequest = (
-  sendSignatureRequestBody: SendSignatureRequestBody
-): TE.TaskEither<Error, SignatureRequest> =>
-  pipe(
-    getSignatureRequest(
-      sendSignatureRequestBody.id,
-      sendSignatureRequestBody.subscriptionId
-    ),
-    (_) => TE.left(new Error("Not yet implemented"))
-  );
+
+export const sendSignatureRequest =
+  (
+    getSignatureRequest: GetSignatureRequest,
+    getFiscalCodeBySignerId: GetFiscalCodeBySignerId,
+    getProduct: GetProduct
+  ) =>
+  (
+    sendSignatureRequestBody: SendSignatureRequestBody
+  ): TE.TaskEither<Error, MessageCreatedResponse> =>
+    pipe(
+      getSignatureRequest(
+        sendSignatureRequestBody.id,
+        sendSignatureRequestBody.subscriptionId
+      ),
+      TE.chain(
+        flow(
+          TE.fromOption(() => new Error("Signature Request not found")),
+          TE.chain(prepareAndSendMessage(getFiscalCodeBySignerId, getProduct))
+        )
+      )
+    );

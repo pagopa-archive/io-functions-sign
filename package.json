@@ -11,7 +11,8 @@
     "prepare": "husky install",
     "func:ext-install": "func extensions install",
     "start": "func start",
-    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/ui/api-models"
+    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/ui/api-models",
+    "generate:message-api-models": "gen-api-models --api-spec ./openapi-messages.yaml --out-dir ./src/ui/api-models"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "@pagopa/ts-commons": "^10.2.1",
     "fp-ts": "^2.11.10",
     "io-ts": "^2.2.16",
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "undici": "^5.8.0"
   }
 }

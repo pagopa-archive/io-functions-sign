@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: IO Sign - Messages API
+  version: 0.1.0
+  description: >
+    # Warning
+
+    These openapi specifications are derived from [io-functions-services](https://github.com/pagopa/io-functions-services/blob/master/openapi/index.yaml)
+servers:
+  - url: https://api.io.pagopa.it/api/v1
+    description: Production
+security:
+  - SubscriptionKey: []
+paths:
+  /messages/{fiscal_code}:
+    post:
+      operationId: submitMessageforUser
+      summary: Submit a Message passing the user fiscal_code as path parameter
+      parameters:
+        - $ref: "#/components/schemas/FiscalCode"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewMessage"
+      responses:
+        "201":
+          description: Message created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCreatedResponse"
+
+        "400":
+          $ref: "./openapi-global-components.yaml#/components/responses/InvalidPayload"
+        "401":
+          $ref: "./openapi-global-components.yaml#/components/responses/Unauthorized"
+        "403":
+          $ref: "./openapi-global-components.yaml#/components/responses/Forbidden"
+        "429":
+          $ref: "./openapi-global-components.yaml#/components/responses/TooManyRequests"
+        "500":
+          $ref: "./openapi-global-components.yaml#/components/responses/Undelivered"
+
+components:
+  securitySchemes:
+    SubscriptionKey:
+      $ref: "./openapi-global-components.yaml#/components/securitySchemes/SubscriptionKey"
+  schemas:
+    FiscalCode:
+      $ref: "./openapi-global-components.yaml#/components/schemas/FiscalCode"
+    NewMessage:
+      type: object
+      properties:
+        time_to_live:
+          $ref: "./openapi-global-components.yaml#/components/schemas/TimeToLiveSeconds"
+        content:
+          $ref: "#/components/schemas/MessageContent"
+        default_addresses:
+          type: object
+          description: |-
+            Default addresses for notifying the recipient of the message in case
+            no address for the related channel is set in his profile.
+          properties:
+            email:
+              type: string
+              format: email
+              example: foobar@example.com
+        fiscal_code:
+          $ref: "#/components/schemas/FiscalCode"
+        feature_level_type:
+          $ref: "#/components/schemas/FeatureLevelType"
+      required:
+        - content
+    ProblemJson:
+      $ref: "./openapi-global-components.yaml#/components/schemas/ProblemJson"
+    MessageContent:
+      allOf:
+        - $ref: "#/components/schemas/MessageContentBase"
+        - type: object
+
+    MessageContentBase:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: >-
+            The (optional) subject of the message - note that only some
+            notification
+
+            channels support the display of a subject. When a subject is not
+            provided,
+
+            one gets generated from the client attributes.
+          minLength: 10
+          maxLength: 120
+          example: Welcome new user !
+        markdown:
+          type: string
+          description: >-
+            The full version of the message, in plain text or Markdown format. The
+
+            content of this field will be delivered to channels that don't have
+            any
+
+            limit in terms of content size (e.g. email, etc...).
+          minLength: 80
+          maxLength: 10000
+          example: |-
+            # This is a markdown header
+
+            to show how easily markdown can be converted to **HTML**
+
+            Remember: this has to be a long text.
+      required:
+        - subject
+        - markdown
+    FeatureLevelType:
+      type: string
+      default: STANDARD
+      x-extensible-enum:
+        - STANDARD
+        - ADVANCED
+      example: STANDARD
+    MessageCreatedResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier of the created message.
+      example:
+        application/json:
+          id: 01BX9NSMKVXXS5PSP2FATZMYYY

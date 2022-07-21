@@ -5,14 +5,14 @@
 /* eslint-disable  */
 
 import { ProductId } from "./ProductId";
-import { FiscalCode } from "./FiscalCode";
 import * as t from "io-ts";
+import { FiscalCode as FiscalCodeT } from "@pagopa/ts-commons/lib/strings";
 
 // required attributes
 const RequestSignatureBodyR = t.interface({
   productId: ProductId,
 
-  fiscalCode: FiscalCode,
+  fiscalCode: FiscalCodeT,
 });
 
 // optional attributes

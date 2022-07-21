@@ -6,9 +6,14 @@ import {
   CosmosConfig,
   getCosmosConfigFromEnvironment,
 } from "../infra/azure/cosmos/config";
+import {
+  getServiceConfigFromEnvironment,
+  ServiceConfig,
+} from "../infra/services/config";
 
 export const Config = t.type({
   cosmos: CosmosConfig,
+  service: ServiceConfig,
 });
 
 export type Config = t.TypeOf<typeof Config>;
@@ -19,6 +24,7 @@ export const getConfigFromEnvironment: RE.ReaderEither<
   Config
 > = sequenceS(RE.Apply)({
   cosmos: getCosmosConfigFromEnvironment,
+  service: getServiceConfigFromEnvironment,
 });
 
 export const config = getConfigFromEnvironment(process.env);
