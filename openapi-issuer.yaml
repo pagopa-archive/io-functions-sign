@@ -26,11 +26,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProductDetailView"
         "400":
-          $ref: "./openapi-global-components.yaml#/components/responses/BadRequest"
+          $ref: "./components.yaml#/components/responses/BadRequest"
         "403":
-          $ref: "./openapi-global-components.yaml#/components/responses/Forbidden"
+          $ref: "./components.yaml#/components/responses/Forbidden"
         default:
-          $ref: "./openapi-global-components.yaml#/components/responses/Unexpected"
+          $ref: "./components.yaml#/components/responses/Unexpected"
   /products/{productId}:
     get:
       operationId: getProductById
@@ -50,11 +50,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProductDetailView"
         "403":
-          $ref: "./openapi-global-components.yaml#/components/responses/Forbidden"
+          $ref: "./components.yaml#/components/responses/Forbidden"
         "404":
-          $ref: "./openapi-global-components.yaml#/components/responses/NotFound"
+          $ref: "./components.yaml#/components/responses/NotFound"
         default:
-          $ref: "./openapi-global-components.yaml#/components/responses/Unexpected"
+          $ref: "./components.yaml#/components/responses/Unexpected"
   /signature-requests:
     post:
       operationId: requestSignature
@@ -73,17 +73,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/SignatureRequestDetailView"
         "400":
-          $ref: "./openapi-global-components.yaml#/components/responses/BadRequest"
+          $ref: "./components.yaml#/components/responses/BadRequest"
         "403":
-          $ref: "./openapi-global-components.yaml#/components/responses/Forbidden"
+          $ref: "./components.yaml#/components/responses/Forbidden"
         "404":
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: "./openapi-global-components.yaml#/components/schemas/ProblemJson"
+                $ref: "./components.yaml#/components/schemas/ProblemJson"
         default:
-          $ref: "./openapi-global-components.yaml#/components/responses/Unexpected"
+          $ref: "./components.yaml#/components/responses/Unexpected"
   /signature-requests/{signatureRequestId}:
     get:
       operationId: getSignatureRequestById
@@ -103,11 +103,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/SignatureRequestDetailView"
         "403":
-          $ref: "./openapi-global-components.yaml#/components/responses/Forbidden"
+          $ref: "./components.yaml#/components/responses/Forbidden"
         "404":
-          $ref: "./openapi-global-components.yaml#/components/responses/NotFound"
+          $ref: "./components.yaml#/components/responses/NotFound"
         default:
-          $ref: "./openapi-global-components.yaml#/components/responses/Unexpected"
+          $ref: "./components.yaml#/components/responses/Unexpected"
 components:
   schemas:
     Clause:
@@ -176,7 +176,7 @@ components:
         productId:
           $ref: "#/components/schemas/ProductId"
         fiscalCode:
-          $ref: "./openapi-global-components.yaml#/components/schemas/FiscalCode"
+          $ref: "./components.yaml#/components/schemas/FiscalCode"
       required:
         - productId
         - fiscalCode
