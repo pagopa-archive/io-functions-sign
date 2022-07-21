@@ -13,7 +13,7 @@ import { SendSignatureRequestBody } from "../../infra/azure/functions/send-signa
 import { GetProduct, Product } from "../../signature-request/product";
 import { GetFiscalCodeBySignerId } from "../../signer/signer";
 import { NewMessage } from "../../ui/api-models/NewMessage";
-import { sendMessage } from "../../infra/services/send-message";
+import { submitMessageForUser } from "../../infra/services/send-message";
 import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
 
 const makeMessage = (
@@ -43,7 +43,10 @@ const prepareAndSendMessage =
         ),
       }),
       TE.chain(({ signer_cf, product }) =>
-        pipe(makeMessage(signatureRequest, product), sendMessage(signer_cf))
+        pipe(
+          makeMessage(signatureRequest, product),
+          submitMessageForUser(signer_cf)
+        )
       )
     );
 

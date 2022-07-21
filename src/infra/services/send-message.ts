@@ -11,34 +11,35 @@ import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedRespon
 import { makeHttpRequest } from "./http";
 import { basePath, headers } from "./service";
 
-const makeMessagePat = (fiscalCode: string) =>
+const getSubmitMessageForUserUrl = (fiscalCode: string) =>
   pipe(`/api/v1/messages/${fiscalCode}`, UrlFromString.decode);
 
-export const sendMessage = (fiscalCode: FiscalCode) => (body: NewMessage) =>
-  pipe(
-    sequenceS(E.Apply)({
-      basePath,
-      headers,
-      path: pipe(
-        fiscalCode,
-        makeMessagePat,
-        E.mapLeft(() => new Error("Invalid path"))
-      ),
-    }),
-    TE.fromEither,
-    TE.chain(({ basePath, headers, path }) =>
-      makeHttpRequest(basePath.href)({
-        body: JSON.stringify(body),
-        method: "POST",
-        path: path.href,
+export const submitMessageforUser =
+  (fiscalCode: FiscalCode) => (body: NewMessage) =>
+    pipe(
+      sequenceS(E.Apply)({
+        basePath,
         headers,
-      })
-    ),
-    TE.chain(
-      flow(
-        MessageCreatedResponse.decode,
-        E.mapLeft(() => new Error("Invalid response")),
-        TE.fromEither
+        path: pipe(
+          fiscalCode,
+          getSubmitMessageForUserUrl,
+          E.mapLeft(() => new Error("Invalid path"))
+        ),
+      }),
+      TE.fromEither,
+      TE.chain(({ basePath, headers, path }) =>
+        makeHttpRequest(basePath.href)({
+          body: JSON.stringify(body),
+          method: "POST",
+          path: path.href,
+          headers,
+        })
+      ),
+      TE.chain(
+        flow(
+          MessageCreatedResponse.decode,
+          E.mapLeft(() => new Error("Invalid response")),
+          TE.fromEither
+        )
       )
-    )
-  );
+    );
