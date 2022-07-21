@@ -2,8 +2,6 @@ import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
 import { flow } from "fp-ts/function";
 
-import { sequenceS } from "fp-ts/lib/Apply";
-
 import {
   GetSignatureRequest,
   SignatureRequest,
@@ -26,28 +24,24 @@ const makeMessageMock = (
   },
 });
 
-const prepareAndSendMessage =
-  (getFiscalCodeBySignerId: GetFiscalCodeBySignerId, getProduct: GetProduct) =>
+const prepareMessage =
+  (getProduct: GetProduct) =>
+  (signatureRequest: SignatureRequest): TE.TaskEither<Error, NewMessage> =>
+    pipe(
+      getProduct(signatureRequest.productId, signatureRequest.subscriptionId),
+      TE.chain(TE.fromOption(() => new Error("Product not found"))),
+      TE.map((product) => makeMessageMock(signatureRequest, product))
+    );
+
+const sendMessage =
+  (getFiscalCodeBySignerId: GetFiscalCodeBySignerId) =>
+  (message: NewMessage) =>
   (
     signatureRequest: SignatureRequest
   ): TE.TaskEither<Error, MessageCreatedResponse> =>
     pipe(
-      sequenceS(TE.ApplySeq)({
-        signer_cf: getFiscalCodeBySignerId(signatureRequest.signerId),
-        product: pipe(
-          getProduct(
-            signatureRequest.productId,
-            signatureRequest.subscriptionId
-          ),
-          TE.chain(TE.fromOption(() => new Error("Product not found")))
-        ),
-      }),
-      TE.chain(({ signer_cf, product }) =>
-        pipe(
-          makeMessageMock(signatureRequest, product),
-          submitMessageForUser(signer_cf)
-        )
-      )
+      getFiscalCodeBySignerId(signatureRequest.signerId),
+      TE.map(submitMessageForUser(message))
     );
 
 export const sendSignatureRequest =
@@ -67,7 +61,12 @@ export const sendSignatureRequest =
       TE.chain(
         flow(
           TE.fromOption(() => new Error("Signature Request not found")),
-          TE.chain(prepareAndSendMessage(getFiscalCodeBySignerId, getProduct))
+          TE.chain(
+            flow(
+              prepareMessage(getProduct),
+              TE.map(sendMessage(getFiscalCodeBySignerId))
+            )
+          )
         )
       )
     );

@@ -14,8 +14,8 @@ import { basePath, headers } from "./service";
 const getSubmitMessageForUserUrl = (fiscalCode: string) =>
   pipe(`/api/v1/messages/${fiscalCode}`, UrlFromString.decode);
 
-export const submitMessageforUser =
-  (fiscalCode: FiscalCode) => (body: NewMessage) =>
+export const submitMessageForUser =
+  (body: NewMessage) => (fiscalCode: FiscalCode) =>
     pipe(
       sequenceS(E.Apply)({
         basePath,
