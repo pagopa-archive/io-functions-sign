@@ -14,15 +14,14 @@ import { NewMessage } from "../../ui/api-models/NewMessage";
 import { submitMessageForUser } from "../../infra/services/send-message";
 import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
 
-const makeMessageMock = (
-  signatureRequest: SignatureRequest,
-  product: Product
-): NewMessage => ({
-  content: {
-    subject: `Richiesta di firma`,
-    markdown: `---\n- SubscriptionId: \`${signatureRequest.subscriptionId}\`\n- SignatureRequestId: \`${signatureRequest.id}\`\n- ProductId: \`${product.id}\`\n- n. documents: \`${signatureRequest.documents.length}\`\n `,
-  },
-});
+const makeMessageMock =
+  (signatureRequest: SignatureRequest) =>
+  (product: Product): NewMessage => ({
+    content: {
+      subject: `Richiesta di firma`,
+      markdown: `---\n- SubscriptionId: \`${signatureRequest.subscriptionId}\`\n- SignatureRequestId: \`${signatureRequest.id}\`\n- ProductId: \`${product.id}\`\n- n. documents: \`${signatureRequest.documents.length}\`\n `,
+    },
+  });
 
 const prepareMessage =
   (getProduct: GetProduct) =>
@@ -30,7 +29,7 @@ const prepareMessage =
     pipe(
       getProduct(signatureRequest.productId, signatureRequest.subscriptionId),
       TE.chain(TE.fromOption(() => new Error("Product not found"))),
-      TE.map((product) => makeMessageMock(signatureRequest, product))
+      TE.map(makeMessageMock(signatureRequest))
     );
 
 const sendMessage =
