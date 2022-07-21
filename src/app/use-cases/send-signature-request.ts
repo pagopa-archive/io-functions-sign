@@ -16,7 +16,7 @@ import { NewMessage } from "../../ui/api-models/NewMessage";
 import { submitMessageForUser } from "../../infra/services/send-message";
 import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
 
-const makeMessage = (
+const makeMessageMock = (
   signatureRequest: SignatureRequest,
   product: Product
 ): NewMessage => ({
@@ -44,7 +44,7 @@ const prepareAndSendMessage =
       }),
       TE.chain(({ signer_cf, product }) =>
         pipe(
-          makeMessage(signatureRequest, product),
+          makeMessageMock(signatureRequest, product),
           submitMessageForUser(signer_cf)
         )
       )
