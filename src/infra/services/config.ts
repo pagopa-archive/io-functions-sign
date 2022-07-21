@@ -21,7 +21,7 @@ export const getServiceConfigFromEnvironment: RE.ReaderEither<
 > = sequenceS(RE.Apply)({
   serviceBasePath: pipe(
     readFromNodeEnv("ServiceBasePath"),
-    RE.orElse(() => RE.right("https://api.io.pagopa.it/api/v1"))
+    RE.orElse(() => RE.right("https://api.io.pagopa.it"))
   ),
   serviceSubscriptionKey: readFromNodeEnv("ServiceSubscriptionKey"),
 });
