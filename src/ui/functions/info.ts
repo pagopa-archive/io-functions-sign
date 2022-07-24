@@ -2,11 +2,12 @@ import { AzureFunction } from "@azure/functions";
 import { pipe } from "fp-ts/lib/function";
 
 import { createHandler, nopRequestDecoder } from "@pagopa/handler-kit";
-import { jsonResponse } from "@pagopa/handler-kit/lib/http";
+import { success, error } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import * as TE from "fp-ts/TaskEither";
-import { errorResponse } from "../http";
+
+import * as t from "io-ts";
 
 export const run: AzureFunction = pipe(
   createHandler(
@@ -15,8 +16,8 @@ export const run: AzureFunction = pipe(
       TE.right({
         message: "it works",
       }),
-    errorResponse,
-    jsonResponse
+    error,
+    success(t.type({ message: t.string }))
   ),
   azure.unsafeRun
 );

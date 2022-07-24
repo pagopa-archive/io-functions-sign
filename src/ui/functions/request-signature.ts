@@ -7,25 +7,23 @@ import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/Either";
 import * as RE from "fp-ts/ReaderEither";
 
-import { failure } from "io-ts/PathReporter";
 import { sequenceS } from "fp-ts/lib/Apply";
 
 import { pipe, flow } from "fp-ts/function";
 
 import {
-  jsonResponse,
+  created,
+  body,
   HttpRequest,
-  withStatus,
+  error,
 } from "@pagopa/handler-kit/lib/http";
-
-import { badRequestError } from "@pagopa/handler-kit/lib/http/errors";
 
 import {
   makeRequestSignature,
   RequestSignaturePayload,
 } from "../../app/use-cases/request-signature";
 
-import { requireSubscriptionId, errorResponse } from "../http";
+import { requireSubscriptionId } from "../http";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 import { addSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 import { RequestSignatureBody } from "../api-models/RequestSignatureBody";
@@ -44,10 +42,7 @@ const requestSignature = makeRequestSignature(
 const requireRequestSignatureBody = (
   req: HttpRequest
 ): E.Either<Error, RequestSignatureBody> =>
-  pipe(
-    RequestSignatureBody.decode(req.body),
-    E.mapLeft(flow(failure, (errors) => errors.join("\n"), badRequestError))
-  );
+  pipe(req, body(RequestSignatureBody));
 
 export const extractRequestSignaturePayload: RE.ReaderEither<
   HttpRequest,
@@ -67,21 +62,16 @@ export const extractRequestSignaturePayload: RE.ReaderEither<
 
 const decodeRequest = flow(
   azure.fromHttpRequest,
+  TE.fromEither,
   TE.chainEitherK(extractRequestSignaturePayload)
-);
-
-const encodeSuccessResponse = flow(
-  SignatureRequestDetailView.decode,
-  E.mapLeft(() => new Error("Serialization error")),
-  E.fold(errorResponse, flow(jsonResponse, withStatus(201)))
 );
 
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
     requestSignature,
-    errorResponse,
-    encodeSuccessResponse
+    error,
+    created(SignatureRequestDetailView)
   ),
   azure.unsafeRun
 );
