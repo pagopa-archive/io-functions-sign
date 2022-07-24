@@ -10,9 +10,14 @@ import { ProductId } from "./product";
 
 export const SignatureRequestId = t.string;
 
+export const SignatureRequestStatus = t.keyof({
+  DRAFT: null,
+});
+
 export const SignatureRequest = t.intersection([
   t.type({
     id: SignatureRequestId,
+    status: SignatureRequestStatus,
     signerId: SignerId,
     subscriptionId: SubscriptionId,
     productId: ProductId,
