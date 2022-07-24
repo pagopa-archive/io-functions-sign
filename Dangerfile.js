@@ -2,7 +2,7 @@ const customRules = require("@pagopa/danger-plugin").default;
 
 const recordScope = {
   projectToScope: {
-    SFEQS: "Firma con IO"
+    SFEQS: "Firma con IO",
   },
   tagToScope: {
     development: "Development",
@@ -11,7 +11,7 @@ const recordScope = {
   },
   minLenPrDescription: 10,
   updateLabel: false,
-  updateTitle: false
+  updateTitle: false,
 };
 
 customRules(recordScope);
