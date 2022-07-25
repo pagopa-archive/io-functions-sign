@@ -1,0 +1,13 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "uploadedDocument",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "documents/{name}",
+      "connection": "StorageAccountConnectionString"
+    }
+  ],
+  "scriptFile": "../lib/infra/azure/functions/validate-document-upload.js"
+}

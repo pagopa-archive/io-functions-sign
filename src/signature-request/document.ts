@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
+import * as TE from "fp-ts/TaskEither";
 import { Id } from "../id";
 import { Timestamps } from "../timestamps";
 import { ClauseList } from "./clause";
@@ -29,9 +30,14 @@ export const DocumentMetadataList = t.brand(
 
 export type DocumentMetadataList = t.TypeOf<typeof DocumentMetadataList>;
 
+export const DocumentId = Id;
+
 export const Document = t.intersection([
   t.type({
-    id: Id,
+    id: DocumentId,
+  }),
+  t.partial({
+    url: t.string,
   }),
   DocumentMetadata,
   Timestamps,
@@ -51,3 +57,7 @@ export const DocumentList = t.brand(
 );
 
 export type DocumentList = t.TypeOf<typeof DocumentList>;
+
+export type IsDocumentUploaded = (
+  documentId: Document["id"]
+) => TE.TaskEither<Error, boolean>;
