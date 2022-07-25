@@ -12,7 +12,7 @@ import * as t from "io-ts";
 const RequestSignatureBodyR = t.interface({
   productId: ProductId,
 
-  fiscalCode: FiscalCode
+  fiscalCode: FiscalCode,
 });
 
 // optional attributes
