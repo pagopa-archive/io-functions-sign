@@ -15,6 +15,7 @@ import {
 } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import { requireSubscriptionId } from "../http";
 
 import { Subscription } from "../../signature-request/subscription";
@@ -22,10 +23,11 @@ import { Subscription } from "../../signature-request/subscription";
 import {
   SignatureRequest,
   SignatureRequestId,
+  status,
 } from "../../signature-request/signature-request";
 import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 import { SignatureRequestDetailView } from "../api-models/SignatureRequestDetailView";
-import { validate } from "@pagopa/handler-kit/lib/validation";
+import { EntityNotFoundError } from "../../error";
 
 export const requireSignatureRequestId: (
   req: HttpRequest
@@ -55,18 +57,24 @@ const decodeRequest = flow(
   TE.chainEitherK(extractGetSignatureRequestPayload)
 );
 
-const encodeSuccessResponse = flow(
-  E.fromOption(() => new Error("Signature Request not found")),
-  E.fold(error, success(SignatureRequestDetailView))
-);
-
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
     ({ signatureRequestId, subscriptionId }) =>
       getSignatureRequest(signatureRequestId, subscriptionId),
     error,
-    encodeSuccessResponse
+    (request) =>
+      pipe(
+        request,
+        E.fromOption(
+          () => new EntityNotFoundError("Signature Request Not Found")
+        ),
+        E.map((request) => ({
+          ...request,
+          status: status(request),
+        })),
+        E.fold(error, success(SignatureRequestDetailView))
+      )
   ),
   azure.unsafeRun
 );

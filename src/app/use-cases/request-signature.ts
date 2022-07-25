@@ -43,7 +43,6 @@ export const makeRequestSignature =
       TE.map(
         ({ signer, documents }): SignatureRequest => ({
           id: id(),
-          status: "DRAFT",
           subscriptionId: payload.subscriptionId,
           productId: payload.productId,
           signerId: signer.id,
