@@ -8,7 +8,7 @@ import { pipe, flow } from "fp-ts/lib/function";
 import { sequenceS } from "fp-ts/lib/Apply";
 import { NewMessage } from "../../ui/api-models/NewMessage";
 import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
-import { makeHttpRequest } from "./http";
+import { makeHttpRequest } from "../http-client";
 import { basePath, headers } from "./service";
 
 const getSubmitMessageForUserUrl = (fiscalCode: string) =>
