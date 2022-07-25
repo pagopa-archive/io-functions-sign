@@ -16,6 +16,7 @@ import { sequenceS } from "fp-ts/lib/Apply";
 import * as RE from "fp-ts/lib/ReaderEither";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   CreateProductPayload,
   makeCreateProduct,
@@ -27,8 +28,6 @@ import { CreateProductBody } from "../api-models/CreateProductBody";
 import { DocumentMetadataList } from "../../signature-request/document";
 import { addProduct } from "../../infra/azure/cosmos/product";
 import { ProductDetailView } from "../api-models/ProductDetailView";
-
-import { validate } from "@pagopa/handler-kit/lib/error";
 
 const createProduct = makeCreateProduct(addProduct);
 

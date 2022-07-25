@@ -15,6 +15,7 @@ import {
 } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import { ProductDetailView } from "../api-models/ProductDetailView";
 import { requireSubscriptionId } from "../http";
 
@@ -22,8 +23,6 @@ import { Product, ProductId } from "../../signature-request/product";
 import { Subscription } from "../../signature-request/subscription";
 
 import { getProduct } from "../../infra/azure/cosmos/product";
-
-import { validate } from "@pagopa/handler-kit/lib/error";
 
 export const requireProductId: (
   req: HttpRequest
