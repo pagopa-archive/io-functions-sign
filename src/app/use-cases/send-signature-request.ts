@@ -14,7 +14,7 @@ import { GetProduct, Product } from "../../signature-request/product";
 import { GetFiscalCodeBySignerId } from "../../signer/signer";
 import { NewMessage } from "../../ui/api-models/NewMessage";
 import { submitMessageForUser } from "../../infra/services/send-message";
-import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
+import { CreatedMessage } from "../../ui/api-models/CreatedMessage";
 
 const makeMessage = (
   signatureRequest: SignatureRequest,
@@ -28,9 +28,7 @@ const makeMessage = (
 
 const prepareAndSendMessage =
   (getFiscalCodeBySignerId: GetFiscalCodeBySignerId, getProduct: GetProduct) =>
-  (
-    signatureRequest: SignatureRequest
-  ): TE.TaskEither<Error, MessageCreatedResponse> =>
+  (signatureRequest: SignatureRequest): TE.TaskEither<Error, CreatedMessage> =>
     pipe(
       sequenceS(TE.ApplySeq)({
         signer_cf: getFiscalCodeBySignerId(signatureRequest.signerId),
@@ -58,7 +56,7 @@ export const sendSignatureRequest =
   ) =>
   (
     sendSignatureRequestBody: SendSignatureRequestBody
-  ): TE.TaskEither<Error, MessageCreatedResponse> =>
+  ): TE.TaskEither<Error, CreatedMessage> =>
     pipe(
       getSignatureRequest(
         sendSignatureRequestBody.id,

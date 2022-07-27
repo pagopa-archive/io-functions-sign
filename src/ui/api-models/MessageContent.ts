@@ -6,12 +6,30 @@
 
 import * as t from "io-ts";
 import { MessageContentBase } from "./MessageContentBase";
+import { PaymentData } from "./PaymentData";
+import { PrescriptionData } from "./PrescriptionData";
+import { LegalData } from "./LegalData";
+import { EUCovidCert } from "./EUCovidCert";
+import { ThirdPartyData } from "./ThirdPartyData";
+import { Timestamp } from "./Timestamp";
 
 // required attributes
 const MessageContent2R = t.interface({});
 
 // optional attributes
-const MessageContent2O = t.partial({});
+const MessageContent2O = t.partial({
+  payment_data: PaymentData,
+
+  prescription_data: PrescriptionData,
+
+  legal_data: LegalData,
+
+  eu_covid_cert: EUCovidCert,
+
+  third_party_data: ThirdPartyData,
+
+  due_date: Timestamp,
+});
 
 export const MessageContent2 = t.exact(
   t.intersection([MessageContent2R, MessageContent2O], "MessageContent2")

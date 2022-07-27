@@ -25,7 +25,7 @@ import { SubscriptionId } from "../../../signature-request/subscription";
 import { getSignatureRequest } from "../cosmos/signature-request";
 import { GetFiscalCodeBySignerId } from "../../../signer/signer";
 import { getProduct } from "../cosmos/product";
-import { MessageCreatedResponse } from "../../../ui/api-models/MessageCreatedResponse";
+import { CreatedMessage } from "../../../ui/api-models/CreatedMessage";
 
 const mockGetFiscalCodeBySignerId: GetFiscalCodeBySignerId = (signerId) =>
   pipe(
@@ -74,7 +74,7 @@ const decodeRequest = flow(
 );
 
 const encodeSuccessResponse = flow(
-  MessageCreatedResponse.decode,
+  CreatedMessage.decode,
   E.mapLeft(() => new Error("Serialization error")),
   E.fold(errorResponse, jsonResponse)
 );

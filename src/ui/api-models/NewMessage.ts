@@ -4,25 +4,12 @@
  */
 /* eslint-disable  */
 
+import { TimeToLiveSeconds } from "./TimeToLiveSeconds";
 import { MessageContent } from "./MessageContent";
 import { FiscalCode } from "./FiscalCode";
 import { FeatureLevelType } from "./FeatureLevelType";
-import { withDefault } from "@pagopa/ts-commons/lib/types";
 import * as t from "io-ts";
 import { EmailString } from "@pagopa/ts-commons/lib/strings";
-import {
-  IWithinRangeIntegerTag,
-  WithinRangeInteger,
-} from "@pagopa/ts-commons/lib/numbers";
-
-type TimeToLiveBase = t.TypeOf<typeof TimeToLiveBase>;
-const TimeToLiveBase = t.union([
-  WithinRangeInteger<3600, 604800, IWithinRangeIntegerTag<3600, 604800>>(
-    3600,
-    604800
-  ),
-  t.literal(604800),
-]);
 
 /**
  * Default addresses for notifying the recipient of the message in case
@@ -55,7 +42,7 @@ const NewMessageR = t.interface({
 
 // optional attributes
 const NewMessageO = t.partial({
-  time_to_live: withDefault(TimeToLiveBase, 3600 as TimeToLiveBase),
+  time_to_live: TimeToLiveSeconds,
 
   default_addresses: NewMessageDefault_addresses,
 

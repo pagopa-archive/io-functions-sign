@@ -7,7 +7,7 @@ import { pipe, flow } from "fp-ts/lib/function";
 
 import { sequenceS } from "fp-ts/lib/Apply";
 import { NewMessage } from "../../ui/api-models/NewMessage";
-import { MessageCreatedResponse } from "../../ui/api-models/MessageCreatedResponse";
+import { CreatedMessage } from "../../ui/api-models/CreatedMessage";
 import { makeHttpRequest } from "../http-client";
 import { basePath, headers } from "./service";
 
@@ -37,7 +37,7 @@ export const submitMessageForUser =
       ),
       TE.chain(
         flow(
-          MessageCreatedResponse.decode,
+          CreatedMessage.decode,
           E.mapLeft(() => new Error("Invalid response")),
           TE.fromEither
         )

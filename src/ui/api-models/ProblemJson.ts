@@ -12,7 +12,12 @@ import {
 } from "@pagopa/ts-commons/lib/numbers";
 
 // required attributes
-const ProblemJsonR = t.interface({
+const ProblemJsonR = t.interface({});
+
+// optional attributes
+const ProblemJsonO = t.partial({
+  type: withDefault(t.string, "about:blank"),
+
   title: t.string,
 
   status: t.union([
@@ -21,11 +26,6 @@ const ProblemJsonR = t.interface({
   ]),
 
   detail: t.string,
-});
-
-// optional attributes
-const ProblemJsonO = t.partial({
-  type: withDefault(t.string, "about:blank"),
 
   instance: t.string,
 });

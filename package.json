@@ -12,7 +12,7 @@
     "func:ext-install": "func extensions install",
     "start": "func start",
     "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/ui/api-models",
-    "generate:message-api-models": "gen-api-models --api-spec ./openapi-messages.yaml --out-dir ./src/ui/api-models"
+    "generate:message-api-models": "gen-api-models --api-spec https://raw.githubusercontent.com/pagopa/io-functions-services/master/openapi/index.yaml --out-dir ./src/ui/api-models"
   },
   "repository": {
     "type": "git",
