@@ -38,6 +38,21 @@ And run the project with
 npm start
 ```
 
+### Services integration
+
+To use a message sending service to the IO app it is also necessary to set the following parameters in `local.settings.json`
+
+```json
+{
+  // ... other props
+  "Values": {
+    // ... other settings
+    "ServiceBasePath": "https://api.io.italia.it",
+    "ServiceSubscriptionKey": "HERE-THE-SERVICE-SUBSCRIPTION-KEY"
+  }
+}
+```
+
 ### Test Azure Services locally
 
 This project requires various backing services provided by Microsoft Azure in order to function.
