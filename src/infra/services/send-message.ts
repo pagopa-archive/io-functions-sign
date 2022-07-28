@@ -8,10 +8,11 @@ import { pipe, flow } from "fp-ts/lib/function";
 import { sequenceS } from "fp-ts/lib/Apply";
 import { NewMessage } from "../../ui/api-models/NewMessage";
 import { CreatedMessage } from "../../ui/api-models/CreatedMessage";
-import { makeHttpRequest } from "../http-client";
-import { basePath, headers } from "./service";
+import { basePath, headers, timeoutFetch } from "./service";
 
-const getSubmitMessageForUserUrl = (fiscalCode: string) =>
+const is2xx = (r: Response): boolean => r.status >= 200 && r.status < 300;
+
+const getSubmitMessageForUserPath = (fiscalCode: string) =>
   pipe(`/api/v1/messages/${fiscalCode}`, UrlFromString.decode);
 
 export const submitMessageForUser =
@@ -20,20 +21,33 @@ export const submitMessageForUser =
       sequenceS(E.Apply)({
         basePath,
         headers,
+        timeoutFetch,
         path: pipe(
           fiscalCode,
-          getSubmitMessageForUserUrl,
+          getSubmitMessageForUserPath,
           E.mapLeft(() => new Error("Invalid path"))
         ),
       }),
       TE.fromEither,
-      TE.chain(({ basePath, headers, path }) =>
-        makeHttpRequest(basePath.href)({
-          body: JSON.stringify(body),
-          method: "POST",
-          path: path.href,
-          headers,
-        })
+      TE.chain(({ basePath, headers, timeoutFetch, path }) =>
+        pipe(
+          TE.tryCatch(
+            () =>
+              timeoutFetch(`${basePath.href}${path.href}`, {
+                body: JSON.stringify(body),
+                method: "POST",
+                headers,
+              })
+                .then((r) => {
+                  if (!is2xx(r)) {
+                    throw Error("Unexpected webhook response");
+                  }
+                  return r;
+                })
+                .then((r) => r.json()),
+            E.toError
+          )
+        )
       ),
       TE.chain(
         flow(
