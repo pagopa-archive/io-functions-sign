@@ -13,7 +13,7 @@ export class EntityNotFoundError extends Error implements ProblemDetail {
 }
 export class InvalidDateError extends Error implements ProblemDetail {
   type = "/problems/invalid-date";
-  title = "Date not found";
+  title = "Date not valid";
   status = "400";
   constructor(public detail: string) {
     super(detail);
