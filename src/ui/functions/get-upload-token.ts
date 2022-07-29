@@ -60,7 +60,10 @@ const decodeRequest = flow(
 const getDocumentUploadToken = pipe(
   config,
   E.map((config) =>
-    createContainerClient(config.storage.connectionString, "documents")
+    createContainerClient(
+      config.storage.connectionString,
+      config.storage.issuerBlobContainerName
+    )
   ),
   E.map(makeBlobStorageGetDocumentUploadToken),
   E.map((blob) => makeGetDocumentUploadToken(getSignatureRequest, blob)),

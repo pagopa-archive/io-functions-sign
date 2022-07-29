@@ -29,7 +29,10 @@ import { makeIsDocumentUploaded } from "../storage/document";
 const isDocumentUploadedToBlobStorage = pipe(
   config,
   E.map((config) =>
-    createContainerClient(config.storage.connectionString, "documents")
+    createContainerClient(
+      config.storage.connectionString,
+      config.storage.issuerBlobContainerName
+    )
   ),
   E.map(makeIsDocumentUploaded),
   E.getOrElse(
