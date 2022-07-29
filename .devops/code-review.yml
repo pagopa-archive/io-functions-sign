@@ -65,3 +65,6 @@ jobs:
       - template: templates/node-job-setup/template.yaml@pagopaCommons
       - script: yarn jest --ci
         displayName: "Execute tests"
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
