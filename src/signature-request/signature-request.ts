@@ -4,10 +4,10 @@ import { TaskEither } from "fp-ts/lib/TaskEither";
 import { Option } from "fp-ts/lib/Option";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
+import { EntityNotFoundError } from "../error";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
-import { EntityNotFoundError } from "../error";
 
 export const SignatureRequestId = t.string;
 

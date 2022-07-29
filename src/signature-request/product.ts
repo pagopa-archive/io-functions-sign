@@ -9,9 +9,9 @@ import { flow } from "fp-ts/lib/function";
 import { map } from "fp-ts/Array";
 import { id, Id } from "../id";
 import { timestamps, Timestamps } from "../timestamps";
+import { EntityNotFoundError } from "../error";
 import { SubscriptionId } from "./subscription";
 import { DocumentList, DocumentMetadataList } from "./document";
-import { EntityNotFoundError } from "../error";
 
 export const ProductId = Id;
 

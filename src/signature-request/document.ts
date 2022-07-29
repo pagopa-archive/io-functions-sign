@@ -4,8 +4,8 @@ import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import * as TE from "fp-ts/TaskEither";
 import { Id } from "../id";
 import { Timestamps } from "../timestamps";
-import { ClauseList } from "./clause";
 import { EntityNotFoundError } from "../error";
+import { ClauseList } from "./clause";
 
 export const DocumentTitle = NonEmptyString;
 

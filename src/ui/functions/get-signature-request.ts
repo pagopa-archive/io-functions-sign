@@ -28,7 +28,6 @@ import {
 } from "../../signature-request/signature-request";
 import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 import { SignatureRequestDetailView } from "../api-models/SignatureRequestDetailView";
-import { EntityNotFoundError } from "../../error";
 
 export const requireSignatureRequestId: (
   req: HttpRequest

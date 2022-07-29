@@ -13,8 +13,6 @@ import { Subscription } from "../../signature-request/subscription";
 
 import { GetSignatureRequest } from "../../signature-request/signature-request";
 
-import { EntityNotFoundError } from "../../error";
-
 export type GetDocumentPayload = {
   subscriptionId: Subscription["id"];
   signatureRequestId: SignatureRequest["id"];
