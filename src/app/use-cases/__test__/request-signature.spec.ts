@@ -47,13 +47,13 @@ const mockAddSignatureRequest: AddSignatureRequest = (
 
 describe("MakeRequestSignatureList", () => {
   it.each([
-    { payload: {} as RequestSignaturePayload, expected: false },
+    { payload: {}, expected: false },
     {
       payload: {
         productId: "prod-id",
         subscriptionId: "sub-id",
         fiscalCode: "SPNDNL80R13C555X",
-      } as RequestSignaturePayload,
+      },
       expected: true,
     },
     {
@@ -62,7 +62,7 @@ describe("MakeRequestSignatureList", () => {
         subscriptionId: "sub-id",
         fiscalCode: "SPNDNL80R13C555X",
         expiresAt: subDays(1, new Date()),
-      } as RequestSignaturePayload,
+      },
       expected: false,
     },
     {
@@ -71,12 +71,12 @@ describe("MakeRequestSignatureList", () => {
         subscriptionId: "sub-id",
         fiscalCode: "SPNDNL80R13C555X",
         expiresAt: addDays(1, new Date()),
-      } as RequestSignaturePayload,
+      },
       expected: true,
     },
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
-      payload,
+      payload as RequestSignaturePayload,
       makeRequestSignature(
         mockGetSignerByFiscalCode,
         mockGetProduct,
