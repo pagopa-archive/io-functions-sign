@@ -46,7 +46,7 @@ export const makeRequestSignature =
           ? isBefore(payload.expiresAt, new Date())
             ? TE.left(
                 new InvalidEntityError(
-                  "The expiration date is earlier than the current one"
+                  "The expiration date must be in the future"
                 )
               )
             : TE.right(payload.expiresAt)
