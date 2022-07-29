@@ -2,15 +2,12 @@ import { AzureFunction } from "@azure/functions";
 
 import { createHandler } from "@pagopa/handler-kit";
 import {
-  jsonResponse,
   HttpRequest,
-  withStatus,
+  created,
+  error,
+  body,
 } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
-
-import { badRequestError } from "@pagopa/handler-kit/lib/http/errors";
-
-import { failure } from "io-ts/PathReporter";
 
 import { pipe, flow } from "fp-ts/lib/function";
 
@@ -19,12 +16,13 @@ import { sequenceS } from "fp-ts/lib/Apply";
 import * as RE from "fp-ts/lib/ReaderEither";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   CreateProductPayload,
   makeCreateProduct,
 } from "../../app/use-cases/create-product";
 
-import { requireSubscriptionId, errorResponse } from "../http";
+import { requireSubscriptionId } from "../http";
 import { CreateProductBody } from "../api-models/CreateProductBody";
 
 import { DocumentMetadataList } from "../../signature-request/document";
@@ -37,10 +35,15 @@ const requireDocumentsMetadata = (
   req: HttpRequest
 ): E.Either<Error, DocumentMetadataList> =>
   pipe(
-    CreateProductBody.decode(req.body),
+    req,
+    body(CreateProductBody),
     E.map((body) => body.documents),
-    E.chain(DocumentMetadataList.decode),
-    E.mapLeft(flow(failure, (errors) => errors.join("\n"), badRequestError))
+    E.chain(
+      validate(
+        DocumentMetadataList,
+        "Unable to decode the document metadata list"
+      )
+    )
   );
 
 export const extractCreateProductPayload: RE.ReaderEither<
@@ -56,21 +59,16 @@ export const extractCreateProductPayload: RE.ReaderEither<
 
 const decodeRequest = flow(
   azure.fromHttpRequest,
+  TE.fromEither,
   TE.chainEitherK(extractCreateProductPayload)
-);
-
-const encodeSuccessResponse = flow(
-  ProductDetailView.decode,
-  E.mapLeft(() => new Error("Serialization error")),
-  E.fold(errorResponse, flow(jsonResponse, withStatus(201)))
 );
 
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
     createProduct,
-    errorResponse,
-    encodeSuccessResponse
+    error,
+    created(ProductDetailView)
   ),
   azure.unsafeRun
 );

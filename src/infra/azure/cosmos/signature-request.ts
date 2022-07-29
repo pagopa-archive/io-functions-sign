@@ -16,6 +16,9 @@ import {
   SignatureRequest,
   AddSignatureRequest,
   GetSignatureRequest,
+  SignatureRequestStatus,
+  status,
+  UpsertSignatureRequest,
 } from "../../../signature-request/signature-request";
 
 import { container } from "./database";
@@ -23,7 +26,13 @@ import { container } from "./database";
 const containerId = "signature-requests";
 const partitionKey = "subscriptionId";
 
-const NewSignatureRequest = t.intersection([SignatureRequest, BaseModel]);
+const NewSignatureRequest = t.intersection([
+  SignatureRequest,
+  t.type({
+    status: SignatureRequestStatus,
+  }),
+  BaseModel,
+]);
 
 type NewSignatureRequest = t.TypeOf<typeof NewSignatureRequest>;
 
@@ -54,7 +63,10 @@ const signatureRequestModelTE = TE.fromEither(signatureRequestModel);
 
 export const addSignatureRequest: AddSignatureRequest = (request) =>
   pipe(
-    NewSignatureRequest.decode(request),
+    NewSignatureRequest.decode({
+      ...request,
+      status: status(request),
+    }),
     E.mapLeft(() => new Error("Invalid Signature Request")),
     TE.fromEither,
     TE.chain((newRequest) =>
@@ -82,6 +94,27 @@ export const getSignatureRequest: GetSignatureRequest = (id, serviceId) =>
           pipe(
             model.find([id, serviceId]),
             TE.mapLeft(() => new Error("Error getting the Signature Request"))
+          )
+        )
+      )
+    )
+  );
+
+export const upsertSignatureRequest: UpsertSignatureRequest = (request) =>
+  pipe(
+    NewSignatureRequest.decode({
+      ...request,
+      status: status(request),
+    }),
+    E.mapLeft(() => new Error("Invalid Signature Request")),
+    TE.fromEither,
+    TE.chain((newRequest) =>
+      pipe(
+        signatureRequestModelTE,
+        TE.chain((model) =>
+          pipe(
+            model.upsert(newRequest),
+            TE.mapLeft(() => new Error("Error creating the Signature Request"))
           )
         )
       )

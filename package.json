@@ -1,6 +1,6 @@
 {
   "name": "io-functions-sign",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "scripts": {
     "test": "jest --verbose --coverage",
     "format": "prettier --write .",
@@ -46,10 +46,10 @@
   "dependencies": {
     "@azure/cosmos": "^3.15.1",
     "@azure/storage-blob": "^12.9.0",
-    "@pagopa/handler-kit": "^0.2.3",
+    "@pagopa/handler-kit": "0.3.0",
     "@pagopa/io-functions-commons": "^24.3.0",
     "@pagopa/ts-commons": "^10.2.1",
-    "date-fns": "^2.28.0",
+    "date-fns": "^2.29.1",
     "fp-ts": "^2.11.10",
     "io-ts": "^2.2.16",
     "ulid": "^2.3.0"

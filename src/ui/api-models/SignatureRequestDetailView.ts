@@ -21,6 +21,7 @@ const SignatureRequestDetailViewR = t.interface({
 // optional attributes
 const SignatureRequestDetailViewO = t.partial({
   expiryAt: ExpirationDateTime,
+  status: t.string,
 });
 
 export const SignatureRequestDetailView = t.exact(
