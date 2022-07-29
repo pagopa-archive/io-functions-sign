@@ -2,6 +2,7 @@ import { pipe } from "fp-ts/function";
 import { isRight as isValid } from "fp-ts/Either";
 import * as TE from "fp-ts/TaskEither";
 import * as O from "fp-ts/Option";
+import { addDays, subDays } from "date-fns/fp";
 import { GetSignerByFiscalCode } from "../../../signer/signer";
 import {
   makeRequestSignature,
@@ -51,7 +52,25 @@ describe("MakeRequestSignatureList", () => {
       payload: {
         productId: "prod-id",
         subscriptionId: "sub-id",
-        fiscalCode: "prod-id",
+        fiscalCode: "SPNDNL80R13C555X",
+      } as RequestSignaturePayload,
+      expected: true,
+    },
+    {
+      payload: {
+        productId: "prod-id",
+        subscriptionId: "sub-id",
+        fiscalCode: "SPNDNL80R13C555X",
+        expiresAt: subDays(1, new Date()),
+      } as RequestSignaturePayload,
+      expected: false,
+    },
+    {
+      payload: {
+        productId: "prod-id",
+        subscriptionId: "sub-id",
+        fiscalCode: "SPNDNL80R13C555X",
+        expiresAt: addDays(1, new Date()),
       } as RequestSignaturePayload,
       expected: true,
     },
