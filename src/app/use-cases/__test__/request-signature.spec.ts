@@ -84,16 +84,13 @@ describe("MakeRequestSignatureList", () => {
       )
     )();
     return makeRequest.then((data) => {
-      const isValid = pipe(data, E.isRight);
-
       pipe(
         data,
         E.mapLeft((e) => {
           expect(e).toBeInstanceOf(InvalidEntityError);
         })
       );
-
-      expect(isValid).toBe(expected);
+      expect(pipe(data, E.isRight)).toBe(expected);
     });
   });
 });
