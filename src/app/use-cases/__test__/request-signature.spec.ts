@@ -1,5 +1,5 @@
 import { pipe } from "fp-ts/function";
-import { isRight as isValid } from "fp-ts/Either";
+import * as E from "fp-ts/Either";
 import * as TE from "fp-ts/TaskEither";
 import * as O from "fp-ts/Option";
 import { addDays, subDays } from "date-fns/fp";
@@ -83,8 +83,17 @@ describe("MakeRequestSignatureList", () => {
         mockAddSignatureRequest
       )
     )();
-    return makeRequest.then((data) =>
-      expect(pipe(data, isValid)).toBe(expected)
-    );
+    return makeRequest.then((data) => {
+      const isValid = pipe(data, E.isRight);
+
+      pipe(
+        data,
+        E.mapLeft((e) => {
+          expect(e).toBeInstanceOf(InvalidEntityError);
+        })
+      );
+
+      expect(isValid).toBe(expected);
+    });
   });
 });

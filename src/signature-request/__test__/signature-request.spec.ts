@@ -1,4 +1,4 @@
-import { isRight as isValid } from "fp-ts/Either";
+import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
 import { SignatureRequest } from "../signature-request";
 
@@ -31,7 +31,7 @@ describe("SignatureRequestList", () => {
       expected: true,
     },
   ])("should be valid ($#)", ({ signatureRequest, expected }) => {
-    expect(pipe(signatureRequest, SignatureRequest.decode, isValid)).toBe(
+    expect(pipe(signatureRequest, SignatureRequest.decode, E.isRight)).toBe(
       expected
     );
   });
