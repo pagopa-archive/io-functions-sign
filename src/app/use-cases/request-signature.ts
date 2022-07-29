@@ -42,17 +42,15 @@ export const makeRequestSignature =
           TE.chainW(TE.fromOption(() => productNotFoundError)),
           TE.chainEitherK(getDocumentsByMetadata)
         ),
-        expiresAt: pipe(
-          payload.expiresAt
-            ? isBefore(payload.expiresAt, new Date())
-              ? TE.left(
-                  new InvalidEntityError(
-                    "The expiration date is earlier than the current one"
-                  )
+        expiresAt: payload.expiresAt
+          ? isBefore(payload.expiresAt, new Date())
+            ? TE.left(
+                new InvalidEntityError(
+                  "The expiration date is earlier than the current one"
                 )
-              : TE.right(payload.expiresAt)
-            : TE.right(undefined)
-        ),
+              )
+            : TE.right(payload.expiresAt)
+          : TE.right(undefined),
       }),
       TE.map(
         ({ signer, documents, expiresAt }): SignatureRequest => ({
