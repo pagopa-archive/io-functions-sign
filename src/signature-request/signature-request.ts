@@ -2,13 +2,13 @@ import * as t from "io-ts";
 
 import { TaskEither } from "fp-ts/lib/TaskEither";
 import { Option } from "fp-ts/lib/Option";
+import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
 import { EntityNotFoundError } from "../error";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
-import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 
 export const SignatureRequestId = t.string;
 
