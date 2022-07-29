@@ -6,7 +6,7 @@
 
 import { ProductId } from "./ProductId";
 import { FiscalCode } from "./FiscalCode";
-import { ExpirationDateTime } from "./ExpirationDateTime";
+import { Timestamp } from "./Timestamp";
 import * as t from "io-ts";
 
 // required attributes
@@ -18,7 +18,7 @@ const RequestSignatureBodyR = t.interface({
 
 // optional attributes
 const RequestSignatureBodyO = t.partial({
-  expiryAt: ExpirationDateTime,
+  expiresAt: Timestamp,
 });
 
 export const RequestSignatureBody = t.exact(

@@ -8,7 +8,7 @@ import { EntityNotFoundError } from "../error";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
-import { ExpirationDateTime } from "./expiration-datetime";
+import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 
 export const SignatureRequestId = t.string;
 
@@ -28,7 +28,7 @@ export const SignatureRequest = t.intersection([
     documents: DocumentList,
   }),
   t.partial({
-    expiryAt: ExpirationDateTime,
+    expiresAt: UTCISODateFromString,
   }),
   Timestamps,
 ]);

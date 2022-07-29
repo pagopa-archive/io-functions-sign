@@ -16,7 +16,9 @@ export const FutureDate = new t.Type<Date, string, unknown>(
           t.string.validate(u, c),
           E.chain((s) => {
             const d = new Date(s);
-            return isBefore(d, new Date()) ? t.failure(u, c) : t.success(d);
+            return isBefore(d, new Date())
+              ? t.failure(u, c, "Date is earlier than the current one")
+              : t.success(d);
           })
         ),
   (a) => a.toISOString()
