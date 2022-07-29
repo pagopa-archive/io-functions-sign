@@ -119,16 +119,26 @@ paths:
             type: string
             format: ulid
           required: true
+        - in: path
+          name: documentId
+          schema:
+            type: string
+            format: ulid
+          required: true
       responses:
         "200":
-          description: "the upload link of the specified document"
+          description: "The upload token of the specified document"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: "#/components/schemas/UploadToken"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        default:
+          $ref: "#/components/responses/Unexpected"
+
 components:
   securitySchemes:
     SubscriptionKey:
