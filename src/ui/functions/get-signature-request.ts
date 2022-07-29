@@ -7,20 +7,24 @@ import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 
 import { createHandler } from "@pagopa/handler-kit";
-import { jsonResponse, HttpRequest, path } from "@pagopa/handler-kit/lib/http";
-import * as azure from "@pagopa/handler-kit/lib/azure";
 import {
-  BadRequestError,
-  NotFoundError,
-} from "@pagopa/handler-kit/lib/http/errors";
+  success,
+  HttpRequest,
+  path,
+  error,
+} from "@pagopa/handler-kit/lib/http";
+import * as azure from "@pagopa/handler-kit/lib/azure";
 
-import { requireSubscriptionId, errorResponse } from "../http";
+import { validate } from "@pagopa/handler-kit/lib/validation";
+import { requireSubscriptionId } from "../http";
 
 import { Subscription } from "../../signature-request/subscription";
 
 import {
   SignatureRequest,
   SignatureRequestId,
+  signatureRequestNotFoundError,
+  status,
 } from "../../signature-request/signature-request";
 import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 import { SignatureRequestDetailView } from "../api-models/SignatureRequestDetailView";
@@ -29,13 +33,8 @@ export const requireSignatureRequestId: (
   req: HttpRequest
 ) => E.Either<Error, SignatureRequest["id"]> = flow(
   path("signatureRequestId"),
-  E.fromOption(() => new BadRequestError("Missing signatureRequestId in path")),
-  E.chain(
-    flow(
-      SignatureRequestId.decode,
-      E.mapLeft(() => new BadRequestError("Invalid signatureRequestId id"))
-    )
-  )
+  E.fromOption(() => new Error("Missing signatureRequestId in path")),
+  E.chainW(validate(SignatureRequestId, "Invalid signatureRequestId in path"))
 );
 
 export const extractGetSignatureRequestPayload: RE.ReaderEither<
@@ -54,18 +53,8 @@ export const extractGetSignatureRequestPayload: RE.ReaderEither<
 
 const decodeRequest = flow(
   azure.fromHttpRequest,
+  TE.fromEither,
   TE.chainEitherK(extractGetSignatureRequestPayload)
-);
-
-const encodeSuccessResponse = flow(
-  E.fromOption(() => new NotFoundError("Signature Request not found")),
-  E.chainW(
-    flow(
-      SignatureRequestDetailView.decode,
-      E.mapLeft(() => new Error("Serialization error"))
-    )
-  ),
-  E.fold(errorResponse, jsonResponse)
 );
 
 export const run: AzureFunction = pipe(
@@ -73,8 +62,17 @@ export const run: AzureFunction = pipe(
     decodeRequest,
     ({ signatureRequestId, subscriptionId }) =>
       getSignatureRequest(signatureRequestId, subscriptionId),
-    errorResponse,
-    encodeSuccessResponse
+    error,
+    (request) =>
+      pipe(
+        request,
+        E.fromOption(() => signatureRequestNotFoundError),
+        E.map((request) => ({
+          ...request,
+          status: status(request),
+        })),
+        E.fold(error, success(SignatureRequestDetailView))
+      )
   ),
   azure.unsafeRun
 );

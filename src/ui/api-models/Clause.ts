@@ -10,7 +10,7 @@ import * as t from "io-ts";
 const ClauseR = t.interface({
   title: t.string,
 
-  required: t.boolean
+  required: t.boolean,
 });
 
 // optional attributes

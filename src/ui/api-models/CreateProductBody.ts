@@ -9,7 +9,7 @@ import * as t from "io-ts";
 
 // required attributes
 const CreateProductBodyR = t.interface({
-  documents: t.readonlyArray(DocumentMetadata, "array of DocumentMetadata")
+  documents: t.readonlyArray(DocumentMetadata, "array of DocumentMetadata"),
 });
 
 // optional attributes

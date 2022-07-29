@@ -9,11 +9,13 @@ import { DocumentMetadata } from "./DocumentMetadata";
 
 // required attributes
 const Document1R = t.interface({
-  id: t.string
+  id: t.string,
 });
 
 // optional attributes
-const Document1O = t.partial({});
+const Document1O = t.partial({
+  url: t.string,
+});
 
 export const Document1 = t.exact(
   t.intersection([Document1R, Document1O], "Document1")

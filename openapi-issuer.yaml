@@ -108,6 +108,37 @@ paths:
           $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
+  /signature-requests/{signatureRequestId}/documents/{documentId}/upload-token:
+    get:
+      operationId: getDocumentUploadToken
+      summary: Get the upload link for the specified document
+      parameters:
+        - in: path
+          name: signatureRequestId
+          schema:
+            type: string
+            format: ulid
+          required: true
+        - in: path
+          name: documentId
+          schema:
+            type: string
+            format: ulid
+          required: true
+      responses:
+        "200":
+          description: "The upload token of the specified document"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadToken"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        default:
+          $ref: "#/components/responses/Unexpected"
+
 components:
   securitySchemes:
     SubscriptionKey:
@@ -141,6 +172,19 @@ components:
           schema:
             $ref: "#/components/schemas/ProblemJson"
   schemas:
+    UploadToken:
+      type: object
+      properties:
+        documentId:
+          type: string
+          format: ulid
+        token:
+          type: string
+          format: url
+      required:
+        - documentId
+        - token
+
     ProblemJson:
       type: object
       properties:
@@ -226,6 +270,9 @@ components:
             id:
               type: string
               format: ulid
+            url:
+              type: string
+              format: uri
           required:
             - id
         - $ref: "#/components/schemas/DocumentMetadata"
@@ -271,6 +318,8 @@ components:
         id:
           type: string
           format: ulid
+        status:
+          type: string
         productId:
           type: string
           format: ulid
