@@ -29,11 +29,11 @@ const mockGetProduct: GetProduct = (id: string, subscriptionId: string) =>
       subscriptionId,
       documents: [
         {
-          title: "TITOLO DOC",
+          title: "doc-title",
           clauses: [
             {
-              title: "CLAUSOLA 1 DOC 1",
-              required: true,
+              title: "doc-tos",
+              required: false,
             },
           ],
         },
