@@ -13,8 +13,8 @@ import { id } from "../../id";
 import {
   Product,
   GetProduct,
-  ProductNotFoundError,
   getDocumentsByMetadata,
+  productNotFoundError,
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
 
@@ -36,7 +36,7 @@ export const makeRequestSignature =
         signer: getSignerByFiscalCode(payload.fiscalCode),
         documents: pipe(
           getProduct(payload.productId, payload.subscriptionId),
-          TE.chain(TE.fromOption(() => new ProductNotFoundError())),
+          TE.chainW(TE.fromOption(() => productNotFoundError)),
           TE.chainEitherK(getDocumentsByMetadata)
         ),
       }),

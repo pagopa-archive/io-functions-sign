@@ -23,6 +23,7 @@ import { Subscription } from "../../signature-request/subscription";
 import {
   SignatureRequest,
   SignatureRequestId,
+  signatureRequestNotFoundError,
   status,
 } from "../../signature-request/signature-request";
 import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
@@ -66,9 +67,7 @@ export const run: AzureFunction = pipe(
     (request) =>
       pipe(
         request,
-        E.fromOption(
-          () => new EntityNotFoundError("Signature Request Not Found")
-        ),
+        E.fromOption(() => signatureRequestNotFoundError),
         E.map((request) => ({
           ...request,
           status: status(request),

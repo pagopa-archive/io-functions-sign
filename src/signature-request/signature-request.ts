@@ -7,6 +7,7 @@ import { Timestamps } from "../timestamps";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
+import { EntityNotFoundError } from "../error";
 
 export const SignatureRequestId = t.string;
 
@@ -47,3 +48,7 @@ export type UpsertSignatureRequest = (
 export type AddSignatureRequest = (
   request: SignatureRequest
 ) => TaskEither<Error, SignatureRequest>;
+
+export const signatureRequestNotFoundError = new EntityNotFoundError(
+  "Signature request not found"
+);

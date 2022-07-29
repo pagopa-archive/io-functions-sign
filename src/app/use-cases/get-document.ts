@@ -1,8 +1,14 @@
 import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
 import { findFirst } from "fp-ts/Array";
-import { Document } from "../../signature-request/document";
-import { SignatureRequest } from "../../signature-request/signature-request";
+import {
+  Document,
+  documentNotFoundError,
+} from "../../signature-request/document";
+import {
+  SignatureRequest,
+  signatureRequestNotFoundError,
+} from "../../signature-request/signature-request";
 import { Subscription } from "../../signature-request/subscription";
 
 import { GetSignatureRequest } from "../../signature-request/signature-request";
@@ -19,13 +25,9 @@ export const makeGetDocument =
   (getSignatureRequest: GetSignatureRequest) => (payload: GetDocumentPayload) =>
     pipe(
       getSignatureRequest(payload.signatureRequestId, payload.subscriptionId),
-      TE.chainW(
-        TE.fromOption(
-          () => new EntityNotFoundError("Signature request not found")
-        )
-      ),
+      TE.chainW(TE.fromOption(() => signatureRequestNotFoundError)),
       TE.map((signatureRequest) => signatureRequest.documents),
-      TE.chainOptionK(
-        (): Error => new EntityNotFoundError("Document not found")
-      )(findFirst((document) => document.id === payload.documentId))
+      TE.chainOptionK((): Error => documentNotFoundError)(
+        findFirst((document) => document.id === payload.documentId)
+      )
     );

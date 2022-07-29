@@ -8,6 +8,7 @@ import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   GetSignatureRequest,
   SignatureRequest,
+  signatureRequestNotFoundError,
   UpsertSignatureRequest,
 } from "../../signature-request/signature-request";
 
@@ -58,11 +59,7 @@ export const makeValidateDocument =
       TE.chain(() =>
         getSignatureRequest(payload.signatureRequestId, payload.subscriptionId)
       ),
-      TE.chainW(
-        TE.fromOption(
-          () => new EntityNotFoundError("Signature request not found")
-        )
-      ),
+      TE.chainW(TE.fromOption(() => signatureRequestNotFoundError)),
       TE.chainEitherKW((request) =>
         pipe(
           request,

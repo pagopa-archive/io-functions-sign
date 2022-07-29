@@ -19,7 +19,11 @@ import { validate } from "@pagopa/handler-kit/lib/validation";
 import { ProductDetailView } from "../api-models/ProductDetailView";
 import { requireSubscriptionId } from "../http";
 
-import { Product, ProductId } from "../../signature-request/product";
+import {
+  Product,
+  ProductId,
+  productNotFoundError,
+} from "../../signature-request/product";
 import { Subscription } from "../../signature-request/subscription";
 
 import { getProduct } from "../../infra/azure/cosmos/product";
@@ -50,7 +54,7 @@ const decodeRequest = flow(
 );
 
 const encodeSuccessResponse = flow(
-  E.fromOption(() => new Error("Product not found")),
+  E.fromOption(() => productNotFoundError),
   E.fold(error, success(ProductDetailView))
 );
 

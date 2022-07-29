@@ -11,6 +11,7 @@ import { id, Id } from "../id";
 import { timestamps, Timestamps } from "../timestamps";
 import { SubscriptionId } from "./subscription";
 import { DocumentList, DocumentMetadataList } from "./document";
+import { EntityNotFoundError } from "../error";
 
 export const ProductId = Id;
 
@@ -43,9 +44,6 @@ export const getDocumentsByMetadata = flow(
   E.mapLeft(() => new Error("Invalid Product"))
 );
 
-export class ProductNotFoundError extends Error {
-  name = "ProductNotFoundError";
-  constructor() {
-    super("The specified product was not found");
-  }
-}
+export const productNotFoundError = new EntityNotFoundError(
+  "Product not found"
+);

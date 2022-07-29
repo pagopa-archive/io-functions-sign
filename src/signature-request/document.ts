@@ -5,6 +5,7 @@ import * as TE from "fp-ts/TaskEither";
 import { Id } from "../id";
 import { Timestamps } from "../timestamps";
 import { ClauseList } from "./clause";
+import { EntityNotFoundError } from "../error";
 
 export const DocumentTitle = NonEmptyString;
 
@@ -61,3 +62,7 @@ export type DocumentList = t.TypeOf<typeof DocumentList>;
 export type IsDocumentUploaded = (
   documentId: Document["id"]
 ) => TE.TaskEither<Error, boolean>;
+
+export const documentNotFoundError = new EntityNotFoundError(
+  "Document not found"
+);
