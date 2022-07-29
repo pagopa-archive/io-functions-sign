@@ -9,7 +9,7 @@ import { flow } from "fp-ts/lib/function";
 import { map } from "fp-ts/Array";
 import { id, Id } from "../id";
 import { timestamps, Timestamps } from "../timestamps";
-import { EntityNotFoundError } from "../error";
+import { EntityNotFoundError } from "../error/entity-not-found";
 import { SubscriptionId } from "./subscription";
 import { DocumentList, DocumentMetadataList } from "./document";
 
