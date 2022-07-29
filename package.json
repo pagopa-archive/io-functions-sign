@@ -1,6 +1,6 @@
 {
   "name": "io-functions-sign",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "scripts": {
     "test": "jest --verbose --coverage",
     "format": "prettier --write .",
