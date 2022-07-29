@@ -18,7 +18,7 @@ import {
   productNotFoundError,
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
-import { InvalidDateError } from "../../error/invalid-date";
+import { InvalidEntityError } from "../../error/invalid-entity";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;
@@ -46,7 +46,7 @@ export const makeRequestSignature =
           payload.expiresAt
             ? isBefore(payload.expiresAt, new Date())
               ? TE.left(
-                  new InvalidDateError(
+                  new InvalidEntityError(
                     "The expiration date is earlier than the current one"
                   )
                 )
