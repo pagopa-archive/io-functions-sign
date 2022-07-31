@@ -1,9 +1,9 @@
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { pipe } from "fp-ts/lib/function";
+import { constant, pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/TaskEither";
 import { sequenceS } from "fp-ts/lib/Apply";
 import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
-import { isBefore } from "date-fns";
+import { isAfter } from "date-fns";
 import { Subscription } from "../../signature-request/subscription";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 import {
@@ -42,15 +42,17 @@ export const makeRequestSignature =
           TE.chainW(TE.fromOption(() => productNotFoundError)),
           TE.chainEitherK(getDocumentsByMetadata)
         ),
-        expiresAt: payload.expiresAt
-          ? isBefore(payload.expiresAt, new Date())
-            ? TE.left(
-                new InvalidEntityError(
-                  "The expiration date must be in the future"
-                )
+        expiresAt: pipe(
+          TE.of(payload.expiresAt),
+          TE.filterOrElse(
+            (_) => _ === undefined || isAfter(_, Date.now()),
+            constant(
+              new InvalidEntityError(
+                "The expiration date must be in the future"
               )
-            : TE.right(payload.expiresAt)
-          : TE.right(undefined),
+            )
+          )
+        ),
       }),
       TE.map(
         ({ signer, documents, expiresAt }): SignatureRequest => ({
