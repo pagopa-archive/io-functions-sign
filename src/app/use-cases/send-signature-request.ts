@@ -20,7 +20,7 @@ import { NewMessage } from "../../ui/api-models/NewMessage";
 import { submitMessageForUser } from "../../infra/services/send-message";
 import { CreatedMessage } from "../../ui/api-models/CreatedMessage";
 
-const makeMessage = (
+const mockMakeMessage = (
   signatureRequest: SignatureRequest,
   product: Product
 ): NewMessage => ({
@@ -51,7 +51,7 @@ export const prepareMessage =
           TE.chainW(TE.fromOption(() => productNotFoundError))
         ),
       }),
-      TE.map(({ product }) => makeMessage(signatureRequest, product))
+      TE.map(({ product }) => mockMakeMessage(signatureRequest, product))
     );
 
 export const sendMessage =
