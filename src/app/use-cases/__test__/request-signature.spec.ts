@@ -1,49 +1,16 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
-import * as TE from "fp-ts/TaskEither";
-import * as O from "fp-ts/Option";
 import { addDays, subDays } from "date-fns/fp";
-import { GetSignerByFiscalCode } from "../../../signer/signer";
 import {
   makeRequestSignature,
   RequestSignaturePayload,
 } from "../request-signature";
-import { GetProduct, Product } from "../../../signature-request/product";
-import {
-  AddSignatureRequest,
-  SignatureRequest,
-} from "../../../signature-request/signature-request";
 import { InvalidEntityError } from "../../../error/invalid-entity";
-
-const mockGetSignerByFiscalCode: GetSignerByFiscalCode = (fiscalCode) =>
-  pipe(
-    fiscalCode,
-    TE.fromNullable(new InvalidEntityError("Invalid CF")),
-    TE.map((cf) => ({ id: `Signer-${cf}` }))
-  );
-
-const mockGetProduct: GetProduct = (id: string, subscriptionId: string) =>
-  TE.right(
-    O.fromNullable({
-      id,
-      subscriptionId,
-      documents: [
-        {
-          title: "doc-title",
-          clauses: [
-            {
-              title: "doc-tos",
-              required: false,
-            },
-          ],
-        },
-      ],
-    } as Product)
-  );
-
-const mockAddSignatureRequest: AddSignatureRequest = (
-  request: SignatureRequest
-) => TE.right(request);
+import {
+  mockAddSignatureRequest,
+  mockGetProduct,
+  mockGetSignerByFiscalCode,
+} from "./mock";
 
 describe("MakeRequestSignatureList", () => {
   it.each([

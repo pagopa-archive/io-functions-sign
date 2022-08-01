@@ -38,12 +38,11 @@ const makeMessage = (
   },
 });
 
-const prepareAndSendMessage =
-  (getFiscalCodeBySignerId: GetFiscalCodeBySignerId, getProduct: GetProduct) =>
-  (signatureRequest: SignatureRequest): TE.TaskEither<Error, CreatedMessage> =>
+export const prepareMessage =
+  (getProduct: GetProduct) =>
+  (signatureRequest: SignatureRequest): TE.TaskEither<Error, NewMessage> =>
     pipe(
       sequenceS(TE.ApplySeq)({
-        signer_cf: getFiscalCodeBySignerId(signatureRequest.signerId),
         product: pipe(
           getProduct(
             signatureRequest.productId,
@@ -52,11 +51,20 @@ const prepareAndSendMessage =
           TE.chainW(TE.fromOption(() => productNotFoundError))
         ),
       }),
-      TE.chain(({ signer_cf, product }) =>
-        pipe(
-          makeMessage(signatureRequest, product),
-          submitMessageForUser(signer_cf)
-        )
+      TE.map(({ product }) => makeMessage(signatureRequest, product))
+    );
+
+export const sendMessage =
+  (message: NewMessage, signerId: string) =>
+  (
+    getFiscalCodeBySignerId: GetFiscalCodeBySignerId
+  ): TE.TaskEither<Error, CreatedMessage> =>
+    pipe(
+      sequenceS(TE.ApplySeq)({
+        signer_cf: getFiscalCodeBySignerId(signerId),
+      }),
+      TE.chain(({ signer_cf }) =>
+        pipe(message, submitMessageForUser(signer_cf))
       )
     );
 
@@ -77,7 +85,15 @@ export const sendSignatureRequest =
       TE.chainW(
         flow(
           TE.fromOption(() => signatureRequestNotFoundError),
-          TE.chain(prepareAndSendMessage(getFiscalCodeBySignerId, getProduct))
+          TE.chain((sr) =>
+            pipe(
+              sr,
+              prepareMessage(getProduct),
+              TE.chain((message) =>
+                pipe(getFiscalCodeBySignerId, sendMessage(message, sr.signerId))
+              )
+            )
+          )
         )
       )
     );
