@@ -6,6 +6,7 @@
 
 import { ProductId } from "./ProductId";
 import { FiscalCode } from "./FiscalCode";
+import { Timestamp } from "./Timestamp";
 import * as t from "io-ts";
 
 // required attributes
@@ -16,7 +17,9 @@ const RequestSignatureBodyR = t.interface({
 });
 
 // optional attributes
-const RequestSignatureBodyO = t.partial({});
+const RequestSignatureBodyO = t.partial({
+  expiresAt: Timestamp,
+});
 
 export const RequestSignatureBody = t.exact(
   t.intersection(

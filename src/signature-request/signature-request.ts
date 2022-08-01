@@ -2,9 +2,10 @@ import * as t from "io-ts";
 
 import { TaskEither } from "fp-ts/lib/TaskEither";
 import { Option } from "fp-ts/lib/Option";
+import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
-import { EntityNotFoundError } from "../error";
+import { EntityNotFoundError } from "../error/entity-not-found";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
@@ -25,6 +26,9 @@ export const SignatureRequest = t.intersection([
     subscriptionId: SubscriptionId,
     productId: ProductId,
     documents: DocumentList,
+  }),
+  t.partial({
+    expiresAt: UTCISODateFromString,
   }),
   Timestamps,
 ]);
