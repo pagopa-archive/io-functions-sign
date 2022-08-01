@@ -9,7 +9,10 @@ import { last } from "fp-ts/ReadonlyNonEmptyArray";
 import { split } from "fp-ts/string";
 import { validate } from "@pagopa/handler-kit/lib/validation";
 import * as E from "fp-ts/Either";
-import { SignatureRequestId } from "../../../signature-request/signature-request";
+import {
+  SignatureRequest,
+  SignatureRequestId,
+} from "../../../signature-request/signature-request";
 import { SubscriptionId } from "../../../signature-request/subscription";
 import { DocumentId } from "../../../signature-request/document";
 import {
@@ -25,6 +28,8 @@ import { config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
 import { makeIsDocumentUploaded } from "../storage/document";
+import { createQueueClient } from "../storage/queue/client";
+import { enqueueSignatureRequest } from "../storage/queue/signature-request";
 
 const isDocumentUploadedToBlobStorage = pipe(
   config,
@@ -40,10 +45,27 @@ const isDocumentUploadedToBlobStorage = pipe(
   )
 );
 
+const enqueueRequestAwaitingSignature = (request: SignatureRequest) =>
+  pipe(
+    config,
+    E.map((config) =>
+      pipe(
+        createQueueClient(
+          config.storage.connectionString,
+          config.storage.queueName
+        ),
+        enqueueSignatureRequest(request)
+      )
+    ),
+    TE.fromEither,
+    TE.flatten
+  );
+
 const validateDocument = makeValidateDocument(
   getSignatureRequest,
   upsertSignatureRequest,
-  isDocumentUploadedToBlobStorage
+  isDocumentUploadedToBlobStorage,
+  enqueueRequestAwaitingSignature
 );
 
 export const run = pipe(

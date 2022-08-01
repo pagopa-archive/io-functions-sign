@@ -10,6 +10,7 @@ import {
   SignatureRequest,
   signatureRequestNotFoundError,
   UpsertSignatureRequest,
+  status,
 } from "../../signature-request/signature-request";
 
 import { EntityNotFoundError } from "../../error/entity-not-found";
@@ -19,6 +20,7 @@ import {
   DocumentList,
   IsDocumentUploaded,
 } from "../../signature-request/document";
+import { EnqueueSignatureRequest } from "../../infra/azure/storage/queue/signature-request";
 import { GetDocumentPayload } from "./get-document";
 
 export const addUrlToDocument =
@@ -47,7 +49,8 @@ export const makeValidateDocument =
   (
     getSignatureRequest: GetSignatureRequest,
     upsertSignatureRequest: UpsertSignatureRequest,
-    isDocumentUploaded: IsDocumentUploaded
+    isDocumentUploaded: IsDocumentUploaded,
+    enqueueRequestAwaitingSignature: EnqueueSignatureRequest
   ) =>
   (payload: ValidateDocumentPayload) =>
     pipe(
@@ -68,5 +71,10 @@ export const makeValidateDocument =
         )
       ),
       TE.chain(upsertSignatureRequest),
+      TE.chain((sr) =>
+        status(sr) === "WAIT_FOR_SIGNATURE"
+          ? enqueueRequestAwaitingSignature(sr)
+          : TE.right(sr)
+      ),
       TE.map(() => void 0)
     );
