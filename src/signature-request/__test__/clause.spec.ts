@@ -1,4 +1,4 @@
-import { isRight as isValid } from "fp-ts/Either";
+import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
 import { ClauseTitle, ClauseList } from "../clause";
 
@@ -8,7 +8,7 @@ describe("ClauseTitle", () => {
     { title: "Clause 1", expected: true },
   ])("should be valid (non empty) ($#)", ({ title, expected }) => {
     const result = ClauseTitle.decode(title);
-    expect(pipe(result, isValid)).toBe(expected);
+    expect(pipe(result, E.isRight)).toBe(expected);
   });
 });
 
@@ -25,6 +25,6 @@ describe("ClauseList", () => {
       expected: true,
     },
   ])("should always have at least one element ($#)", ({ list, expected }) => {
-    expect(pipe(list, ClauseList.decode, isValid)).toBe(expected);
+    expect(pipe(list, ClauseList.decode, E.isRight)).toBe(expected);
   });
 });

@@ -9,6 +9,7 @@ import { flow } from "fp-ts/lib/function";
 import { map } from "fp-ts/Array";
 import { id, Id } from "../id";
 import { timestamps, Timestamps } from "../timestamps";
+import { EntityNotFoundError } from "../error/entity-not-found";
 import { SubscriptionId } from "./subscription";
 import { DocumentList, DocumentMetadataList } from "./document";
 
@@ -43,9 +44,6 @@ export const getDocumentsByMetadata = flow(
   E.mapLeft(() => new Error("Invalid Product"))
 );
 
-export class ProductNotFoundError extends Error {
-  name = "ProductNotFoundError";
-  constructor() {
-    super("The specified product was not found");
-  }
-}
+export const productNotFoundError = new EntityNotFoundError(
+  "Product not found"
+);

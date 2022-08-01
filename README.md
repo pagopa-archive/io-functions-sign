@@ -87,7 +87,7 @@ You can find the `Primary Connection String` to add to your `local.settings.json
   "Values": {
     // ... other settings
     "CosmosDbConnectionString": "HERE-THE-PRIMARY-CONNECTION-STRING",
-    "CosmosDbName": "HERE-THE-COSMOS-DB-NAME"
+    "CosmosDbDatabaseName": "HERE-THE-COSMOS-DB-NAME"
   }
 }
 ```

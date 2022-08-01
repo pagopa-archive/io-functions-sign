@@ -4,6 +4,8 @@
  */
 /* eslint-disable  */
 
+import { ProductId } from "./ProductId";
+import { Timestamp } from "./Timestamp";
 import { Document } from "./Document";
 import * as t from "io-ts";
 
@@ -11,13 +13,17 @@ import * as t from "io-ts";
 const SignatureRequestDetailViewR = t.interface({
   id: t.string,
 
-  productId: t.string,
+  productId: ProductId,
 
   documents: t.readonlyArray(Document, "array of Document"),
 });
 
 // optional attributes
-const SignatureRequestDetailViewO = t.partial({});
+const SignatureRequestDetailViewO = t.partial({
+  status: t.string,
+
+  expiresAt: Timestamp,
+});
 
 export const SignatureRequestDetailView = t.exact(
   t.intersection(

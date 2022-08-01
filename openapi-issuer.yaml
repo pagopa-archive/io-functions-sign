@@ -141,12 +141,21 @@ components:
             id:
               type: string
               format: ulid
+            url:
+              type: string
+              format: uri
           required:
             - id
         - $ref: "#/components/schemas/DocumentMetadata"
     ProductId:
       type: string
       format: ulid
+    Timestamp:
+      type: string
+      format: UTCISODateFromString
+      description: A date-time field in ISO-8601 format and UTC timezone.
+      x-import: "@pagopa/ts-commons/lib/dates"
+      example: "2018-10-13T00:00:00.000Z"
     CreateProductBody:
       type: object
       properties:
@@ -186,9 +195,12 @@ components:
         id:
           type: string
           format: ulid
-        productId:
+        status:
           type: string
-          format: ulid
+        productId:
+          $ref: "#/components/schemas/ProductId"
+        expiresAt:
+          $ref: "#/components/schemas/Timestamp"
         documents:
           type: array
           items:

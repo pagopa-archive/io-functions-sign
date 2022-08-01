@@ -7,17 +7,23 @@ import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 
 import { createHandler } from "@pagopa/handler-kit";
-import { jsonResponse, HttpRequest, path } from "@pagopa/handler-kit/lib/http";
-import * as azure from "@pagopa/handler-kit/lib/azure";
 import {
-  BadRequestError,
-  NotFoundError,
-} from "@pagopa/handler-kit/lib/http/errors";
+  success,
+  HttpRequest,
+  path,
+  error,
+} from "@pagopa/handler-kit/lib/http";
+import * as azure from "@pagopa/handler-kit/lib/azure";
 
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import { ProductDetailView } from "../api-models/ProductDetailView";
-import { requireSubscriptionId, errorResponse } from "../http";
+import { requireSubscriptionId } from "../http";
 
-import { Product, ProductId } from "../../signature-request/product";
+import {
+  Product,
+  ProductId,
+  productNotFoundError,
+} from "../../signature-request/product";
 import { Subscription } from "../../signature-request/subscription";
 
 import { getProduct } from "../../infra/azure/cosmos/product";
@@ -26,13 +32,8 @@ export const requireProductId: (
   req: HttpRequest
 ) => E.Either<Error, Product["id"]> = flow(
   path("productId"),
-  E.fromOption(() => new BadRequestError("Missing productId in path")),
-  E.chain(
-    flow(
-      ProductId.decode,
-      E.mapLeft(() => new BadRequestError("Invalid productId id"))
-    )
-  )
+  E.fromOption(() => new Error("Missing productId in path")),
+  E.chainW(validate(ProductId, "Invalid ProductId in path"))
 );
 
 export const extractGetProductPayload: RE.ReaderEither<
@@ -48,25 +49,20 @@ export const extractGetProductPayload: RE.ReaderEither<
 
 const decodeRequest = flow(
   azure.fromHttpRequest,
+  TE.fromEither,
   TE.chainEitherK(extractGetProductPayload)
 );
 
 const encodeSuccessResponse = flow(
-  E.fromOption(() => new NotFoundError("Product not found")),
-  E.chainW(
-    flow(
-      ProductDetailView.decode,
-      E.mapLeft(() => new Error("Serialization error"))
-    )
-  ),
-  E.fold(errorResponse, jsonResponse)
+  E.fromOption(() => productNotFoundError),
+  E.fold(error, success(ProductDetailView))
 );
 
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
     ({ productId, subscriptionId }) => getProduct(productId, subscriptionId),
-    errorResponse,
+    error,
     encodeSuccessResponse
   ),
   azure.unsafeRun

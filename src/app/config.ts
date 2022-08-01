@@ -11,9 +11,15 @@ import {
   ServiceConfig,
 } from "../infra/services/config";
 
+import {
+  StorageConfig,
+  getStorageConfigFromEnvironment,
+} from "../infra/azure/storage/config";
+
 export const Config = t.type({
   cosmos: CosmosConfig,
   service: ServiceConfig,
+  storage: StorageConfig,
 });
 
 export type Config = t.TypeOf<typeof Config>;
@@ -25,6 +31,7 @@ export const getConfigFromEnvironment: RE.ReaderEither<
 > = sequenceS(RE.Apply)({
   cosmos: getCosmosConfigFromEnvironment,
   service: getServiceConfigFromEnvironment,
+  storage: getStorageConfigFromEnvironment,
 });
 
 export const config = getConfigFromEnvironment(process.env);

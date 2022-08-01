@@ -1,10 +1,11 @@
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { pipe } from "fp-ts/lib/function";
+import { constant, pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/TaskEither";
 import { sequenceS } from "fp-ts/lib/Apply";
+import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
+import { isAfter } from "date-fns";
 import { Subscription } from "../../signature-request/subscription";
 import { GetSignerByFiscalCode } from "../../signer/signer";
-
 import {
   SignatureRequest,
   AddSignatureRequest,
@@ -13,12 +14,14 @@ import { id } from "../../id";
 import {
   Product,
   GetProduct,
-  ProductNotFoundError,
   getDocumentsByMetadata,
+  productNotFoundError,
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
+import { InvalidEntityError } from "../../error/invalid-entity";
 
 export type RequestSignaturePayload = {
+  expiresAt?: UTCISODateFromString;
   subscriptionId: Subscription["id"];
   fiscalCode: FiscalCode;
   productId: Product["id"];
@@ -36,13 +39,25 @@ export const makeRequestSignature =
         signer: getSignerByFiscalCode(payload.fiscalCode),
         documents: pipe(
           getProduct(payload.productId, payload.subscriptionId),
-          TE.chain(TE.fromOption(() => new ProductNotFoundError())),
+          TE.chainW(TE.fromOption(() => productNotFoundError)),
           TE.chainEitherK(getDocumentsByMetadata)
+        ),
+        expiresAt: pipe(
+          TE.of(payload.expiresAt),
+          TE.filterOrElse(
+            (_) => _ === undefined || isAfter(_, Date.now()),
+            constant(
+              new InvalidEntityError(
+                "The expiration date must be in the future"
+              )
+            )
+          )
         ),
       }),
       TE.map(
-        ({ signer, documents }): SignatureRequest => ({
+        ({ signer, documents, expiresAt }): SignatureRequest => ({
           id: id(),
+          expiresAt,
           subscriptionId: payload.subscriptionId,
           productId: payload.productId,
           signerId: signer.id,
