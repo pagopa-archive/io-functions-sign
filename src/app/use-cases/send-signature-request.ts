@@ -9,7 +9,7 @@ import {
   signatureRequestNotFoundError,
 } from "../../signature-request/signature-request";
 
-import { SendSignatureRequestBody } from "../../infra/azure/functions/send-signature-request";
+import { SendSignatureRequestBody } from "../../infra/azure/functions/send-signature-request-message";
 import {
   GetProduct,
   Product,

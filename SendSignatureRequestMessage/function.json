@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "send-signature-request",
+      "route": "send-signature-request-message",
       "methods": ["post"]
     },
     {
