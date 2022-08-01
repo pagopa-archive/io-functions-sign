@@ -74,9 +74,7 @@ export const sendSignatureRequest =
     getFiscalCodeBySignerId: GetFiscalCodeBySignerId,
     getProduct: GetProduct
   ) =>
-  (
-    sendSignatureRequestBody: SendSignatureRequestBody
-  ): TE.TaskEither<Error, CreatedMessage> =>
+  (sendSignatureRequestBody: SendSignatureRequestBody) =>
     pipe(
       getSignatureRequest(
         sendSignatureRequestBody.signatureRequestId,
@@ -95,5 +93,6 @@ export const sendSignatureRequest =
             )
           )
         )
-      )
+      ),
+      TE.map(() => void 0)
     );

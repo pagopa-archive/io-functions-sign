@@ -28,6 +28,6 @@ export const getStorageConfigFromEnvironment: RE.ReaderEither<
   ),
   queueName: pipe(
     readFromNodeEnv("QueueName"),
-    RE.orElse(() => RE.right("requests-waiting-for-signature"))
+    RE.orElse(() => RE.right("waiting-for-signature"))
   ),
 });

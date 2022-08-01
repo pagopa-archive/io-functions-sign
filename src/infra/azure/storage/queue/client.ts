@@ -14,7 +14,11 @@ export const createQueueClient = (
 
 export const enqueueMessage = (queueClient: QueueClient) => (message: string) =>
   TE.tryCatch(
-    () => pipe(message, btoa, queueClient.sendMessage),
+    () =>
+      pipe(
+        Buffer.from(message, "utf8").toString("base64"),
+        queueClient.sendMessage
+      ),
     () => new Error("Message cannot be queued")
   );
 

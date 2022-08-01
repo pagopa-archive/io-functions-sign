@@ -3,30 +3,20 @@ import * as t from "io-ts";
 import { AzureFunction } from "@azure/functions";
 
 import { createHandler } from "@pagopa/handler-kit";
-import {
-  body,
-  created,
-  error,
-  HttpRequest,
-} from "@pagopa/handler-kit/lib/http";
+
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
-import { pipe, flow } from "fp-ts/lib/function";
+import { pipe, flow, identity } from "fp-ts/lib/function";
 import * as S from "fp-ts/lib/string";
-import { sequenceS } from "fp-ts/lib/Apply";
 
-import * as RE from "fp-ts/lib/ReaderEither";
 import * as TE from "fp-ts/lib/TaskEither";
-import * as E from "fp-ts/lib/Either";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { validate } from "@pagopa/handler-kit/lib/validation";
 import { SignatureRequestId } from "../../../signature-request/signature-request";
 import { sendSignatureRequest } from "../../../app/use-cases/send-signature-request";
 import { SubscriptionId } from "../../../signature-request/subscription";
 import { getSignatureRequest } from "../cosmos/signature-request";
 import { GetFiscalCodeBySignerId } from "../../../signer/signer";
 import { getProduct } from "../cosmos/product";
-import { CreatedMessage } from "../../../ui/api-models/CreatedMessage";
 
 const mockGetFiscalCodeBySignerId: GetFiscalCodeBySignerId = (signerId) =>
   pipe(
@@ -51,42 +41,13 @@ export type SendSignatureRequestBody = t.TypeOf<
   typeof SendSignatureRequestBody
 >;
 
-const getSignatureRequestBody = (
-  req: HttpRequest
-): E.Either<Error, SendSignatureRequestBody> =>
-  pipe(
-    req,
-    body(SendSignatureRequestBody),
-    E.chain(
-      validate(
-        SendSignatureRequestBody,
-        "Unable to decode the signature request body"
-      )
-    )
-  );
-
-export const extractSignatureRequestPayload: RE.ReaderEither<
-  HttpRequest,
-  Error,
-  { sendSignatureRequestBody: SendSignatureRequestBody }
-> = pipe(
-  sequenceS(RE.Apply)({
-    sendSignatureRequestBody: getSignatureRequestBody,
-  })
-);
-
 const decodeRequest = flow(
-  azure.fromHttpRequest,
+  azure.fromQueueMessage(SendSignatureRequestBody),
   TE.fromEither,
-  TE.chainEitherK(extractSignatureRequestPayload)
+  TE.mapLeft(() => new Error("Invalid send signature request body"))
 );
 
 export const run: AzureFunction = pipe(
-  createHandler(
-    decodeRequest,
-    ({ sendSignatureRequestBody }) => sendSignature(sendSignatureRequestBody),
-    error,
-    created(CreatedMessage)
-  ),
+  createHandler(decodeRequest, (_) => sendSignature(_), identity, identity),
   azure.unsafeRun
 );
