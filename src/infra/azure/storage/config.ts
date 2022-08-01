@@ -11,6 +11,7 @@ import { readFromNodeEnv } from "../../../app/env";
 export const StorageConfig = t.type({
   connectionString: t.string,
   issuerBlobContainerName: t.string,
+  queueName: t.string,
 });
 
 export type StorageConfig = t.TypeOf<typeof StorageConfig>;
@@ -24,5 +25,9 @@ export const getStorageConfigFromEnvironment: RE.ReaderEither<
   issuerBlobContainerName: pipe(
     readFromNodeEnv("IssuerBlobContainerName"),
     RE.orElse(() => RE.right("documents"))
+  ),
+  queueName: pipe(
+    readFromNodeEnv("QueueName"),
+    RE.orElse(() => RE.right("documents-ready"))
   ),
 });

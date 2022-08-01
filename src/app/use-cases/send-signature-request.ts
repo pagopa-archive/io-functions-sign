@@ -79,7 +79,7 @@ export const sendSignatureRequest =
   ): TE.TaskEither<Error, CreatedMessage> =>
     pipe(
       getSignatureRequest(
-        sendSignatureRequestBody.id,
+        sendSignatureRequestBody.signatureRequestId,
         sendSignatureRequestBody.subscriptionId
       ),
       TE.chainW(

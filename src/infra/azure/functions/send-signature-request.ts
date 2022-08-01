@@ -44,7 +44,7 @@ const sendSignature = sendSignatureRequest(
 );
 
 export const SendSignatureRequestBody = t.type({
-  id: SignatureRequestId,
+  signatureRequestId: SignatureRequestId,
   subscriptionId: SubscriptionId,
 });
 export type SendSignatureRequestBody = t.TypeOf<

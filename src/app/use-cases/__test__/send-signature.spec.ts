@@ -14,7 +14,7 @@ describe("MakeRequestSignatureList", () => {
     { payload: {}, expected: false },
     {
       payload: {
-        id: "sr-id",
+        signatureRequestId: "sr-id",
         subscriptionId: "sub-id",
       },
       expected: true,
@@ -26,7 +26,7 @@ describe("MakeRequestSignatureList", () => {
       E.mapLeft(constant(new InvalidEntityError("Invalid payload"))),
       E.map((pl) =>
         pipe(
-          mockGetSignatureRequest(pl.id, pl.subscriptionId),
+          mockGetSignatureRequest(pl.signatureRequestId, pl.subscriptionId),
           TE.chainW(
             flow(
               TE.fromOption(() => signatureRequestNotFoundError),
