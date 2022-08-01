@@ -12,12 +12,11 @@ export const createQueueClient = (
   return queueServiceClient.getQueueClient(queueName);
 };
 
-export const sendQueueMessage =
-  (queueClient: QueueClient) => (message: string) =>
-    TE.tryCatch(
-      () => pipe(message, btoa, queueClient.sendMessage),
-      () => new Error("Message cannot be queued")
-    );
+export const enqueueMessage = (queueClient: QueueClient) => (message: string) =>
+  TE.tryCatch(
+    () => pipe(message, btoa, queueClient.sendMessage),
+    () => new Error("Message cannot be queued")
+  );
 
 export const queueExists = (queueClient: QueueClient) =>
   TE.tryCatch(

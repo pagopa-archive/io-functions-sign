@@ -4,7 +4,7 @@ import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
 
 import { SignatureRequest } from "../../../../signature-request/signature-request";
-import { sendQueueMessage } from "./client";
+import { enqueueMessage } from "./client";
 
 export type EnqueueSignatureRequest = (
   request: SignatureRequest
@@ -18,6 +18,6 @@ export const enqueueSignatureRequest =
         subscriptionID: request.subscriptionId,
       },
       JSON.stringify,
-      sendQueueMessage(client),
+      enqueueMessage(client),
       TE.map(() => request)
     );
