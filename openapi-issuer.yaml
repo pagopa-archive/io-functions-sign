@@ -150,12 +150,6 @@ components:
     ProductId:
       type: string
       format: ulid
-    Timestamp:
-      type: string
-      format: UTCISODateFromString
-      description: A date-time field in ISO-8601 format and UTC timezone.
-      x-import: "@pagopa/ts-commons/lib/dates"
-      example: "2018-10-13T00:00:00.000Z"
     CreateProductBody:
       type: object
       properties:
@@ -186,6 +180,8 @@ components:
           $ref: "#/components/schemas/ProductId"
         fiscalCode:
           $ref: "./components.yaml#/components/schemas/FiscalCode"
+        expiresAt:
+          $ref: "./components.yaml#/components/schemas/Timestamp"
       required:
         - productId
         - fiscalCode
@@ -200,7 +196,7 @@ components:
         productId:
           $ref: "#/components/schemas/ProductId"
         expiresAt:
-          $ref: "#/components/schemas/Timestamp"
+          $ref: "./components.yaml#/components/schemas/Timestamp"
         documents:
           type: array
           items:

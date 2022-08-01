@@ -1,16 +1,20 @@
 import * as TE from "fp-ts/TaskEither";
-import { pipe } from "fp-ts/function";
-import { flow } from "fp-ts/function";
+import { pipe, flow } from "fp-ts/function";
 
 import { sequenceS } from "fp-ts/lib/Apply";
 
 import {
   GetSignatureRequest,
   SignatureRequest,
+  signatureRequestNotFoundError,
 } from "../../signature-request/signature-request";
 
 import { SendSignatureRequestBody } from "../../infra/azure/functions/send-signature-request";
-import { GetProduct, Product } from "../../signature-request/product";
+import {
+  GetProduct,
+  Product,
+  productNotFoundError,
+} from "../../signature-request/product";
 import { GetFiscalCodeBySignerId } from "../../signer/signer";
 import { NewMessage } from "../../ui/api-models/NewMessage";
 import { submitMessageForUser } from "../../infra/services/send-message";
@@ -22,7 +26,15 @@ const makeMessage = (
 ): NewMessage => ({
   content: {
     subject: `Richiesta di firma`,
-    markdown: `---\n- SubscriptionId: \`${signatureRequest.subscriptionId}\`\n- SignatureRequestId: \`${signatureRequest.id}\`\n- ProductId: \`${product.id}\`\n- n. documents: \`${signatureRequest.documents.length}\`\n `,
+    markdown: `---\n- SubscriptionId: \`${
+      signatureRequest.subscriptionId
+    }\`\n- SignatureRequestId: \`${signatureRequest.id}\`\n- ProductId: \`${
+      product.id
+    }\`\n- n. documents: \`${
+      signatureRequest.documents.length
+    }\`\n- expiresAt: \`${
+      signatureRequest.expiresAt ? signatureRequest.expiresAt : "Not defined"
+    }\`\n `,
   },
 });
 
@@ -37,7 +49,7 @@ const prepareAndSendMessage =
             signatureRequest.productId,
             signatureRequest.subscriptionId
           ),
-          TE.chain(TE.fromOption(() => new Error("Product not found")))
+          TE.chainW(TE.fromOption(() => productNotFoundError))
         ),
       }),
       TE.chain(({ signer_cf, product }) =>
@@ -62,9 +74,9 @@ export const sendSignatureRequest =
         sendSignatureRequestBody.id,
         sendSignatureRequestBody.subscriptionId
       ),
-      TE.chain(
+      TE.chainW(
         flow(
-          TE.fromOption(() => new Error("Signature Request not found")),
+          TE.fromOption(() => signatureRequestNotFoundError),
           TE.chain(prepareAndSendMessage(getFiscalCodeBySignerId, getProduct))
         )
       )
