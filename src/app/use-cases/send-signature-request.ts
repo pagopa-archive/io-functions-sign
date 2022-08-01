@@ -33,7 +33,7 @@ const mockMakeMessage = (
     }\`\n- n. documents: \`${
       signatureRequest.documents.length
     }\`\n- expiresAt: \`${
-      signatureRequest.expiresAt ? signatureRequest.expiresAt : "Not defined"
+      signatureRequest.expiresAt ? signatureRequest.expiresAt : "never"
     }\`\n `,
   },
 });
