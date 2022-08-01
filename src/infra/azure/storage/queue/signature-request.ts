@@ -13,7 +13,10 @@ export type EnqueueSignatureRequest = (
 export const enqueueSignatureRequest =
   (request: SignatureRequest) => (client: QueueClient) =>
     pipe(
-      request,
+      {
+        signatureRequestId: request.id,
+        subscriptionID: request.subscriptionId,
+      },
       JSON.stringify,
       sendQueueMessage(client),
       TE.map(() => request)

@@ -1,4 +1,5 @@
 import { QueueServiceClient, QueueClient } from "@azure/storage-queue";
+import { pipe } from "fp-ts/lib/function";
 
 import * as TE from "fp-ts/TaskEither";
 
@@ -14,7 +15,7 @@ export const createQueueClient = (
 export const sendQueueMessage =
   (queueClient: QueueClient) => (message: string) =>
     TE.tryCatch(
-      () => queueClient.sendMessage(message),
+      () => pipe(message, btoa, queueClient.sendMessage),
       () => new Error("Message cannot be queued")
     );
 
