@@ -15,7 +15,7 @@ export const enqueueSignatureRequest =
     pipe(
       {
         signatureRequestId: request.id,
-        subscriptionID: request.subscriptionId,
+        subscriptionId: request.subscriptionId,
       },
       JSON.stringify,
       enqueueMessage(client),

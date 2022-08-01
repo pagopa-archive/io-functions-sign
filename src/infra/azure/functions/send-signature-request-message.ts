@@ -48,6 +48,11 @@ const decodeRequest = flow(
 );
 
 export const run: AzureFunction = pipe(
-  createHandler(decodeRequest, (_) => sendSignature(_), identity, identity),
+  createHandler(
+    decodeRequest,
+    (dequeuedMessage) => sendSignature(dequeuedMessage),
+    identity,
+    identity
+  ),
   azure.unsafeRun
 );
