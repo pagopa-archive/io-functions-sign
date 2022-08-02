@@ -5,13 +5,13 @@
 Prerequisites:
 
 - [Node.js](https://nodejs.org/) (`16.x`)
-- [npm](https://www.npmjs.com) (`8.x`)
+- [yarn](https://yarnpkg.com/) (`1.x`)
 - [Docker desktop](https://www.docker.com/products/docker-desktop/) or equivalent container runtime
 
-Install dependencies using `npm`
+Install dependencies using `yarn`
 
 ```sh
-npm install
+yarn install
 ```
 
 And create the `local.settings.json` file with the following content
@@ -26,16 +26,18 @@ And create the `local.settings.json` file with the following content
 }
 ```
 
-Now you can build the TypeScript sources using
+Now you need to generate openapi types and then build the TypeScript sources:
 
 ```sh
-npm run build
+yarn generate:issuer-api-models
+yarn generate:message-api-models
+yarn build
 ```
 
 And run the project with
 
 ```sh
-npm start
+yarn start
 ```
 
 ### Message services integration
