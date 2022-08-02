@@ -49,6 +49,7 @@ jobs:
     continueOnError: false
     steps:
       - template: templates/node-job-setup/template.yaml@pagopaCommons
+      - script: yarn generate:issuer-api-models
       - script: yarn tsc --noEmit
         displayName: "Run TypeScript compiler"
   - job: lint
