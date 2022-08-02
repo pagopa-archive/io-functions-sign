@@ -877,10 +877,10 @@
   resolved "https://registry.npmjs.org/@opentelemetry/api/-/api-1.1.0.tgz"
   integrity sha512-hf+3bwuBwtXsugA2ULBc95qxrOqP2pOekLz34BJhcAKawt94vfeNyUKpYc0lZQ/3sCP6LqRa7UAdHA7i5UODzQ==
 
-"@pagopa/danger-plugin@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/@pagopa/danger-plugin/-/danger-plugin-2.0.1.tgz"
-  integrity sha512-PoZP/+EkPxI2G5ql6TMZMiVRYeMIk8/yWXX1WYpdFZaLKaTSYzcdH3za3WT2/DX+rYqmKqFx4ARnxxoww6Aj7w==
+"@pagopa/danger-plugin@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@pagopa/danger-plugin/-/danger-plugin-2.0.2.tgz#a011d5ab088675169b974d712485a0adbc507c65"
+  integrity sha512-1QzMBWEXv6j5CeVI1yRku2kEFIpga7IGkQRrGnq5XECP9b8Hk31NHJaXxusI7mTBybnJNu4OgtslFqp3VKKmPA==
   dependencies:
     "@pagopa/ts-commons" "^10.4.0"
     auto-changelog "^2.4.0"
