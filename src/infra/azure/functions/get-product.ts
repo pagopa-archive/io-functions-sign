@@ -16,17 +16,17 @@ import {
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import { validate } from "@pagopa/handler-kit/lib/validation";
-import { ProductDetailView } from "../api-models/ProductDetailView";
-import { requireSubscriptionId } from "../http";
+import { ProductDetailView } from "../../../ui/api-models/ProductDetailView";
+import { requireSubscriptionId } from "../../../ui/http";
 
 import {
   Product,
   ProductId,
   productNotFoundError,
-} from "../../signature-request/product";
-import { Subscription } from "../../signature-request/subscription";
+} from "../../../signature-request/product";
+import { Subscription } from "../../../signature-request/subscription";
 
-import { getProduct } from "../../infra/azure/cosmos/product";
+import { getProduct } from "../cosmos/product";
 
 export const requireProductId: (
   req: HttpRequest

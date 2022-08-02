@@ -16,18 +16,18 @@ import {
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import { validate } from "@pagopa/handler-kit/lib/validation";
-import { requireSubscriptionId } from "../http";
+import { requireSubscriptionId } from "../../../ui/http";
 
-import { Subscription } from "../../signature-request/subscription";
+import { Subscription } from "../../../signature-request/subscription";
 
 import {
   SignatureRequest,
   SignatureRequestId,
   signatureRequestNotFoundError,
   status,
-} from "../../signature-request/signature-request";
-import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
-import { SignatureRequestDetailView } from "../api-models/SignatureRequestDetailView";
+} from "../../../signature-request/signature-request";
+import { getSignatureRequest } from "../cosmos/signature-request";
+import { SignatureRequestDetailView } from "../../../ui/api-models/SignatureRequestDetailView";
 
 export const requireSignatureRequestId: (
   req: HttpRequest

@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../lib/ui/functions/create-product.js"
+  "scriptFile": "../lib/infra/azure/functions/create-product.js"
 }

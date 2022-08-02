@@ -20,14 +20,14 @@ import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   CreateProductPayload,
   makeCreateProduct,
-} from "../../app/use-cases/create-product";
+} from "../../../app/use-cases/create-product";
 
-import { requireSubscriptionId } from "../http";
-import { CreateProductBody } from "../api-models/CreateProductBody";
+import { requireSubscriptionId } from "../../../ui/http";
+import { CreateProductBody } from "../../../ui/api-models/CreateProductBody";
 
-import { DocumentMetadataList } from "../../signature-request/document";
-import { addProduct } from "../../infra/azure/cosmos/product";
-import { ProductDetailView } from "../api-models/ProductDetailView";
+import { DocumentMetadataList } from "../../../signature-request/document";
+import { addProduct } from "../cosmos/product";
+import { ProductDetailView } from "../../../ui/api-models/ProductDetailView";
 
 const createProduct = makeCreateProduct(addProduct);
 
