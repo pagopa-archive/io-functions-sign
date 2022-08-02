@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "CosmosDbConnectionString": "COSMOS_DB_CONNECTION_STRING",
+    "CosmosDbDatabaseName": "COSMOS_DB_NAME",
+    "StorageAccountConnectionString": "STORAGE_ACCOUNT_CONNECTION_STRING",
+    "IssuerBlobContainerName": "BLOB_STORAGE_CONTAINER_NAME",
+    "QueueName": "QUEUE_STORAGE_NAME",
+    "IOApiBasePath": "IO_SERVICES_API_URL",
+    "IOApiSubscriptionKey": "IO_SERVICES_API_SUBSCRIPTION_KEY"
+  }
+}
