@@ -16,6 +16,12 @@ import { getSignatureRequest } from "../cosmos/signature-request";
 import { GetFiscalCodeBySignerId } from "../../../signer/signer";
 import { getProduct } from "../cosmos/product";
 
+/*
+ * Creates the content of the message to be sent to the IO app relating to the signature request.
+ * TODO: A mock of the message containing debug information is currently used.
+ * The message template has yet to be defined!
+ */
+
 const mockGetFiscalCodeBySignerId: GetFiscalCodeBySignerId = (signerId) =>
   pipe(
     signerId,
@@ -25,6 +31,9 @@ const mockGetFiscalCodeBySignerId: GetFiscalCodeBySignerId = (signerId) =>
     TE.mapLeft(() => new Error("Invalid fiscal code"))
   );
 
+/*
+ * Sends a message to the IO app containing information about the signature request.
+ */
 const sendSignature = sendSignatureRequest(
   getSignatureRequest,
   mockGetFiscalCodeBySignerId,

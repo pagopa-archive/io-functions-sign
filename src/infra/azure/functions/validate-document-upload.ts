@@ -57,6 +57,12 @@ const enqueueRequestAwaitingSignature = (request: SignatureRequest) =>
     TE.flatten
   );
 
+/*
+ * Validates the documents uploaded by the issuer by populating the database with the url in case of success.
+ * When all the documents have been uploaded and validated, it is necessary to communicate to other services
+ * that the signature request is ready to be signed. This communication takes place by writing the signature request
+ * to a queue storage.
+ */
 const validateDocument = makeValidateDocument(
   getSignatureRequest,
   upsertSignatureRequest,
