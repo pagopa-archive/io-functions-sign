@@ -1,16 +1,14 @@
 import * as t from "io-ts";
 
-import { AzureFunction } from "@azure/functions";
-
 import { createHandler } from "@pagopa/handler-kit";
-
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
-import { pipe, flow, identity } from "fp-ts/lib/function";
+import { pipe, identity } from "fp-ts/lib/function";
 import * as S from "fp-ts/lib/string";
-
 import * as TE from "fp-ts/lib/TaskEither";
+
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import { SignatureRequestId } from "../../../signature-request/signature-request";
 import { sendSignatureRequest } from "../../../app/use-cases/send-signature-request";
 import { SubscriptionId } from "../../../signature-request/subscription";
@@ -41,15 +39,17 @@ export type SendSignatureRequestBody = t.TypeOf<
   typeof SendSignatureRequestBody
 >;
 
-const decodeRequest = flow(
-  azure.fromQueueMessage(SendSignatureRequestBody),
-  TE.fromEither,
-  TE.mapLeft(() => new Error("Invalid send signature request body"))
-);
-
-export const run: AzureFunction = pipe(
+export const run = pipe(
   createHandler(
-    decodeRequest,
+    (ctx) =>
+      pipe(
+        ctx.bindingData.queueTrigger,
+        validate(
+          SendSignatureRequestBody,
+          "Unable to validate the Queue Message schema"
+        ),
+        TE.fromEither
+      ),
     (dequeuedMessage) => sendSignature(dequeuedMessage),
     identity,
     identity

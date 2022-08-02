@@ -34,7 +34,7 @@ const mockMakeMessage = (
       signatureRequest.documents.length
     }\`\n- expiresAt: \`${
       signatureRequest.expiresAt ? signatureRequest.expiresAt : "never"
-    }\`\n `,
+    }\`\n- docs: \`${JSON.stringify(signatureRequest.documents)}\`\n `,
   },
 });
 
