@@ -1,8 +1,7 @@
 import * as TE from "fp-ts/TaskEither";
 import { pipe, flow } from "fp-ts/function";
 
-import { sequenceS } from "fp-ts/lib/Apply";
-
+import { NewMessage } from "@pagopa/io-functions-services-sdk/NewMessage";
 import {
   GetSignatureRequest,
   SignatureRequest,
@@ -16,9 +15,8 @@ import {
   productNotFoundError,
 } from "../../signature-request/product";
 import { GetFiscalCodeBySignerId } from "../../signer/signer";
-import { NewMessage } from "../../ui/api-models/NewMessage";
-import { submitMessageForUser } from "../../infra/services/send-message";
-import { CreatedMessage } from "../../ui/api-models/CreatedMessage";
+
+import { submitMessageForUser } from "../../infra/IOApiClient/send-message";
 
 const mockMakeMessage = (
   signatureRequest: SignatureRequest,
@@ -42,30 +40,9 @@ export const prepareMessage =
   (getProduct: GetProduct) =>
   (signatureRequest: SignatureRequest): TE.TaskEither<Error, NewMessage> =>
     pipe(
-      sequenceS(TE.ApplySeq)({
-        product: pipe(
-          getProduct(
-            signatureRequest.productId,
-            signatureRequest.subscriptionId
-          ),
-          TE.chainW(TE.fromOption(() => productNotFoundError))
-        ),
-      }),
-      TE.map(({ product }) => mockMakeMessage(signatureRequest, product))
-    );
-
-export const sendMessage =
-  (message: NewMessage, signerId: string) =>
-  (
-    getFiscalCodeBySignerId: GetFiscalCodeBySignerId
-  ): TE.TaskEither<Error, CreatedMessage> =>
-    pipe(
-      sequenceS(TE.ApplySeq)({
-        signer_cf: getFiscalCodeBySignerId(signerId),
-      }),
-      TE.chain(({ signer_cf }) =>
-        pipe(message, submitMessageForUser(signer_cf))
-      )
+      getProduct(signatureRequest.productId, signatureRequest.subscriptionId),
+      TE.chainW(TE.fromOption(() => productNotFoundError)),
+      TE.map((product) => mockMakeMessage(signatureRequest, product))
     );
 
 export const sendSignatureRequest =
@@ -83,12 +60,16 @@ export const sendSignatureRequest =
       TE.chainW(
         flow(
           TE.fromOption(() => signatureRequestNotFoundError),
-          TE.chain((sr) =>
+          TE.chain((signatureRequest) =>
             pipe(
-              sr,
+              signatureRequest,
               prepareMessage(getProduct),
               TE.chain((message) =>
-                pipe(getFiscalCodeBySignerId, sendMessage(message, sr.signerId))
+                pipe(
+                  signatureRequest.signerId,
+                  getFiscalCodeBySignerId,
+                  TE.chain(submitMessageForUser(message))
+                )
               )
             )
           )

@@ -7,9 +7,9 @@ import {
   getCosmosConfigFromEnvironment,
 } from "../infra/azure/cosmos/config";
 import {
-  getServiceConfigFromEnvironment,
-  ServiceConfig,
-} from "../infra/services/config";
+  getIOApiClientConfigFromEnvironment,
+  IOApiClientConfig,
+} from "../infra/IOApiClient/config";
 
 import {
   StorageConfig,
@@ -18,7 +18,7 @@ import {
 
 export const Config = t.type({
   cosmos: CosmosConfig,
-  service: ServiceConfig,
+  ioapi: IOApiClientConfig,
   storage: StorageConfig,
 });
 
@@ -30,7 +30,7 @@ export const getConfigFromEnvironment: RE.ReaderEither<
   Config
 > = sequenceS(RE.Apply)({
   cosmos: getCosmosConfigFromEnvironment,
-  service: getServiceConfigFromEnvironment,
+  ioapi: getIOApiClientConfigFromEnvironment,
   storage: getStorageConfigFromEnvironment,
 });
 

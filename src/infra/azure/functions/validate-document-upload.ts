@@ -45,6 +45,10 @@ const isDocumentUploadedToBlobStorage = pipe(
   )
 );
 
+/*
+ * Instantiates a connection with a Storage Queue and queues a message in JSON format
+ * containing the information relating to the signature request.
+ */
 const enqueueRequestAwaitingSignature = (request: SignatureRequest) =>
   pipe(
     config,

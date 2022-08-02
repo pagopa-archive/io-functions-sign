@@ -10,7 +10,7 @@ import * as t from "io-ts";
 const UploadTokenR = t.interface({
   documentId: t.string,
 
-  token: t.string,
+  token: t.string
 });
 
 // optional attributes

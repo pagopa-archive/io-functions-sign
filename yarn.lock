@@ -943,6 +943,15 @@
     unified "^9.2.2"
     winston "^3.1.0"
 
+"@pagopa/io-functions-services-sdk@^3.12.1":
+  version "3.12.1"
+  resolved "https://registry.yarnpkg.com/@pagopa/io-functions-services-sdk/-/io-functions-services-sdk-3.12.1.tgz#9fdb92aa29a4c37a5bae71f28bda9f4c87f2ecb6"
+  integrity sha512-ZKRBGKH0pV6F1qpDy6SIvJ8Jy06VEZb30UKbsYDXS/emv+XgFiZQC+ZQwXH5OGEqKjZBGTM4Pog3MjtICP/1UA==
+  dependencies:
+    "@pagopa/ts-commons" "^10.0.0"
+    fp-ts "^2.10.5"
+    io-ts "^2.2.16"
+
 "@pagopa/openapi-codegen-ts@^11.0.0":
   version "11.0.0"
   resolved "https://registry.npmjs.org/@pagopa/openapi-codegen-ts/-/openapi-codegen-ts-11.0.0.tgz"
@@ -957,6 +966,20 @@
     swagger-parser "^10.0.3"
     write-yaml-file "^4.1.3"
     yargs "^15.0.1"
+
+"@pagopa/ts-commons@^10.0.0":
+  version "10.8.0"
+  resolved "https://registry.yarnpkg.com/@pagopa/ts-commons/-/ts-commons-10.8.0.tgz#2ee54077cf09edf254442e1aad67427078a69edd"
+  integrity sha512-LAdzrwnHeAX5+NuTtd+H9Dwz6Z+MqRVcofKHHlF37O6YoYmNzWmT4+LInjAGIZWnjoEtsBM+8W9PsS6ndX2f6w==
+  dependencies:
+    abort-controller "^3.0.0"
+    agentkeepalive "^4.1.4"
+    applicationinsights "^1.8.10"
+    fp-ts "^2.11.0"
+    io-ts "^2.2.16"
+    json-set-map "^1.1.2"
+    node-fetch "^2.6.0"
+    validator "^13.7.0"
 
 "@pagopa/ts-commons@^10.2.1", "@pagopa/ts-commons@^10.3.0":
   version "10.4.0"

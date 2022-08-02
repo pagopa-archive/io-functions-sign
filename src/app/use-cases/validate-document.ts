@@ -71,10 +71,10 @@ export const makeValidateDocument =
         )
       ),
       TE.chain(upsertSignatureRequest),
-      TE.chain((sr) =>
-        status(sr) === "WAIT_FOR_SIGNATURE"
-          ? enqueueRequestAwaitingSignature(sr)
-          : TE.right(sr)
+      TE.chain((signatureRequest) =>
+        status(signatureRequest) === "WAIT_FOR_SIGNATURE"
+          ? enqueueRequestAwaitingSignature(signatureRequest)
+          : TE.right(signatureRequest)
       ),
       TE.map(() => void 0)
     );

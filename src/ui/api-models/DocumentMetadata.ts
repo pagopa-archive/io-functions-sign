@@ -11,7 +11,7 @@ import * as t from "io-ts";
 const DocumentMetadataR = t.interface({
   title: t.string,
 
-  clauses: t.readonlyArray(Clause, "array of Clause"),
+  clauses: t.readonlyArray(Clause, "array of Clause")
 });
 
 // optional attributes

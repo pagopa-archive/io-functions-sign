@@ -10,15 +10,15 @@ import * as E from "fp-ts/lib/Either";
 import { UrlFromString } from "@pagopa/ts-commons/lib/url";
 import { pipe } from "fp-ts/lib/function";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import { config } from "../../app/config";
 
 export const basePath = pipe(
   config,
-  E.chain((config) =>
+  E.chainW((config) =>
     pipe(
-      config.service.serviceBasePath,
-      UrlFromString.decode,
-      E.mapLeft(() => new Error("Invalid service parameters"))
+      config.ioapi.serviceBasePath,
+      validate(UrlFromString, "Invalid service parameters")
     )
   )
 );
@@ -27,7 +27,7 @@ export const headers = pipe(
   config,
   E.map((config) => ({
     "content-type": "application/json",
-    "Ocp-Apim-Subscription-Key": config.service.serviceSubscriptionKey,
+    "Ocp-Apim-Subscription-Key": config.ioapi.serviceSubscriptionKey,
   }))
 );
 
@@ -39,7 +39,7 @@ export const timeoutFetch = pipe(
   E.map((config) =>
     toFetch(
       setFetchTimeout(
-        config.service.serviceRequestTimeout as Millisecond,
+        config.ioapi.serviceRequestTimeout as Millisecond,
         abortableFetch
       )
     )

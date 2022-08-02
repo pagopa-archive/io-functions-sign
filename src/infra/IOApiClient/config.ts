@@ -8,24 +8,24 @@ import { sequenceS } from "fp-ts/lib/Apply";
 import { IntegerFromString } from "@pagopa/ts-commons/lib/numbers";
 import { readFromNodeEnv } from "../../app/env";
 
-export const ServiceConfig = t.type({
+export const IOApiClientConfig = t.type({
   serviceBasePath: t.string,
   serviceSubscriptionKey: t.string,
   serviceRequestTimeout: t.number,
 });
 
-export type ServiceConfig = t.TypeOf<typeof ServiceConfig>;
+export type IOApiClientConfig = t.TypeOf<typeof IOApiClientConfig>;
 
-export const getServiceConfigFromEnvironment: RE.ReaderEither<
+export const getIOApiClientConfigFromEnvironment: RE.ReaderEither<
   NodeJS.ProcessEnv,
   Error,
-  ServiceConfig
+  IOApiClientConfig
 > = sequenceS(RE.Apply)({
   serviceBasePath: pipe(
-    readFromNodeEnv("ServiceBasePath"),
+    readFromNodeEnv("IOApiBasePath"),
     RE.orElse(() => RE.right("https://api.io.pagopa.it"))
   ),
-  serviceSubscriptionKey: readFromNodeEnv("ServiceSubscriptionKey"),
+  serviceSubscriptionKey: readFromNodeEnv("IOApiSubscriptionKey"),
   serviceRequestTimeout: pipe(
     readFromNodeEnv("ServiceRequestTimeout"),
     RE.chainEitherK(

@@ -1,4 +1,5 @@
 import { QueueServiceClient, QueueClient } from "@azure/storage-queue";
+import { toError } from "fp-ts/lib/Either";
 
 import * as TE from "fp-ts/TaskEither";
 
@@ -14,11 +15,8 @@ export const createQueueClient = (
 export const enqueueMessage = (queueClient: QueueClient) => (message: string) =>
   TE.tryCatch(
     () => queueClient.sendMessage(Buffer.from(message).toString("base64")),
-    () => new Error("Message cannot be queued")
+    toError
   );
 
 export const queueExists = (queueClient: QueueClient) =>
-  TE.tryCatch(
-    () => queueClient.exists(),
-    () => new Error("The specified queue does not exists")
-  );
+  TE.tryCatch(() => queueClient.exists(), toError);

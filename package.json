@@ -11,8 +11,7 @@
     "prepare": "husky install",
     "func:ext-install": "func extensions install",
     "start": "func start",
-    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/ui/api-models",
-    "generate:message-api-models": "gen-api-models --api-spec https://raw.githubusercontent.com/pagopa/io-functions-services/master/openapi/index.yaml --out-dir ./src/ui/api-models"
+    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/ui/api-models"
   },
   "repository": {
     "type": "git",
@@ -50,6 +49,7 @@
     "@azure/storage-queue": "^12.10.0",
     "@pagopa/handler-kit": "0.3.2",
     "@pagopa/io-functions-commons": "^24.3.0",
+    "@pagopa/io-functions-services-sdk": "^3.12.1",
     "@pagopa/ts-commons": "^10.2.1",
     "date-fns": "^2.29.1",
     "fp-ts": "^2.11.10",
