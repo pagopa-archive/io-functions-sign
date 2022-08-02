@@ -18,7 +18,7 @@ const getSubmitMessageForUserPath = (fiscalCode: string) =>
   pipe(`/api/v1/messages/${fiscalCode}`, UrlFromString.decode);
 
 export const submitMessageForUser =
-  (body: NewMessage) => (fiscalCode: FiscalCode) =>
+  (fiscalCode: FiscalCode) => (body: NewMessage) =>
     pipe(
       sequenceS(E.Apply)({
         basePath,
