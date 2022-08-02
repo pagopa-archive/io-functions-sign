@@ -38,7 +38,7 @@ And run the project with
 npm start
 ```
 
-### Services integration
+### Message services integration
 
 To use a message sending service to the IO app it is also necessary to set the following parameters in `local.settings.json`
 
@@ -61,6 +61,7 @@ Specifically, we are currently using
 
 - Azure Functions, which serves as a REST over HTTP transport layer - Azure Cosmos DB, which stores entities
 - Azure Blob Storage, which is used to store PDF documents associated with signature requests.
+- Azure Queue Storage, which is used to send messages when a signature requests is ready to sign.
 
 These services can be tested locally for development purposes using Microsoft's official Azure emulators.
 
@@ -112,3 +113,19 @@ To accomplish this, simply add the following property to the personal `settings.
 ```
 
 Please care of this setting, as it exposes the editor to potential security issues with third-party extensions.
+
+### Storage integration
+
+A storage account must also be configured to use blob storage and queues in `local.settings.json`
+
+```json
+{
+  // ... other props
+  "Values": {
+    // ... other settings
+    "StorageAccountConnectionString": "HERE-THE-PRIMARY-CONNECTION-STRING",
+    "IssuerBlobContainerName": "HERE-THE-BLOB-CONTAINER-NAME",
+    "QueueName": "HERE-THE-QUEUE-NAME"
+  }
+}
+```
