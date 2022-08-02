@@ -181,7 +181,7 @@ components:
         fiscalCode:
           $ref: "./openapi-components.yaml#/components/schemas/FiscalCode"
         expiresAt:
-          $ref: "./openapi-components.yaml#/components/schemas/Timestamp"
+          $ref: "#/components/schemas/ExpiresAt"
       required:
         - productId
         - fiscalCode
@@ -196,7 +196,7 @@ components:
         productId:
           $ref: "#/components/schemas/ProductId"
         expiresAt:
-          $ref: "./openapi-components.yaml#/components/schemas/Timestamp"
+          $ref: "#/components/schemas/ExpiresAt"
         documents:
           type: array
           items:
@@ -205,3 +205,9 @@ components:
         - id
         - productId
         - documents
+    ExpiresAt:
+      type: string
+      format: UTCISODateFromString
+      description: A date-time field in ISO-8601 format and UTC timezone.
+      x-import: "@pagopa/ts-commons/lib/dates"
+      example: "2018-10-13T00:00:00.000Z"

@@ -118,9 +118,3 @@ components:
         This parameter specifies for how long (in seconds) the system will
         try to deliver the message to the channels configured by the user.
       example: 3600
-    Timestamp:
-      type: string
-      format: UTCISODateFromString
-      description: A date-time field in ISO-8601 format and UTC timezone.
-      x-import: "@pagopa/ts-commons/lib/dates"
-      example: "2018-10-13T00:00:00.000Z"

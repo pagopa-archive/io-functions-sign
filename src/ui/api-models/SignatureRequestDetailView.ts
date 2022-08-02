@@ -5,7 +5,7 @@
 /* eslint-disable  */
 
 import { ProductId } from "./ProductId";
-import { Timestamp } from "./Timestamp";
+import { ExpiresAt } from "./ExpiresAt";
 import { Document } from "./Document";
 import * as t from "io-ts";
 
@@ -22,7 +22,7 @@ const SignatureRequestDetailViewR = t.interface({
 const SignatureRequestDetailViewO = t.partial({
   status: t.string,
 
-  expiresAt: Timestamp,
+  expiresAt: ExpiresAt,
 });
 
 export const SignatureRequestDetailView = t.exact(

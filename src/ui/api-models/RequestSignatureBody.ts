@@ -5,7 +5,7 @@
 /* eslint-disable  */
 
 import { ProductId } from "./ProductId";
-import { Timestamp } from "./Timestamp";
+import { ExpiresAt } from "./ExpiresAt";
 import * as t from "io-ts";
 import { FiscalCode as FiscalCodeT } from "@pagopa/ts-commons/lib/strings";
 
@@ -18,7 +18,7 @@ const RequestSignatureBodyR = t.interface({
 
 // optional attributes
 const RequestSignatureBodyO = t.partial({
-  expiresAt: Timestamp,
+  expiresAt: ExpiresAt,
 });
 
 export const RequestSignatureBody = t.exact(
