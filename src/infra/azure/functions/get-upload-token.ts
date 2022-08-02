@@ -15,17 +15,17 @@ import {
 } from "@pagopa/handler-kit/lib/http";
 
 import { sequenceS } from "fp-ts/lib/Apply";
-import { Subscription } from "../../signature-request/subscription";
-import { SignatureRequest } from "../../signature-request/signature-request";
-import { UploadToken } from "../api-models/UploadToken";
-import { requireSubscriptionId } from "../http";
-import { Document } from "../../signature-request/document";
-import { makeGetDocumentUploadToken } from "../../app/use-cases/get-upload-token";
+import { Subscription } from "../../../signature-request/subscription";
+import { SignatureRequest } from "../../../signature-request/signature-request";
+import { UploadToken } from "../../../ui/api-models/UploadToken";
+import { requireSubscriptionId } from "../../../ui/http";
+import { Document } from "../../../signature-request/document";
+import { makeGetDocumentUploadToken } from "../../../app/use-cases/get-upload-token";
 
-import { makeGetDocumentUploadToken as makeBlobStorageGetDocumentUploadToken } from "../../infra/azure/storage/upload-token";
-import { createContainerClient } from "../../infra/azure/storage/client";
-import { config } from "../../app/config";
-import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
+import { makeGetDocumentUploadToken as makeBlobStorageGetDocumentUploadToken } from "../storage/upload-token";
+import { createContainerClient } from "../storage/client";
+import { config } from "../../../app/config";
+import { getSignatureRequest } from "../cosmos/signature-request";
 import { requireSignatureRequestId } from "./get-signature-request";
 
 export const requireDocumentId: (
