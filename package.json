@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
-    "@pagopa/danger-plugin": "^2.0.1",
+    "@pagopa/danger-plugin": "^2.0.2",
     "@pagopa/eslint-config": "^3.0.0",
     "@pagopa/openapi-codegen-ts": "^11.0.0",
     "@types/jest": "^27.4.1",
