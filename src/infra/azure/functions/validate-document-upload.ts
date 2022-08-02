@@ -28,7 +28,7 @@ import { config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
 import { makeIsDocumentUploaded } from "../storage/document";
-import { createQueueClient } from "../storage/queue/client";
+import { queueClient } from "../storage/queue/client";
 import { enqueueSignatureRequest } from "../storage/queue/signature-request";
 
 const isDocumentUploadedToBlobStorage = pipe(
@@ -51,16 +51,8 @@ const isDocumentUploadedToBlobStorage = pipe(
  */
 const enqueueRequestAwaitingSignature = (request: SignatureRequest) =>
   pipe(
-    config,
-    E.map((config) =>
-      pipe(
-        createQueueClient(
-          config.storage.connectionString,
-          config.storage.queueName
-        ),
-        enqueueSignatureRequest(request)
-      )
-    ),
+    queueClient,
+    E.map(enqueueSignatureRequest(request)),
     TE.fromEither,
     TE.flatten
   );
