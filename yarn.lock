@@ -908,10 +908,10 @@
     eslint-plugin-sonarjs "^0.13.0"
     prettier "^2.6.2"
 
-"@pagopa/handler-kit@0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@pagopa/handler-kit/-/handler-kit-0.3.1.tgz#728de873a6edb44f71aaf5c1a74ee7cd147b9b7d"
-  integrity sha512-sji7Kjcmx5KXTKTndeHEpnz+HwPiXEHaiyPW9lwJ+Map83dCZzSnoEER9SvaCf5n/ejs0/x+WYrKtDVGlys4Uw==
+"@pagopa/handler-kit@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@pagopa/handler-kit/-/handler-kit-0.3.2.tgz#6a45ef03a5d862412a6ffd3e384af5cb36516ec0"
+  integrity sha512-ef61PE6Jcm+Jr5A9sUcFRIM6meP7T5wgG4ZqqIyxkyK5gKz0PPdLhOuvMIAd9M09DeJYs8fTXJzeNVS77qBfkA==
   dependencies:
     fp-ts "^2.12.1"
     io-ts "^2.2.16"
