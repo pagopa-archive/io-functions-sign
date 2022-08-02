@@ -4,8 +4,8 @@ module.exports = {
   testEnvironment: "node",
   transformIgnorePatterns: ["/node_modules/", "/lib/"],
   globals: {
-    'ts-jest': {
-      isolatedModules: true
-    }
-  }
+    "ts-jest": {
+      isolatedModules: true,
+    },
+  },
 };
