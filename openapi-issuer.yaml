@@ -26,11 +26,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProductDetailView"
         "400":
-          $ref: "./openapi-components.yaml#/components/responses/BadRequest"
+          $ref: "#/components/responses/BadRequest"
         "403":
-          $ref: "./openapi-components.yaml#/components/responses/Forbidden"
+          $ref: "#/components/responses/Forbidden"
         default:
-          $ref: "./openapi-components.yaml#/components/responses/Unexpected"
+          $ref: "#/components/responses/Unexpected"
   /products/{productId}:
     get:
       operationId: getProductById
@@ -50,11 +50,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProductDetailView"
         "403":
-          $ref: "./openapi-components.yaml#/components/responses/Forbidden"
+          $ref: "#/components/responses/Forbidden"
         "404":
-          $ref: "./openapi-components.yaml#/components/responses/NotFound"
+          $ref: "#/components/responses/NotFound"
         default:
-          $ref: "./openapi-components.yaml#/components/responses/Unexpected"
+          $ref: "#/components/responses/Unexpected"
   /signature-requests:
     post:
       operationId: requestSignature
@@ -73,17 +73,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/SignatureRequestDetailView"
         "400":
-          $ref: "./openapi-components.yaml#/components/responses/BadRequest"
+          $ref: "#/components/responses/BadRequest"
         "403":
-          $ref: "./openapi-components.yaml#/components/responses/Forbidden"
+          $ref: "#/components/responses/Forbidden"
         "404":
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: "./openapi-components.yaml#/components/schemas/ProblemJson"
+                $ref: "#/components/schemas/ProblemJson"
         default:
-          $ref: "./openapi-components.yaml#/components/responses/Unexpected"
+          $ref: "#/components/responses/Unexpected"
   /signature-requests/{signatureRequestId}:
     get:
       operationId: getSignatureRequestById
@@ -103,13 +103,142 @@ paths:
               schema:
                 $ref: "#/components/schemas/SignatureRequestDetailView"
         "403":
-          $ref: "./openapi-components.yaml#/components/responses/Forbidden"
+          $ref: "#/components/responses/Forbidden"
         "404":
-          $ref: "./openapi-components.yaml#/components/responses/NotFound"
+          $ref: "#/components/responses/NotFound"
         default:
-          $ref: "./openapi-components.yaml#/components/responses/Unexpected"
+          $ref: "#/components/responses/Unexpected"
+  /signature-requests/{signatureRequestId}/documents/{documentId}/upload-token:
+    get:
+      operationId: getDocumentUploadToken
+      summary: Get the upload link for the specified document
+      parameters:
+        - in: path
+          name: signatureRequestId
+          schema:
+            type: string
+            format: ulid
+          required: true
+        - in: path
+          name: documentId
+          schema:
+            type: string
+            format: ulid
+          required: true
+      responses:
+        "200":
+          description: "The upload token of the specified document"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadToken"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        default:
+          $ref: "#/components/responses/Unexpected"
+
 components:
+  securitySchemes:
+    SubscriptionKey:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+      description: The API key obtained through the developer portal
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemJson"
+    BadRequest:
+      description: Validation error on body
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemJson"
+    Forbidden:
+      description: You don't have enough privileges to perform this action
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemJson"
+    Unexpected:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemJson"
   schemas:
+    UploadToken:
+      type: object
+      properties:
+        documentId:
+          type: string
+          format: ulid
+        token:
+          type: string
+          format: url
+      required:
+        - documentId
+        - token
+
+    ProblemJson:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |-
+            An absolute URI that identifies the problem type. When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: about:blank
+          example: https://example.com/problem/constraint-violation
+        title:
+          type: string
+          description: >-
+            A short, summary of the problem type. Written in english and
+            readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: >-
+            The HTTP status code generated by the origin server for this
+            occurrence of the problem.
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 200
+        detail:
+          type: string
+          description: |-
+            A human readable explanation specific to this occurrence of the
+            problem.
+          example: There was an error processing the request
+        instance:
+          type: string
+          format: uri
+          description: >-
+            An absolute URI that identifies the specific occurrence of the
+            problem. It may or may not yield further information if
+            dereferenced.
+      required:
+        - title
+        - status
+        - detail
+    FiscalCode:
+      type: string
+      description: User's fiscal code.
+      format: FiscalCode
+      x-import: "@pagopa/ts-commons/lib/strings"
+      example: SPNDNL80R13C555X
     Clause:
       type: object
       properties:
@@ -150,6 +279,12 @@ components:
     ProductId:
       type: string
       format: ulid
+    Timestamp:
+      type: string
+      format: UTCISODateFromString
+      description: A date-time field in ISO-8601 format and UTC timezone.
+      x-import: "@pagopa/ts-commons/lib/dates"
+      example: "2018-10-13T00:00:00.000Z"
     CreateProductBody:
       type: object
       properties:
@@ -179,9 +314,9 @@ components:
         productId:
           $ref: "#/components/schemas/ProductId"
         fiscalCode:
-          $ref: "./openapi-components.yaml#/components/schemas/FiscalCode"
+          $ref: "#/components/schemas/FiscalCode"
         expiresAt:
-          $ref: "#/components/schemas/ExpiresAt"
+          $ref: "#/components/schemas/Timestamp"
       required:
         - productId
         - fiscalCode
@@ -196,7 +331,7 @@ components:
         productId:
           $ref: "#/components/schemas/ProductId"
         expiresAt:
-          $ref: "#/components/schemas/ExpiresAt"
+          $ref: "#/components/schemas/Timestamp"
         documents:
           type: array
           items:
@@ -205,9 +340,3 @@ components:
         - id
         - productId
         - documents
-    ExpiresAt:
-      type: string
-      format: UTCISODateFromString
-      description: A date-time field in ISO-8601 format and UTC timezone.
-      x-import: "@pagopa/ts-commons/lib/dates"
-      example: "2018-10-13T00:00:00.000Z"

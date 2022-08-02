@@ -5,20 +5,20 @@
 /* eslint-disable  */
 
 import { ProductId } from "./ProductId";
-import { ExpiresAt } from "./ExpiresAt";
+import { FiscalCode } from "./FiscalCode";
+import { Timestamp } from "./Timestamp";
 import * as t from "io-ts";
-import { FiscalCode as FiscalCodeT } from "@pagopa/ts-commons/lib/strings";
 
 // required attributes
 const RequestSignatureBodyR = t.interface({
   productId: ProductId,
 
-  fiscalCode: FiscalCodeT,
+  fiscalCode: FiscalCode,
 });
 
 // optional attributes
 const RequestSignatureBodyO = t.partial({
-  expiresAt: ExpiresAt,
+  expiresAt: Timestamp,
 });
 
 export const RequestSignatureBody = t.exact(
