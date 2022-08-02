@@ -68,7 +68,7 @@ export const sendSignatureRequest =
                 pipe(
                   signatureRequest.signerId,
                   getFiscalCodeBySignerId,
-                  TE.chain(submitMessageForUser(message))
+                  TE.map(submitMessageForUser(message))
                 )
               )
             )
