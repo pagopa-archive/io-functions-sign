@@ -1,47 +1,23 @@
-import { agent } from "@pagopa/ts-commons";
-import {
-  AbortableFetch,
-  setFetchTimeout,
-  toFetch,
-} from "@pagopa/ts-commons/lib/fetch";
-
 import * as E from "fp-ts/lib/Either";
-
-import { UrlFromString } from "@pagopa/ts-commons/lib/url";
 import { pipe } from "fp-ts/lib/function";
-import { Millisecond } from "@pagopa/ts-commons/lib/units";
-import { validate } from "@pagopa/handler-kit/lib/validation";
+
+import { createClient } from "@pagopa/io-functions-services-sdk/client";
+import nodeFetch from "node-fetch";
 import { config } from "../../app/config";
 
-export const basePath = pipe(
-  config,
-  E.chainW((config) =>
-    pipe(
-      config.ioapi.serviceBasePath,
-      validate(UrlFromString, "Invalid service parameters")
-    )
-  )
-);
-
-export const headers = pipe(
-  config,
-  E.map((config) => ({
-    "content-type": "application/json",
-    "Ocp-Apim-Subscription-Key": config.ioapi.serviceSubscriptionKey,
-  }))
-);
-
-const httpApiFetch = agent.getHttpFetch(process.env);
-const abortableFetch = AbortableFetch(httpApiFetch);
-
-export const timeoutFetch = pipe(
+export const ioApiClient = pipe(
   config,
   E.map((config) =>
-    toFetch(
-      setFetchTimeout(
-        config.ioapi.serviceRequestTimeout as Millisecond,
-        abortableFetch
-      )
-    )
+    createClient<"SubscriptionKey">({
+      baseUrl: config.ioapi.serviceBasePath,
+      fetchApi: nodeFetch as unknown as typeof fetch,
+      withDefaults: (op) => (params) =>
+        op({
+          ...params,
+          // please refer to source api spec for actual header mapping
+          // https://github.com/pagopa/io-functions-app/blob/master/openapi/index.yaml#:~:text=%20%20SubscriptionKey:
+          SubscriptionKey: config.ioapi.serviceSubscriptionKey,
+        }),
+    })
   )
 );
