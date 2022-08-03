@@ -20,7 +20,7 @@ import {
   DocumentList,
   IsDocumentUploaded,
 } from "../../signature-request/document";
-import { EnqueueSignatureRequest } from "../../infra/azure/storage/queue/signature-request";
+import { EnqueueSignatureRequest } from "../../signature-request/signature-request";
 import { GetDocumentPayload } from "./get-document";
 
 export const addUrlToDocument =

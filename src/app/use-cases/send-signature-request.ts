@@ -66,10 +66,9 @@ export const sendSignatureRequest =
               prepareMessage(getProduct),
               TE.chain((message) =>
                 pipe(
-                  getFiscalCodeBySignerId(signatureRequest.signerId),
-                  TE.chain((signer_cf) =>
-                    pipe(message, submitMessageForUser(signer_cf))
-                  )
+                  signatureRequest.signerId,
+                  getFiscalCodeBySignerId,
+                  TE.chain(submitMessageForUser(message))
                 )
               )
             )

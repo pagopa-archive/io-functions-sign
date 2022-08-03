@@ -1,5 +1,7 @@
 import * as t from "io-ts";
+import { Encoder } from "io-ts/Encoder";
 
+import { pipe } from "fp-ts/function";
 import { TaskEither } from "fp-ts/lib/TaskEither";
 import { Option } from "fp-ts/lib/Option";
 import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
@@ -56,3 +58,18 @@ export type AddSignatureRequest = (
 export const signatureRequestNotFoundError = new EntityNotFoundError(
   "Signature request not found"
 );
+
+export type EnqueueSignatureRequest = (
+  request: SignatureRequest
+) => TaskEither<Error, SignatureRequest>;
+
+export const SignatureRequestMessage: Encoder<string, SignatureRequest> = {
+  encode: (request) =>
+    pipe(
+      {
+        signatureRequestId: request.id,
+        subscriptionId: request.subscriptionId,
+      },
+      JSON.stringify
+    ),
+};
