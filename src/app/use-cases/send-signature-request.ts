@@ -74,6 +74,5 @@ export const sendSignatureRequest =
             )
           )
         )
-      ),
-      TE.map(() => void 0)
+      )
     );

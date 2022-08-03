@@ -75,6 +75,5 @@ export const makeValidateDocument =
         status(signatureRequest) === "WAIT_FOR_SIGNATURE"
           ? enqueueRequestAwaitingSignature(signatureRequest)
           : TE.right(signatureRequest)
-      ),
-      TE.map(() => void 0)
+      )
     );

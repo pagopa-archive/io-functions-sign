@@ -2,7 +2,7 @@ import { createHandler } from "@pagopa/handler-kit";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import * as TE from "fp-ts/TaskEither";
-import { pipe, flow, identity } from "fp-ts/function";
+import { pipe, flow, identity, constVoid } from "fp-ts/function";
 
 import * as t from "io-ts";
 import { last } from "fp-ts/ReadonlyNonEmptyArray";
@@ -98,7 +98,7 @@ export const run = pipe(
         TE.chain(validateDocument)
       ),
     identity,
-    identity
+    constVoid
   ),
   azure.unsafeRun
 );

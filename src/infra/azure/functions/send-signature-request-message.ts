@@ -3,7 +3,7 @@ import * as t from "io-ts";
 import { createHandler } from "@pagopa/handler-kit";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
-import { pipe, flow, identity } from "fp-ts/lib/function";
+import { pipe, flow, identity, constVoid } from "fp-ts/lib/function";
 import * as S from "fp-ts/lib/string";
 import * as TE from "fp-ts/lib/TaskEither";
 
@@ -53,7 +53,7 @@ export const run = pipe(
     flow(azure.fromQueueMessage(SendSignatureRequestBody), TE.fromEither),
     (dequeuedMessage) => sendSignature(dequeuedMessage),
     identity,
-    identity
+    constVoid
   ),
   azure.unsafeRun
 );
