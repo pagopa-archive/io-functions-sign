@@ -9,6 +9,7 @@
     "IssuerBlobContainerName": "BLOB_STORAGE_CONTAINER_NAME",
     "QueueName": "QUEUE_STORAGE_NAME",
     "IOApiBasePath": "IO_SERVICES_API_URL",
-    "IOApiSubscriptionKey": "IO_SERVICES_API_SUBSCRIPTION_KEY"
+    "IOApiSubscriptionKey": "IO_SERVICES_API_SUBSCRIPTION_KEY",
+    "IOApiRequestTimeout": 10000
   }
 }

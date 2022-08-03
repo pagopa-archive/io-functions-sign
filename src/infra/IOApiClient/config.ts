@@ -27,7 +27,7 @@ export const getIOApiClientConfigFromEnvironment: RE.ReaderEither<
   ),
   serviceSubscriptionKey: readFromNodeEnv("IOApiSubscriptionKey"),
   serviceRequestTimeout: pipe(
-    readFromNodeEnv("ServiceRequestTimeout"),
+    readFromNodeEnv("IOApiRequestTimeout"),
     RE.chainEitherK(
       flow(
         IntegerFromString.decode,
