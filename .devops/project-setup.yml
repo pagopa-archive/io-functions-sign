@@ -1,0 +1,12 @@
+resources:
+  repositories:
+    - repository: pagopaCommons
+      type: github
+      name: pagopa/azure-pipeline-templates
+      ref: refs/tags/v19
+      endpoint: "io-azure-devops-github-ro"
+
+steps:
+  - template: templates/node-job-setup/template.yaml@pagopaCommons
+  - script: yarn generate:issuer-api-models
+    displayName: "Generate model definitons for Issuer API"
