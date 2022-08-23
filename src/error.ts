@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 // TODO: move to PagoPA TypeScript commons?
 import { ProblemDetail } from "@pagopa/handler-kit/lib/problem-detail";
 
