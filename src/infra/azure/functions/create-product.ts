@@ -22,12 +22,12 @@ import {
   makeCreateProduct,
 } from "../../../app/use-cases/create-product";
 
-import { requireSubscriptionId } from "../../../ui/http";
-import { CreateProductBody } from "../../../ui/api-models/CreateProductBody";
+import { requireSubscriptionId } from "../../http";
+import { CreateProductBody } from "../../api-models/CreateProductBody";
 
 import { DocumentMetadataList } from "../../../signature-request/document";
 import { addProduct } from "../cosmos/product";
-import { ProductDetailView } from "../../../ui/api-models/ProductDetailView";
+import { ProductDetailView } from "../../api-models/ProductDetailView";
 
 const createProduct = makeCreateProduct(addProduct);
 

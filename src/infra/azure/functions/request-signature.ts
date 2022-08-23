@@ -23,12 +23,12 @@ import {
   RequestSignaturePayload,
 } from "../../../app/use-cases/request-signature";
 
-import { requireSubscriptionId } from "../../../ui/http";
+import { requireSubscriptionId } from "../../http";
 import { GetSignerByFiscalCode } from "../../../signer/signer";
 import { addSignatureRequest } from "../cosmos/signature-request";
-import { RequestSignatureBody } from "../../../ui/api-models/RequestSignatureBody";
+import { RequestSignatureBody } from "../../api-models/RequestSignatureBody";
 import { getProduct } from "../cosmos/product";
-import { SignatureRequestDetailView } from "../../../ui/api-models/SignatureRequestDetailView";
+import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 
 const mockGetSignerByFiscalCode: GetSignerByFiscalCode = (fiscalCode) =>
   TE.right({ id: `Signer-${fiscalCode}` });

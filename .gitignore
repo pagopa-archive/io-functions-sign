@@ -7,3 +7,4 @@ local.settings.json
 coverage
 bin
 obj
+src/infra/api-models
