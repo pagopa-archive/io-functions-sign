@@ -10,3 +10,13 @@ export class EntityNotFoundError extends Error implements ProblemDetail {
     this.name = "EntityNotFoundError";
   }
 }
+
+export class InvalidEntityError extends Error implements ProblemDetail {
+  type = "/problems/invalid-entity";
+  title = "Entity not valid";
+  status = "400";
+  constructor(public detail: string) {
+    super(detail);
+    this.name = "InvalidEntityError";
+  }
+}
