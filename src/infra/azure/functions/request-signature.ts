@@ -26,9 +26,10 @@ import {
 import { requireSubscriptionId } from "../../http";
 import { GetSignerByFiscalCode } from "../../../signer/signer";
 import { addSignatureRequest } from "../cosmos/signature-request";
-import { RequestSignatureBody } from "../../../generated/RequestSignatureBody";
+
+import { RequestSignatureBody } from "../../api-models/RequestSignatureBody";
 import { getProduct } from "../cosmos/product";
-import { SignatureRequestDetailView } from "../../../generated/SignatureRequestDetailView";
+import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 
 const mockGetSignerByFiscalCode: GetSignerByFiscalCode = (fiscalCode) =>
   TE.right({ id: `Signer-${fiscalCode}` });

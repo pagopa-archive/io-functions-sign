@@ -7,7 +7,7 @@ import { Option } from "fp-ts/lib/Option";
 import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
-import { EntityNotFoundError } from "../error/entity-not-found";
+import { EntityNotFoundError } from "../error";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";

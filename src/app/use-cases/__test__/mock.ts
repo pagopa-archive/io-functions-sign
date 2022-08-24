@@ -8,7 +8,7 @@ import {
   GetSignatureRequest,
   SignatureRequest,
 } from "../../../signature-request/signature-request";
-import { InvalidEntityError } from "../../../error/invalid-entity";
+import { InvalidEntityError } from "../../../error";
 
 export const mockGetSignerByFiscalCode: GetSignerByFiscalCode = (fiscalCode) =>
   pipe(

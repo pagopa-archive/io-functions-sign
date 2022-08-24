@@ -36,9 +36,8 @@ jobs:
       )
       )
     steps:
-      - template: templates/node-job-setup/template.yaml@pagopaCommons
-      - bash: |
-          yarn danger ci
+      - template: project-setup.yml
+      - script: yarn danger ci
         env:
           DANGER_GITHUB_API_TOKEN: "$(DANGER_GITHUB_API_TOKEN)"
           JIRA_USERNAME: "$(JIRA_USERNAME)"
@@ -48,21 +47,20 @@ jobs:
     displayName: "Type check"
     continueOnError: false
     steps:
-      - template: templates/node-job-setup/template.yaml@pagopaCommons
-      - script: yarn generate:issuer-api-models
+      - template: project-setup.yml
       - script: yarn tsc --noEmit
         displayName: "Run TypeScript compiler"
   - job: lint
     displayName: "Lint"
     continueOnError: false
     steps:
-      - template: templates/node-job-setup/template.yaml@pagopaCommons
-      - script: yarn run lint
+      - template: project-setup.yml
+      - script: yarn lint
         displayName: "Run linter"
   - job: test
     displayName: "Test"
     continueOnError: false
     steps:
-      - template: templates/node-job-setup/template.yaml@pagopaCommons
+      - template: project-setup.yml
       - script: yarn jest --ci
         displayName: "Execute tests"

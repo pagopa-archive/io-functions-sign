@@ -16,7 +16,7 @@ import {
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import { validate } from "@pagopa/handler-kit/lib/validation";
-import { ProductDetailView } from "../../../generated/ProductDetailView";
+import { ProductDetailView } from "../../api-models/ProductDetailView";
 import { requireSubscriptionId } from "../../http";
 
 import {

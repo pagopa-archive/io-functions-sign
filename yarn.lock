@@ -944,9 +944,9 @@
     winston "^3.1.0"
 
 "@pagopa/io-functions-services-sdk@^3.12.1":
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/@pagopa/io-functions-services-sdk/-/io-functions-services-sdk-3.12.1.tgz#9fdb92aa29a4c37a5bae71f28bda9f4c87f2ecb6"
-  integrity sha512-ZKRBGKH0pV6F1qpDy6SIvJ8Jy06VEZb30UKbsYDXS/emv+XgFiZQC+ZQwXH5OGEqKjZBGTM4Pog3MjtICP/1UA==
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/@pagopa/io-functions-services-sdk/-/io-functions-services-sdk-3.12.2.tgz#d00bf0caef3158ddee2d75cf91c7ee75af4125e1"
+  integrity sha512-2BDPujvF5/sW6wsZJ4taGnj33LyuKxNKyrfhwDo6j1Q4xcXCyfAMQF2OmbUTdEOKB/jXOSwwO5BiKAuYFc9hYg==
   dependencies:
     "@pagopa/ts-commons" "^10.0.0"
     fp-ts "^2.10.5"
@@ -968,9 +968,9 @@
     yargs "^15.0.1"
 
 "@pagopa/ts-commons@^10.0.0":
-  version "10.8.0"
-  resolved "https://registry.yarnpkg.com/@pagopa/ts-commons/-/ts-commons-10.8.0.tgz#2ee54077cf09edf254442e1aad67427078a69edd"
-  integrity sha512-LAdzrwnHeAX5+NuTtd+H9Dwz6Z+MqRVcofKHHlF37O6YoYmNzWmT4+LInjAGIZWnjoEtsBM+8W9PsS6ndX2f6w==
+  version "10.10.0"
+  resolved "https://registry.yarnpkg.com/@pagopa/ts-commons/-/ts-commons-10.10.0.tgz#9eae84003956ac44aad710b91abd7614bb09665e"
+  integrity sha512-/bIEHIvswrp9mi+NdBOJftPAP9YeI5Z1+mK1WV/RDTvy6nb5Zd7C9kwdBJbXjl4zW/eiQsb5PqLHEC6odQKlWg==
   dependencies:
     abort-controller "^3.0.0"
     agentkeepalive "^4.1.4"

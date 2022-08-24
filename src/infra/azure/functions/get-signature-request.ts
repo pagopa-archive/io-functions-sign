@@ -27,7 +27,7 @@ import {
   status,
 } from "../../../signature-request/signature-request";
 import { getSignatureRequest } from "../cosmos/signature-request";
-import { SignatureRequestDetailView } from "../../../generated/SignatureRequestDetailView";
+import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 
 export const requireSignatureRequestId: (
   req: HttpRequest

@@ -5,7 +5,8 @@ import {
   makeRequestSignature,
   RequestSignaturePayload,
 } from "../request-signature";
-import { InvalidEntityError } from "../../../error/invalid-entity";
+
+import { InvalidEntityError } from "../../../error";
 import {
   mockAddSignatureRequest,
   mockGetProduct,

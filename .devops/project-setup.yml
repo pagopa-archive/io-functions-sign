@@ -1,0 +1,4 @@
+steps:
+  - template: templates/node-job-setup/template.yaml@pagopaCommons
+  - script: yarn generate:issuer-api-models
+    displayName: "Generate model definitons for Issuer API"

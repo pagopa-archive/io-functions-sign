@@ -16,7 +16,7 @@ import {
 } from "../../signature-request/product";
 import { GetFiscalCodeBySignerId } from "../../signer/signer";
 
-import { submitMessageForUser } from "../../infra/IOApiClient/send-message";
+import { submitMessageForUser } from "../../infra/io-services/send-message";
 
 const mockMakeMessage = (
   signatureRequest: SignatureRequest,

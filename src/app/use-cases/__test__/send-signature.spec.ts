@@ -2,7 +2,7 @@ import { flow, pipe, constant } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import * as TE from "fp-ts/TaskEither";
 import { validate } from "@pagopa/handler-kit/lib/validation";
-import { InvalidEntityError } from "../../../error/invalid-entity";
+import { InvalidEntityError } from "../../../error";
 import { SendSignatureRequestBody } from "../../../infra/azure/functions/send-signature-request-message";
 import { signatureRequestNotFoundError } from "../../../signature-request/signature-request";
 import { mockGetProduct, mockGetSignatureRequest } from "./mock";

@@ -18,7 +18,7 @@ import {
   productNotFoundError,
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
-import { InvalidEntityError } from "../../error/invalid-entity";
+import { InvalidEntityError } from "../../error";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;

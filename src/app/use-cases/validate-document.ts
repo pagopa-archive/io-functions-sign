@@ -13,7 +13,7 @@ import {
   status,
 } from "../../signature-request/signature-request";
 
-import { EntityNotFoundError } from "../../error/entity-not-found";
+import { EntityNotFoundError } from "../../error";
 
 import {
   Document,

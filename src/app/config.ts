@@ -9,7 +9,7 @@ import {
 import {
   getIOApiClientConfigFromEnvironment,
   IOApiClientConfig,
-} from "../infra/IOApiClient/config";
+} from "../infra/io-services/config";
 
 import {
   StorageConfig,
