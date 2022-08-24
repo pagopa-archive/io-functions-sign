@@ -5,37 +5,34 @@
 Prerequisites:
 
 - [Node.js](https://nodejs.org/) (`16.x`)
-- [npm](https://www.npmjs.com) (`8.x`)
+- [yarn](https://yarnpkg.com/) (`1.x`)
 - [Docker desktop](https://www.docker.com/products/docker-desktop/) or equivalent container runtime
 
-Install dependencies using `npm`
+Install dependencies using `yarn`
 
 ```sh
-npm install
+yarn install
 ```
 
-And create the `local.settings.json` file with the following content
-
-```json
-{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "",
-    "FUNCTIONS_WORKER_RUNTIME": "node"
-  }
-}
-```
-
-Now you can build the TypeScript sources using
+Create the `local.settings.json`
 
 ```sh
-npm run build
+cp local.settings.json.example local.settings.json
+```
+
+and edit it with your parameters.
+
+Now you need to generate openapi types and then build the TypeScript sources:
+
+```sh
+yarn generate:issuer-api-models
+yarn build
 ```
 
 And run the project with
 
 ```sh
-npm start
+yarn start
 ```
 
 ### Test Azure Services locally
@@ -46,6 +43,7 @@ Specifically, we are currently using
 
 - Azure Functions, which serves as a REST over HTTP transport layer - Azure Cosmos DB, which stores entities
 - Azure Blob Storage, which is used to store PDF documents associated with signature requests.
+- Azure Queue Storage, which is used to send messages when a signature requests is ready to sign.
 
 These services can be tested locally for development purposes using Microsoft's official Azure emulators.
 
@@ -65,17 +63,6 @@ As specified in the `docker-compose.yml` configuration file, this launches a sma
 After that, simply navigate to `https:/localhost:8081/_explorer/index.html` to access the Data Explorer.
 
 You can find the `Primary Connection String` to add to your `local.settings.json` file on this page.
-
-```json
-{
-  // ... other props
-  "Values": {
-    // ... other settings
-    "CosmosDbConnectionString": "HERE-THE-PRIMARY-CONNECTION-STRING",
-    "CosmosDbDatabaseName": "HERE-THE-COSMOS-DB-NAME"
-  }
-}
-```
 
 ##### Configure SSL
 

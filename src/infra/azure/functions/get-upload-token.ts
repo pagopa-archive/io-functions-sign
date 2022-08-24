@@ -18,6 +18,7 @@ import { sequenceS } from "fp-ts/lib/Apply";
 import { Subscription } from "../../../signature-request/subscription";
 import { SignatureRequest } from "../../../signature-request/signature-request";
 import { UploadToken } from "../../api-models/UploadToken";
+
 import { requireSubscriptionId } from "../../http";
 import { Document } from "../../../signature-request/document";
 import { makeGetDocumentUploadToken } from "../../../app/use-cases/get-upload-token";

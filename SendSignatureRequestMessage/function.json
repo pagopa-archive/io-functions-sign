@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "name": "sendSignatureRequestMessage",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "waiting-for-signature",
+      "connection": "StorageAccountConnectionString"
+    }
+  ],
+  "scriptFile": "../lib/infra/azure/functions/send-signature-request-message.js"
+}

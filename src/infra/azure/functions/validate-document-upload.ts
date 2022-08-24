@@ -2,14 +2,17 @@ import { createHandler } from "@pagopa/handler-kit";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
 import * as TE from "fp-ts/TaskEither";
-import { pipe, flow, identity } from "fp-ts/function";
+import { pipe, flow, identity, constVoid } from "fp-ts/function";
 
 import * as t from "io-ts";
 import { last } from "fp-ts/ReadonlyNonEmptyArray";
 import { split } from "fp-ts/string";
 import { validate } from "@pagopa/handler-kit/lib/validation";
 import * as E from "fp-ts/Either";
-import { SignatureRequestId } from "../../../signature-request/signature-request";
+import {
+  SignatureRequest,
+  SignatureRequestId,
+} from "../../../signature-request/signature-request";
 import { SubscriptionId } from "../../../signature-request/subscription";
 import { DocumentId } from "../../../signature-request/document";
 import {
@@ -25,6 +28,8 @@ import { config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
 import { makeIsDocumentUploaded } from "../storage/document";
+import { enqueueMessage, queueClient } from "../storage/queue/client";
+import { SignatureRequestMessage } from "../../../signature-request/signature-request";
 
 const isDocumentUploadedToBlobStorage = pipe(
   config,
@@ -40,10 +45,31 @@ const isDocumentUploadedToBlobStorage = pipe(
   )
 );
 
+/*
+ * Instantiates a connection with a Storage Queue and queues a message in JSON format
+ * containing the information relating to the signature request.
+ */
+const enqueueRequestAwaitingSignature = (request: SignatureRequest) =>
+  pipe(
+    queueClient,
+    TE.fromEither,
+    TE.chain((client) =>
+      pipe(request, SignatureRequestMessage.encode, enqueueMessage(client))
+    ),
+    TE.map(() => request)
+  );
+
+/*
+ * Validates the documents uploaded by the issuer by populating the database with the url in case of success.
+ * When all the documents have been uploaded and validated, it is necessary to communicate to other services
+ * that the signature request is ready to be signed. This communication takes place by writing the signature request
+ * to a queue storage.
+ */
 const validateDocument = makeValidateDocument(
   getSignatureRequest,
   upsertSignatureRequest,
-  isDocumentUploadedToBlobStorage
+  isDocumentUploadedToBlobStorage,
+  enqueueRequestAwaitingSignature
 );
 
 export const run = pipe(
@@ -72,7 +98,7 @@ export const run = pipe(
         TE.chain(validateDocument)
       ),
     identity,
-    identity
+    constVoid
   ),
   azure.unsafeRun
 );

@@ -23,6 +23,7 @@ import {
 } from "../../../app/use-cases/create-product";
 
 import { requireSubscriptionId } from "../../http";
+
 import { CreateProductBody } from "../../api-models/CreateProductBody";
 
 import { DocumentMetadataList } from "../../../signature-request/document";
