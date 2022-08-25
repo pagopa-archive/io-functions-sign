@@ -8,14 +8,14 @@ import { pipe } from "fp-ts/lib/function";
 
 import { readFromNodeEnv } from "../../../app/env";
 import {
-  getWebJjobStorageConfigFromEnvironment,
-  WebJobStorageConfig,
-} from "./webjob-config";
+  getWebJobsStorageConfigFromEnvironment,
+  WebJobsStorageConfig,
+} from "./webjobs-config";
 
 export const StorageConfig = t.type({
   connectionString: t.string,
   issuerBlobContainerName: t.string,
-  webJob: WebJobStorageConfig,
+  webJobs: WebJobsStorageConfig,
 });
 
 export type StorageConfig = t.TypeOf<typeof StorageConfig>;
@@ -30,5 +30,5 @@ export const getStorageConfigFromEnvironment: RE.ReaderEither<
     readFromNodeEnv("IssuerBlobContainerName"),
     RE.orElse(() => RE.right("documents"))
   ),
-  webJob: getWebJjobStorageConfigFromEnvironment,
+  webJobs: getWebJobsStorageConfigFromEnvironment,
 });
