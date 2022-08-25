@@ -7,7 +7,7 @@
     "CosmosDbDatabaseName": "COSMOS_DB_NAME",
     "StorageAccountConnectionString": "STORAGE_ACCOUNT_CONNECTION_STRING",
     "IssuerBlobContainerName": "BLOB_STORAGE_CONTAINER_NAME",
-    "QueueName": "QUEUE_STORAGE_NAME",
+    "WaitingSignatureQueueName": "QUEUE_STORAGE_NAME_FOR_WAITING_SIGNATURE",
     "IOApiBasePath": "IO_SERVICES_API_URL",
     "IOApiSubscriptionKey": "IO_SERVICES_API_SUBSCRIPTION_KEY",
     "IOApiRequestTimeout": 10000

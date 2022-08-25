@@ -5,7 +5,7 @@
       "type": "queueTrigger",
       "direction": "in",
       "queueName": "waiting-for-signature",
-      "connection": "StorageAccountConnectionString"
+      "connection": "AzureWebJobsStorage"
     }
   ],
   "scriptFile": "../lib/infra/azure/functions/send-signature-request-message.js"

@@ -7,11 +7,15 @@ import { sequenceS } from "fp-ts/lib/Apply";
 import { pipe } from "fp-ts/lib/function";
 
 import { readFromNodeEnv } from "../../../app/env";
+import {
+  getWebJobsStorageConfigFromEnvironment,
+  WebJobsStorageConfig,
+} from "./webjobs-config";
 
 export const StorageConfig = t.type({
   connectionString: t.string,
   issuerBlobContainerName: t.string,
-  queueName: t.string,
+  webJobs: WebJobsStorageConfig,
 });
 
 export type StorageConfig = t.TypeOf<typeof StorageConfig>;
@@ -26,8 +30,5 @@ export const getStorageConfigFromEnvironment: RE.ReaderEither<
     readFromNodeEnv("IssuerBlobContainerName"),
     RE.orElse(() => RE.right("documents"))
   ),
-  queueName: pipe(
-    readFromNodeEnv("QueueName"),
-    RE.orElse(() => RE.right("waiting-for-signature"))
-  ),
+  webJobs: getWebJobsStorageConfigFromEnvironment,
 });
