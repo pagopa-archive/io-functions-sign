@@ -1,4 +1,12 @@
+parameters:
+  # whether code must be checked-out with persisted credentials
+  - name: "persistCredentials"
+    type: string
+    default: false
+
 steps:
   - template: templates/node-job-setup/template.yaml@pagopaCommons
+    parameters:
+      persistCredentials: ${{ parameters.persistCredentials }}
   - script: yarn generate:issuer-api-models
     displayName: "Generate model definitons for Issuer API"
