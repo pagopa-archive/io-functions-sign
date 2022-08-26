@@ -3,6 +3,10 @@ parameters:
   - name: "persistCredentials"
     type: string
     default: false
+  # the branch, tag or commit to checkout
+  - name: "gitReference"
+    type: string
+    default: "none"
 
 steps:
   - template: templates/node-job-setup/template.yaml@pagopaCommons
