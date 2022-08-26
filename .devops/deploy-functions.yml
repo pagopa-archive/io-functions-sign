@@ -22,7 +22,7 @@ parameters:
     displayName: ""
     type: object
     default:
-      services:
+      sign:
         appname: io-p-sign-func
         rg: io-p-sign-backend-rg
 
@@ -68,7 +68,7 @@ stages:
       - job: make_release
         steps:
           - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-              - template: templates/node-job-setup/template.yaml@pagopaCommons
+              - template: project-setup.yml
                 parameters:
                   persistCredentials: true
               - template: templates/node-github-release/template.yaml@pagopaCommons
@@ -92,7 +92,7 @@ stages:
       - job: "prepare_artifact"
         steps:
           # Build application
-          - template: templates/node-job-setup/template.yaml@pagopaCommons
+          - template: project-setup.yml
             parameters:
               # On the assumption that this stage is executed only when Relase stage is,
               #  with this parameter we set the reference the deploy script must pull changes from.
@@ -103,6 +103,12 @@ stages:
           - script: |
               yarn build
             displayName: "Build"
+
+          # Install functions extensions
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: "build"
+              arguments: "-o bin"
 
           # Copy application to
           - task: CopyFiles@2
@@ -131,9 +137,7 @@ stages:
                 !local.settings.json
                 !tsconfig.json
                 !yarn.lock
-                !openapi-definitions.yaml
                 !openapi-issuer.yaml
-                !openapi-user.yaml
                 !README.md
                 !CODEOWNERS
                 !__*/**/*
