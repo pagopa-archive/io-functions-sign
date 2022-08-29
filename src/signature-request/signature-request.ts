@@ -28,6 +28,7 @@ export const SignatureRequest = t.intersection([
     subscriptionId: SubscriptionId,
     productId: ProductId,
     documents: DocumentList,
+    qrCodeUrl: t.string,
   }),
   t.partial({
     expiresAt: UTCISODateFromString,
