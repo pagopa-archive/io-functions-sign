@@ -312,6 +312,7 @@ components:
     QrCodeUrl:
       type: string
       format: url
+      minLength: 1
 
     RequestSignatureBody:
       type: object
