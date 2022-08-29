@@ -1,6 +1,6 @@
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
-import { SignatureRequest } from "../signature-request";
+import { mockQrCodeUrl, SignatureRequest } from "../signature-request";
 
 describe("SignatureRequestList", () => {
   it.each([
@@ -11,6 +11,7 @@ describe("SignatureRequestList", () => {
         subscriptionId: "sub-id",
         productId: "prod-id",
         signerId: "sign-id",
+        qrCodeUrl: mockQrCodeUrl,
         documents: [
           {
             id: "my-document",

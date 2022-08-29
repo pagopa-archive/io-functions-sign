@@ -9,6 +9,7 @@ import { GetSignerByFiscalCode } from "../../signer/signer";
 import {
   SignatureRequest,
   AddSignatureRequest,
+  mockQrCodeUrl,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
 import {
@@ -64,8 +65,7 @@ export const makeRequestSignature =
           documents,
           // WARNING! this is just a placeholder
           // TODO: replace the static QR-code with a dynamic one
-          qrCodeUrl:
-            "https://gist.githubusercontent.com/lucacavallaro/a3b9d5305cc6e2c9bdfb6ec1dc28fd96/raw/26799f357ff712396cdbc4f862a13099758e89d3/qr-code.png",
+          qrCodeUrl: mockQrCodeUrl,
           ...timestamps(),
         })
       ),
