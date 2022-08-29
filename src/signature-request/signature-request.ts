@@ -75,4 +75,5 @@ export const SignatureRequestMessage: Encoder<string, SignatureRequest> = {
     ),
 };
 
-export const mockQrCodeUrl =  "https://gist.githubusercontent.com/lucacavallaro/a3b9d5305cc6e2c9bdfb6ec1dc28fd96/raw/26799f357ff712396cdbc4f862a13099758e89d3/qr-code.png";
+export const mockQrCodeUrl =
+  "https://gist.githubusercontent.com/lucacavallaro/a3b9d5305cc6e2c9bdfb6ec1dc28fd96/raw/26799f357ff712396cdbc4f862a13099758e89d3/qr-code.png";
