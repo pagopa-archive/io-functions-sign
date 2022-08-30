@@ -4,7 +4,7 @@
       "name": "sendSignatureRequestMessage",
       "type": "queueTrigger",
       "direction": "in",
-      "queueName": "waiting-for-signature",
+      "queueName": "waiting-for-message",
       "connection": "AzureWebJobsStorage"
     }
   ],

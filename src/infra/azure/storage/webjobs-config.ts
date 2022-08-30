@@ -10,7 +10,7 @@ import { readFromNodeEnv } from "../../../app/env";
 
 export const WebJobsStorageConfig = t.type({
   connectionString: t.string,
-  waitingSignatureQueueName: t.string,
+  WaitingMessageQueueName: t.string,
 });
 
 export type WebJobStorageConfig = t.TypeOf<typeof WebJobsStorageConfig>;
@@ -21,8 +21,8 @@ export const getWebJobsStorageConfigFromEnvironment: RE.ReaderEither<
   WebJobStorageConfig
 > = sequenceS(RE.Apply)({
   connectionString: readFromNodeEnv("AzureWebJobsStorage"),
-  waitingSignatureQueueName: pipe(
-    readFromNodeEnv("WaitingSignatureQueueName"),
-    RE.orElse(() => RE.right("waiting-for-signature"))
+  WaitingMessageQueueName: pipe(
+    readFromNodeEnv("WaitingMessageQueueName"),
+    RE.orElse(() => RE.right("waiting-for-message"))
   ),
 });
