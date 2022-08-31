@@ -28,6 +28,7 @@ export const SignatureRequest = t.intersection([
     subscriptionId: SubscriptionId,
     productId: ProductId,
     documents: DocumentList,
+    qrCodeUrl: t.string,
   }),
   t.partial({
     expiresAt: UTCISODateFromString,
@@ -73,3 +74,6 @@ export const SignatureRequestMessage: Encoder<string, SignatureRequest> = {
       JSON.stringify
     ),
 };
+
+export const mockQrCodeUrl =
+  "https://gist.githubusercontent.com/lucacavallaro/a3b9d5305cc6e2c9bdfb6ec1dc28fd96/raw/26799f357ff712396cdbc4f862a13099758e89d3/qr-code.png";
