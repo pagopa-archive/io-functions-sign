@@ -8,29 +8,12 @@ import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
 import { EntityNotFoundError } from "../error";
+import { SignatureRequestStatus } from "../infra/api-models/SignatureRequestStatus";
 import { DocumentList } from "./document";
 import { SubscriptionId } from "./subscription";
 import { ProductId } from "./product";
 
 export const SignatureRequestId = t.string;
-
-/*
- * Signature request status meaning:
- * - DRAFT: The signature request has been created but not all documents have been uploaded yet.
- * - WAIT_FOR_ISSUER: All documents have been uploaded but the ISSUER has not yet marked the signature request as READY.
- * - READY: The signature request is ready for processing. In this phase the documents will be analyzed and prepared for sending to the USER.
- * - WAIT_FOR_SIGNATURE: The signature request has been sent to the user and is awaiting signature
- * - SIGNED: The signature request was successfully signed.
- */
-export const SignatureRequestStatus = t.keyof({
-  DRAFT: null,
-  WAIT_FOR_ISSUER: null,
-  READY: null,
-  WAIT_FOR_SIGNATURE: null,
-  SIGNED: null,
-});
-
-export type SignatureRequestStatus = t.TypeOf<typeof SignatureRequestStatus>;
 
 export const SignatureRequest = t.intersection([
   t.type({

@@ -23,6 +23,7 @@ import {
 import { timestamps } from "../../timestamps";
 import { EntityNotFoundError, InvalidEntityError } from "../../error";
 import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
+import { SignatureRequestStatusEnum } from "../../infra/api-models/SignatureRequestStatus";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;
@@ -74,7 +75,7 @@ export const makeRequestSignature =
           productId: payload.productId,
           signerId: signer.id,
           documents,
-          status: "DRAFT",
+          status: SignatureRequestStatusEnum.DRAFT,
           // WARNING! this is just a placeholder
           // TODO: replace the static QR-code with a dynamic one
           qrCodeUrl: mockQrCodeUrl,
@@ -99,7 +100,7 @@ export const updateStatusRequestSignature =
         signatureRequestStatus: pipe(
           TE.of(payload.signatureRequestStatus),
           TE.filterOrElse(
-            (status) => status === "READY",
+            (status) => status === SignatureRequestStatusEnum.READY,
             constant(new InvalidEntityError("Only READY status is allowed!"))
           )
         ),
@@ -117,7 +118,8 @@ export const updateStatusRequestSignature =
                   new EntityNotFoundError("Error getting the Signature Request")
               ),
               E.filterOrElse(
-                (request) => request.status === "WAIT_FOR_ISSUER",
+                (request) =>
+                  request.status === SignatureRequestStatusEnum.WAIT_FOR_ISSUER,
                 constant(
                   new InvalidEntityError(
                     "The status can only be changed if the signature request is still in WAIT_FOR_ISSUER!"

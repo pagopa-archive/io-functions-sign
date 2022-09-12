@@ -1,5 +1,6 @@
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
+import { SignatureRequestStatusEnum } from "../../infra/api-models/SignatureRequestStatus";
 import { mockQrCodeUrl, SignatureRequest } from "../signature-request";
 
 describe("SignatureRequestList", () => {
@@ -11,7 +12,7 @@ describe("SignatureRequestList", () => {
         subscriptionId: "sub-id",
         productId: "prod-id",
         signerId: "sign-id",
-        status: "DRAFT",
+        status: SignatureRequestStatusEnum.DRAFT,
         qrCodeUrl: mockQrCodeUrl,
         documents: [
           {
