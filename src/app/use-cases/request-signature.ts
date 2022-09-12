@@ -97,7 +97,7 @@ export const updateStatusRequestSignature =
         signatureRequestStatus: pipe(
           TE.of(payload.signatureRequestStatus),
           TE.filterOrElse(
-            (_) => _ === "READY",
+            (status) => status === "READY",
             constant(new InvalidEntityError("Only READY status is allowed!"))
           )
         ),
@@ -115,7 +115,7 @@ export const updateStatusRequestSignature =
                   new EntityNotFoundError("Error getting the Signature Request")
               ),
               E.filterOrElse(
-                (_) => _.status === "WAIT_FOR_ISSUER",
+                (request) => request.status === "WAIT_FOR_ISSUER",
                 constant(
                   new InvalidEntityError(
                     "The status can only be changed if the signature request is still in WAIT_FOR_ISSUER!"
