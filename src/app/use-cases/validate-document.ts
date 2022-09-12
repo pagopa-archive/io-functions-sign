@@ -9,7 +9,6 @@ import {
   GetSignatureRequest,
   SignatureRequest,
   signatureRequestNotFoundError,
-  SignatureRequestStatus,
   UpsertSignatureRequest,
 } from "../../signature-request/signature-request";
 
@@ -73,7 +72,7 @@ export const makeValidateDocument =
               request.documents.every(
                 (document) => document.url && document.url.length > 0
               ) && request.status === "DRAFT"
-                ? ("WAIT_FOR_SIGNATURE" as SignatureRequestStatus)
+                ? "WAIT_FOR_ISSUER"
                 : request.status,
           }))
         )

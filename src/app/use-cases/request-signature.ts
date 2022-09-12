@@ -85,7 +85,7 @@ export const makeRequestSignature =
 /*
  * Update status of signature request only if:
  * new status is READY
- * and old status is DRAFT!
+ * and previous status is WAIT_FOR_ISSUER!
  */
 export const updateStatusRequestSignature =
   (upsertSignatureRequest: UpsertSignatureRequest) =>
@@ -115,10 +115,10 @@ export const updateStatusRequestSignature =
                   new EntityNotFoundError("Error getting the Signature Request")
               ),
               E.filterOrElse(
-                (_) => _.status === "DRAFT",
+                (_) => _.status === "WAIT_FOR_ISSUER",
                 constant(
                   new InvalidEntityError(
-                    "The status can only be changed if the signature request is still in DRAFT!"
+                    "The status can only be changed if the signature request is still in WAIT_FOR_ISSUER!"
                   )
                 )
               ),
