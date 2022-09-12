@@ -5,6 +5,7 @@ import { identity, pipe } from "fp-ts/function";
 
 import { findIndex, modifyAt } from "fp-ts/Array";
 import { validate } from "@pagopa/handler-kit/lib/validation";
+import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import {
   GetSignatureRequest,
   SignatureRequest,
@@ -70,8 +71,8 @@ export const makeValidateDocument =
           E.map((request) => ({
             ...request,
             status:
-              request.documents.every(
-                (document) => document.url && document.url.length > 0
+              request.documents.every((document) =>
+                NonEmptyString.is(document)
               ) && request.status === SignatureRequestStatusEnum.DRAFT
                 ? SignatureRequestStatusEnum.WAIT_FOR_ISSUER
                 : request.status,
