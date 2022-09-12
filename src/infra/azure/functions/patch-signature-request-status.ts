@@ -24,12 +24,12 @@ import { Subscription } from "../../../signature-request/subscription";
 import {
   SignatureRequest,
   SignatureRequestId,
+  SignatureRequestStatus,
 } from "../../../signature-request/signature-request";
 import { upsertSignatureRequest } from "../cosmos/signature-request";
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 import { PatchSignatureStatusBody } from "../../api-models/PatchSignatureStatusBody";
 import { updateStatusRequestSignature } from "../../../app/use-cases/request-signature";
-import { SignatureRequestStatus } from "../../api-models/SignatureRequestStatus";
 
 const updateStatus = updateStatusRequestSignature(upsertSignatureRequest);
 

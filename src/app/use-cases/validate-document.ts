@@ -21,7 +21,6 @@ import {
   IsDocumentUploaded,
 } from "../../signature-request/document";
 
-import { SignatureRequestStatusEnum } from "../../infra/api-models/SignatureRequestStatus";
 import { GetDocumentPayload } from "./get-document";
 
 export const addUrlToDocument =
@@ -73,8 +72,8 @@ export const makeValidateDocument =
             status:
               request.documents.every((document) =>
                 NonEmptyString.is(document)
-              ) && request.status === SignatureRequestStatusEnum.DRAFT
-                ? SignatureRequestStatusEnum.WAIT_FOR_ISSUER
+              ) && request.status === "DRAFT"
+                ? "WAIT_FOR_ISSUER"
                 : request.status,
           }))
         )
