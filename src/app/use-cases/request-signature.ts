@@ -55,7 +55,9 @@ export const makeRequestSignature =
         expiresAt: pipe(
           TE.of(payload.expiresAt),
           TE.filterOrElse(
-            (_) => _ === undefined || isAfter(_, Date.now()),
+            (expirationDate) =>
+              expirationDate === undefined ||
+              isAfter(expirationDate, Date.now()),
             constant(
               new InvalidEntityError(
                 "The expiration date must be in the future"
