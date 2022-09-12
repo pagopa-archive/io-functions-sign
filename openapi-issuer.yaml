@@ -110,7 +110,7 @@ paths:
           $ref: "#/components/responses/Unexpected"
     patch:
       operationId: patchSignatureRequestStatus
-      summary: Change status of a signature request
+      summary: Change the status of a signature request
       parameters:
         - in: path
           name: signatureRequestId
