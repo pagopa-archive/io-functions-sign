@@ -108,6 +108,31 @@ paths:
           $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
+    patch:
+      operationId: patchSignatureRequestStatus
+      summary: Change status of a signature request
+      parameters:
+        - in: path
+          name: signatureRequestId
+          schema:
+            type: string
+            format: ulid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchSignatureStatusBody"
+      responses:
+        "204":
+          description: The signature status was changed!
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        default:
+          $ref: "#/components/responses/Unexpected"
   /signature-requests/{signatureRequestId}/documents/{documentId}/upload-token:
     get:
       operationId: getDocumentUploadToken
@@ -326,6 +351,15 @@ components:
       required:
         - productId
         - fiscalCode
+
+    PatchSignatureStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "READY"
+      required:
+        - status
 
     SignatureRequestDetailView:
       type: object

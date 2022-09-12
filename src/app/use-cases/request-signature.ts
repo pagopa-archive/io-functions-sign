@@ -1,6 +1,7 @@
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { constant, pipe } from "fp-ts/lib/function";
+import { constant, pipe, flow } from "fp-ts/lib/function";
 import * as TE from "fp-ts/TaskEither";
+import * as E from "fp-ts/lib/Either";
 import { sequenceS } from "fp-ts/lib/Apply";
 import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { isAfter } from "date-fns";
@@ -10,6 +11,7 @@ import {
   SignatureRequest,
   AddSignatureRequest,
   mockQrCodeUrl,
+  UpsertSignatureRequest,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
 import {
@@ -19,13 +21,20 @@ import {
   productNotFoundError,
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
-import { InvalidEntityError } from "../../error";
+import { EntityNotFoundError, InvalidEntityError } from "../../error";
+import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;
   subscriptionId: Subscription["id"];
   fiscalCode: FiscalCode;
   productId: Product["id"];
+};
+
+export type RequestSignatureStatusPayload = {
+  subscriptionId: Subscription["id"];
+  signatureRequestId: SignatureRequest["id"];
+  signatureRequestStatus: SignatureRequest["status"];
 };
 
 export const makeRequestSignature =
@@ -63,6 +72,7 @@ export const makeRequestSignature =
           productId: payload.productId,
           signerId: signer.id,
           documents,
+          status: "DRAFT",
           // WARNING! this is just a placeholder
           // TODO: replace the static QR-code with a dynamic one
           qrCodeUrl: mockQrCodeUrl,
@@ -70,4 +80,55 @@ export const makeRequestSignature =
         })
       ),
       TE.chainFirst(addSignatureRequest)
+    );
+
+/*
+ * Update status of signature request only if:
+ * new status is READY
+ * and old status is DRAFT!
+ */
+export const updateStatusRequestSignature =
+  (upsertSignatureRequest: UpsertSignatureRequest) =>
+  (
+    payload: RequestSignatureStatusPayload
+  ): TE.TaskEither<Error, SignatureRequest> =>
+    pipe(
+      sequenceS(TE.ApplySeq)({
+        signatureRequestStatus: pipe(
+          TE.of(payload.signatureRequestStatus),
+          TE.filterOrElse(
+            (_) => _ === "READY",
+            constant(new InvalidEntityError("Only READY status is allowed!"))
+          )
+        ),
+      }),
+      TE.chain(({ signatureRequestStatus }) =>
+        pipe(
+          getSignatureRequest(
+            payload.signatureRequestId,
+            payload.subscriptionId
+          ),
+          TE.chainEitherKW(
+            flow(
+              E.fromOption(
+                () =>
+                  new EntityNotFoundError("Error getting the Signature Request")
+              ),
+              E.filterOrElse(
+                (_) => _.status === "DRAFT",
+                constant(
+                  new InvalidEntityError(
+                    "The status can only be changed if the signature request is still in DRAFT!"
+                  )
+                )
+              ),
+              E.map((request) => ({
+                ...request,
+                status: signatureRequestStatus,
+              }))
+            )
+          ),
+          TE.chain(upsertSignatureRequest)
+        )
+      )
     );

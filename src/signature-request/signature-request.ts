@@ -16,6 +16,8 @@ export const SignatureRequestId = t.string;
 
 export const SignatureRequestStatus = t.keyof({
   DRAFT: null,
+  WAIT_FOR_ISSUER_SEND: null,
+  READY: null,
   WAIT_FOR_SIGNATURE: null,
 });
 
@@ -29,17 +31,13 @@ export const SignatureRequest = t.intersection([
     productId: ProductId,
     documents: DocumentList,
     qrCodeUrl: t.string,
+    status: SignatureRequestStatus,
   }),
   t.partial({
     expiresAt: UTCISODateFromString,
   }),
   Timestamps,
 ]);
-
-export const status = (request: SignatureRequest): SignatureRequestStatus =>
-  request.documents.every((document) => document.url && document.url.length > 0)
-    ? "WAIT_FOR_SIGNATURE"
-    : "DRAFT";
 
 export type SignatureRequest = t.TypeOf<typeof SignatureRequest>;
 

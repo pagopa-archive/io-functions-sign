@@ -12,6 +12,7 @@ import {
   HttpRequest,
   path,
   error,
+  body,
 } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
@@ -23,10 +24,14 @@ import { Subscription } from "../../../signature-request/subscription";
 import {
   SignatureRequest,
   SignatureRequestId,
-  signatureRequestNotFoundError,
+  SignatureRequestStatus,
 } from "../../../signature-request/signature-request";
-import { getSignatureRequest } from "../cosmos/signature-request";
+import { upsertSignatureRequest } from "../cosmos/signature-request";
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
+import { PatchSignatureStatusBody } from "../../api-models/PatchSignatureStatusBody";
+import { updateStatusRequestSignature } from "../../../app/use-cases/request-signature";
+
+const updateStatus = updateStatusRequestSignature(upsertSignatureRequest);
 
 export const requireSignatureRequestId: (
   req: HttpRequest
@@ -36,38 +41,49 @@ export const requireSignatureRequestId: (
   E.chainW(validate(SignatureRequestId, "Invalid signatureRequestId in path"))
 );
 
-export const extractGetSignatureRequestPayload: RE.ReaderEither<
+const requireSignatureRequestStatus = (
+  req: HttpRequest
+): E.Either<Error, SignatureRequestStatus> =>
+  pipe(
+    req,
+    body(PatchSignatureStatusBody),
+    E.map((body) => body.status),
+    E.chain(
+      validate(
+        SignatureRequestStatus,
+        "Unable to decode the signature request status"
+      )
+    )
+  );
+
+export const extractPatchSignatureRequestPayload: RE.ReaderEither<
   HttpRequest,
   Error,
   {
     subscriptionId: Subscription["id"];
     signatureRequestId: SignatureRequest["id"];
+    signatureRequestStatus: SignatureRequest["status"];
   }
 > = pipe(
   sequenceS(RE.Apply)({
     subscriptionId: requireSubscriptionId,
     signatureRequestId: requireSignatureRequestId,
+    signatureRequestStatus: requireSignatureRequestStatus,
   })
 );
 
 const decodeRequest = flow(
   azure.fromHttpRequest,
   TE.fromEither,
-  TE.chainEitherK(extractGetSignatureRequestPayload)
+  TE.chainEitherK(extractPatchSignatureRequestPayload)
 );
 
 export const run: AzureFunction = pipe(
   createHandler(
     decodeRequest,
-    ({ signatureRequestId, subscriptionId }) =>
-      getSignatureRequest(signatureRequestId, subscriptionId),
+    updateStatus,
     error,
-    (request) =>
-      pipe(
-        request,
-        E.fromOption(() => signatureRequestNotFoundError),
-        E.fold(error, success(SignatureRequestDetailView))
-      )
+    success(SignatureRequestDetailView)
   ),
   azure.unsafeRun
 );

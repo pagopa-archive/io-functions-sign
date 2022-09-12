@@ -9,8 +9,8 @@ import {
   GetSignatureRequest,
   SignatureRequest,
   signatureRequestNotFoundError,
+  SignatureRequestStatus,
   UpsertSignatureRequest,
-  status,
 } from "../../signature-request/signature-request";
 
 import { EntityNotFoundError } from "../../error";
@@ -20,7 +20,7 @@ import {
   DocumentList,
   IsDocumentUploaded,
 } from "../../signature-request/document";
-import { EnqueueSignatureRequest } from "../../signature-request/signature-request";
+
 import { GetDocumentPayload } from "./get-document";
 
 export const addUrlToDocument =
@@ -49,8 +49,7 @@ export const makeValidateDocument =
   (
     getSignatureRequest: GetSignatureRequest,
     upsertSignatureRequest: UpsertSignatureRequest,
-    isDocumentUploaded: IsDocumentUploaded,
-    enqueueRequestAwaitingSignature: EnqueueSignatureRequest
+    isDocumentUploaded: IsDocumentUploaded
   ) =>
   (payload: ValidateDocumentPayload) =>
     pipe(
@@ -67,13 +66,17 @@ export const makeValidateDocument =
         pipe(
           request,
           addUrlToDocument(payload.documentId, payload.documentUrl),
-          E.map((documents) => ({ ...request, documents }))
+          E.map((documents) => ({ ...request, documents })),
+          E.map((request) => ({
+            ...request,
+            status:
+              request.documents.every(
+                (document) => document.url && document.url.length > 0
+              ) && request.status === "DRAFT"
+                ? ("WAIT_FOR_SIGNATURE" as SignatureRequestStatus)
+                : request.status,
+          }))
         )
       ),
-      TE.chain(upsertSignatureRequest),
-      TE.chain((signatureRequest) =>
-        status(signatureRequest) === "WAIT_FOR_SIGNATURE"
-          ? enqueueRequestAwaitingSignature(signatureRequest)
-          : TE.right(signatureRequest)
-      )
+      TE.chain(upsertSignatureRequest)
     );
