@@ -17,6 +17,7 @@ import {
   mockQrCodeUrl,
   UpsertSignatureRequest,
   SignatureRequestStatus,
+  GetSignatureRequest,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
 import {
@@ -27,7 +28,6 @@ import {
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
 import { EntityNotFoundError, InvalidEntityError } from "../../error";
-import { getSignatureRequest } from "../../infra/azure/cosmos/signature-request";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;
@@ -110,7 +110,10 @@ export const makeRequestSignature =
  * and previous status is WAIT_FOR_ISSUER!
  */
 export const updateStatusRequestSignature =
-  (upsertSignatureRequest: UpsertSignatureRequest) =>
+  (
+    upsertSignatureRequest: UpsertSignatureRequest,
+    getSignatureRequest: GetSignatureRequest
+  ) =>
   (
     payload: RequestSignatureStatusPayload
   ): TE.TaskEither<Error, SignatureRequest> =>

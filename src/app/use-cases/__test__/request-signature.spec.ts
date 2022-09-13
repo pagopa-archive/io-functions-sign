@@ -1,16 +1,21 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import { addDays, subDays } from "date-fns/fp";
+import { ValidationError } from "@pagopa/handler-kit/lib/validation";
 import {
   makeRequestSignature,
   RequestSignaturePayload,
+  RequestSignatureStatusPayload,
+  updateStatusRequestSignature,
 } from "../request-signature";
 
 import { InvalidEntityError } from "../../../error";
 import {
   mockAddSignatureRequest,
   mockGetProduct,
+  mockGetSignatureRequest,
   mockGetSignerByFiscalCode,
+  mockUpsertSignatureRequest,
 } from "./mock";
 
 describe("MakeRequestSignatureList", () => {
@@ -56,6 +61,45 @@ describe("MakeRequestSignatureList", () => {
         data,
         E.mapLeft((e) => {
           expect(e).toBeInstanceOf(InvalidEntityError);
+        })
+      );
+      expect(pipe(data, E.isRight)).toBe(expected);
+    });
+  });
+});
+
+describe("updateStatusRequestSignatureList", () => {
+  it.each([
+    { payload: {}, expected: false },
+    {
+      payload: {
+        signatureRequestId: "sig-id",
+        subscriptionId: "sub-id",
+        signatureRequestStatus: "WAIT_FOR_ISSUER",
+      },
+      expected: false,
+    },
+    {
+      payload: {
+        signatureRequestId: "sig-id",
+        subscriptionId: "sub-id",
+        signatureRequestStatus: "READY",
+      },
+      expected: true,
+    },
+  ])("should be valid ($#)", ({ payload, expected }) => {
+    const updateRequest = pipe(
+      payload as RequestSignatureStatusPayload,
+      updateStatusRequestSignature(
+        mockUpsertSignatureRequest,
+        mockGetSignatureRequest
+      )
+    )();
+    return updateRequest.then((data) => {
+      pipe(
+        data,
+        E.mapLeft((e) => {
+          expect(e).toBeInstanceOf(ValidationError);
         })
       );
       expect(pipe(data, E.isRight)).toBe(expected);

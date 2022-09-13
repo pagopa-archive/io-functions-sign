@@ -26,12 +26,18 @@ import {
   SignatureRequestId,
   SignatureRequestStatus,
 } from "../../../signature-request/signature-request";
-import { upsertSignatureRequest } from "../cosmos/signature-request";
+import {
+  getSignatureRequest,
+  upsertSignatureRequest,
+} from "../cosmos/signature-request";
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 import { PatchSignatureStatusBody } from "../../api-models/PatchSignatureStatusBody";
 import { updateStatusRequestSignature } from "../../../app/use-cases/request-signature";
 
-const updateStatus = updateStatusRequestSignature(upsertSignatureRequest);
+const updateStatus = updateStatusRequestSignature(
+  upsertSignatureRequest,
+  getSignatureRequest
+);
 
 export const requireSignatureRequestId: (
   req: HttpRequest
