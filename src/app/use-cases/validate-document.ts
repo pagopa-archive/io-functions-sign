@@ -1,7 +1,7 @@
 import * as TE from "fp-ts/TaskEither";
 import * as O from "fp-ts/Option";
 import * as E from "fp-ts/Either";
-import { identity, pipe } from "fp-ts/function";
+import { identity, pipe, flow } from "fp-ts/function";
 
 import { findIndex, modifyAt } from "fp-ts/Array";
 import { validate } from "@pagopa/handler-kit/lib/validation";
@@ -10,6 +10,7 @@ import {
   GetSignatureRequest,
   SignatureRequest,
   signatureRequestNotFoundError,
+  SignatureRequestStatus,
   UpsertSignatureRequest,
 } from "../../signature-request/signature-request";
 
@@ -45,11 +46,18 @@ export type ValidateDocumentPayload = GetDocumentPayload & {
   documentUrl: string;
 };
 
-const nextStatus = (request: SignatureRequest) =>
-  request.documents.every((document) => NonEmptyString.is(document)) &&
-  request.status === "DRAFT"
-    ? "WAIT_FOR_ISSUER"
-    : request.status;
+const nextStatus = (
+  request: SignatureRequest
+): O.Option<SignatureRequestStatus> =>
+  pipe(
+    request,
+    O.fromNullable,
+    O.filter((request) =>
+      request.documents.every((document) => NonEmptyString.is(document.url))
+    ),
+    O.filter((request) => request.status === "DRAFT"),
+    O.map(() => "WAIT_FOR_ISSUER")
+  );
 
 export const makeValidateDocument =
   (
@@ -73,10 +81,16 @@ export const makeValidateDocument =
           request,
           addUrlToDocument(payload.documentId, payload.documentUrl),
           E.map((documents) => ({ ...request, documents })),
-          E.map((request) => ({
-            ...request,
-            status: nextStatus(request),
-          }))
+          E.map(
+            flow(
+              nextStatus,
+              O.map((status) => ({
+                ...request,
+                status,
+              })),
+              O.getOrElse(() => request)
+            )
+          )
         )
       ),
       TE.chain(upsertSignatureRequest)

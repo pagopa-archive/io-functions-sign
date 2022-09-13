@@ -16,7 +16,6 @@ import {
   AddSignatureRequest,
   mockQrCodeUrl,
   UpsertSignatureRequest,
-  SignatureRequestStatus,
   GetSignatureRequest,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
@@ -41,21 +40,6 @@ export type RequestSignatureStatusPayload = {
   signatureRequestId: SignatureRequest["id"];
   signatureRequestStatus: SignatureRequest["status"];
 };
-
-const isReadyStatus = (u: unknown): u is SignatureRequestStatus =>
-  u === ("READY" as SignatureRequestStatus);
-
-const readyStatus = new t.Type<
-  SignatureRequestStatus,
-  SignatureRequestStatus,
-  unknown
->(
-  "status",
-  isReadyStatus,
-  (input, context) =>
-    isReadyStatus(input) ? t.success(input) : t.failure(input, context),
-  t.identity
-);
 
 export const makeRequestSignature =
   (
@@ -119,7 +103,7 @@ export const updateStatusRequestSignature =
   ): TE.TaskEither<Error, SignatureRequest> =>
     pipe(
       payload.signatureRequestStatus,
-      validate(readyStatus, "Only READY status is allowed!"),
+      validate(t.literal("READY"), "Only READY status is allowed!"),
       TE.fromEither,
       TE.chain((signatureRequestStatus) =>
         pipe(
