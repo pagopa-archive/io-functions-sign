@@ -109,7 +109,7 @@ paths:
         default:
           $ref: "#/components/responses/Unexpected"
     patch:
-      operationId: patchSignatureRequestStatus
+      operationId: setSignatureRequestStatus
       summary: Change the status of a signature request
       parameters:
         - in: path
@@ -126,7 +126,11 @@ paths:
               $ref: "#/components/schemas/PatchSignatureStatusBody"
       responses:
         "204":
-          description: The signature status was changed!
+          description: Signature status successfully changed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignatureRequestDetailView"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":

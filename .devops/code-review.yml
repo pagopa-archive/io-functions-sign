@@ -64,3 +64,5 @@ jobs:
       - template: project-setup.yml
       - script: yarn jest --ci
         displayName: "Execute tests"
+      - bash: bash <(curl -s https://codecov.io/bash)
+        displayName: "Code coverage"
