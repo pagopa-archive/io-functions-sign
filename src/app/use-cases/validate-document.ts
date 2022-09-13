@@ -45,6 +45,12 @@ export type ValidateDocumentPayload = GetDocumentPayload & {
   documentUrl: string;
 };
 
+const nextStatus = (request: SignatureRequest) =>
+  request.documents.every((document) => NonEmptyString.is(document)) &&
+  request.status === "DRAFT"
+    ? "WAIT_FOR_ISSUER"
+    : request.status;
+
 export const makeValidateDocument =
   (
     getSignatureRequest: GetSignatureRequest,
@@ -69,12 +75,7 @@ export const makeValidateDocument =
           E.map((documents) => ({ ...request, documents })),
           E.map((request) => ({
             ...request,
-            status:
-              request.documents.every((document) =>
-                NonEmptyString.is(document)
-              ) && request.status === "DRAFT"
-                ? "WAIT_FOR_ISSUER"
-                : request.status,
+            status: nextStatus(request),
           }))
         )
       ),

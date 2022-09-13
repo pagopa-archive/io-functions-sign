@@ -356,11 +356,11 @@ components:
       type: object
       properties:
         status:
-          $ref: "#/components/schemas/SignatureRequestStatus"
+          $ref: "#/components/schemas/StatusSignatureRequest"
       required:
         - status
 
-    SignatureRequestStatus:
+    StatusSignatureRequest:
       type: string
       enum:
         ["DRAFT", "WAIT_FOR_ISSUER", "READY", "WAIT_FOR_SIGNATURE", "SIGNED"]
@@ -378,7 +378,7 @@ components:
           type: string
           format: ulid
         status:
-          $ref: "#/components/schemas/SignatureRequestStatus"
+          $ref: "#/components/schemas/StatusSignatureRequest"
         productId:
           $ref: "#/components/schemas/ProductId"
         expiresAt:

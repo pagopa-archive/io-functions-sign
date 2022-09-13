@@ -47,13 +47,7 @@ const requireSignatureRequestStatus = (
   pipe(
     req,
     body(PatchSignatureStatusBody),
-    E.map((body) => body.status),
-    E.chain(
-      validate(
-        SignatureRequestStatus,
-        "Unable to decode the signature request status"
-      )
-    )
+    E.map((body) => body.status)
   );
 
 export const extractPatchSignatureRequestPayload: RE.ReaderEither<

@@ -1,10 +1,14 @@
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { constant, pipe, flow } from "fp-ts/lib/function";
+
 import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/lib/Either";
+import * as t from "io-ts";
+
 import { sequenceS } from "fp-ts/lib/Apply";
 import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { isAfter } from "date-fns";
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import { Subscription } from "../../signature-request/subscription";
 import { GetSignerByFiscalCode } from "../../signer/signer";
 import {
@@ -12,6 +16,7 @@ import {
   AddSignatureRequest,
   mockQrCodeUrl,
   UpsertSignatureRequest,
+  SignatureRequestStatus,
 } from "../../signature-request/signature-request";
 import { id } from "../../id";
 import {
@@ -36,6 +41,21 @@ export type RequestSignatureStatusPayload = {
   signatureRequestId: SignatureRequest["id"];
   signatureRequestStatus: SignatureRequest["status"];
 };
+
+const isReadyStatus = (u: unknown): u is SignatureRequestStatus =>
+  u === ("READY" as SignatureRequestStatus);
+
+const readyStatus = new t.Type<
+  SignatureRequestStatus,
+  SignatureRequestStatus,
+  unknown
+>(
+  "status",
+  isReadyStatus,
+  (input, context) =>
+    isReadyStatus(input) ? t.success(input) : t.failure(input, context),
+  t.identity
+);
 
 export const makeRequestSignature =
   (
@@ -95,16 +115,10 @@ export const updateStatusRequestSignature =
     payload: RequestSignatureStatusPayload
   ): TE.TaskEither<Error, SignatureRequest> =>
     pipe(
-      sequenceS(TE.ApplySeq)({
-        signatureRequestStatus: pipe(
-          TE.of(payload.signatureRequestStatus),
-          TE.filterOrElse(
-            (status) => status === "READY",
-            constant(new InvalidEntityError("Only READY status is allowed!"))
-          )
-        ),
-      }),
-      TE.chain(({ signatureRequestStatus }) =>
+      payload.signatureRequestStatus,
+      validate(readyStatus, "Only READY status is allowed!"),
+      TE.fromEither,
+      TE.chain((signatureRequestStatus) =>
         pipe(
           getSignatureRequest(
             payload.signatureRequestId,
