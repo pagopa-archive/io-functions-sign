@@ -3,7 +3,8 @@ import { Encoder } from "io-ts/Encoder";
 
 import { pipe } from "fp-ts/function";
 import { TaskEither } from "fp-ts/lib/TaskEither";
-import { Option } from "fp-ts/lib/Option";
+import * as O from "fp-ts/Option";
+
 import { UTCISODateFromString } from "@pagopa/ts-commons/lib/dates";
 import { SignerId } from "../signer/signer";
 import { Timestamps } from "../timestamps";
@@ -53,7 +54,7 @@ export type SignatureRequest = t.TypeOf<typeof SignatureRequest>;
 export type GetSignatureRequest = (
   id: SignatureRequest["id"],
   subscriptionId: SignatureRequest["subscriptionId"]
-) => TaskEither<Error, Option<SignatureRequest>>;
+) => TaskEither<Error, O.Option<SignatureRequest>>;
 
 export type UpsertSignatureRequest = (
   request: SignatureRequest
