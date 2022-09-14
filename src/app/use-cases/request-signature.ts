@@ -27,6 +27,7 @@ import {
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
 import { EntityNotFoundError, InvalidEntityError } from "../../error";
+import { nextStatus } from "./status-signature-request";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;
@@ -89,9 +90,7 @@ export const makeRequestSignature =
     );
 
 /*
- * Update status of signature request only if:
- * new status is READY
- * and previous status is WAIT_FOR_ISSUER!
+ * Update status of signature request only if new status is READY
  */
 export const updateStatusRequestSignature =
   (
@@ -105,7 +104,7 @@ export const updateStatusRequestSignature =
       payload.signatureRequestStatus,
       validate(t.literal("READY"), "Only READY status is allowed!"),
       TE.fromEither,
-      TE.chain((signatureRequestStatus) =>
+      TE.chain((_) =>
         pipe(
           getSignatureRequest(
             payload.signatureRequestId,
@@ -117,18 +116,7 @@ export const updateStatusRequestSignature =
                 () =>
                   new EntityNotFoundError("Error getting the Signature Request")
               ),
-              E.filterOrElse(
-                (request) => request.status === "WAIT_FOR_ISSUER",
-                constant(
-                  new InvalidEntityError(
-                    "The status can only be changed if the signature request is still in WAIT_FOR_ISSUER!"
-                  )
-                )
-              ),
-              E.map((request) => ({
-                ...request,
-                status: signatureRequestStatus,
-              }))
+              E.chainW((request) => pipe("MARK_AS_READY", nextStatus(request)))
             )
           ),
           TE.chain(upsertSignatureRequest)
