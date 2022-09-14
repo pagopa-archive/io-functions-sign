@@ -42,7 +42,7 @@ export const nextStatus =
       case "SIGNED":
         return E.left(
           new ActionNotAllowedError(
-            "This action is not allowed when signature request is in already SIGNED!"
+            "This action is not allowed when signature request is already SIGNED!"
           )
         );
       default:
