@@ -1,9 +1,6 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
-import {
-  setNextStatusAs,
-  SignatureRequestAction,
-} from "../status-signature-request";
+import { dispatch, SignatureRequestAction } from "../status-signature-request";
 import { SignatureRequest } from "../../../signature-request/signature-request";
 
 const baseRequest = {
@@ -92,7 +89,7 @@ describe("CheckStatusSignatureRequest", () => {
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
       payload.request as SignatureRequest,
-      setNextStatusAs(payload.action as SignatureRequestAction)
+      dispatch(payload.action as SignatureRequestAction)
     );
     expect(pipe(makeRequest, E.isRight)).toBe(expected);
   });

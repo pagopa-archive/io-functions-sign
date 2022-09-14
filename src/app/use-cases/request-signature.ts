@@ -26,7 +26,7 @@ import {
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
 import { EntityNotFoundError, InvalidEntityError } from "../../error";
-import { setNextStatusAs } from "./status-signature-request";
+import { dispatch } from "./status-signature-request";
 
 export type RequestSignaturePayload = {
   expiresAt?: UTCISODateFromString;
@@ -111,6 +111,6 @@ export const updateStatusRequestSignature =
           () => new EntityNotFoundError("Error getting the Signature Request")
         )
       ),
-      TE.chainEitherKW(setNextStatusAs("MARK_AS_READY")),
+      TE.chainEitherKW(dispatch("MARK_AS_READY")),
       TE.chain(upsertSignatureRequest)
     );

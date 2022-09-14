@@ -15,7 +15,7 @@ export const SignatureRequestAction = t.keyof({
 });
 export type SignatureRequestAction = t.TypeOf<typeof SignatureRequestAction>;
 
-export const setNextStatusAs =
+export const dispatch =
   (action: SignatureRequestAction) =>
   (
     request: SignatureRequest

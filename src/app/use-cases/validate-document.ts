@@ -18,7 +18,7 @@ import {
   DocumentList,
   IsDocumentUploaded,
 } from "../../signature-request/document";
-import { setNextStatusAs } from "./status-signature-request";
+import { dispatch } from "./status-signature-request";
 
 import { GetDocumentPayload } from "./get-document";
 
@@ -66,7 +66,7 @@ export const makeValidateDocument =
           request,
           addUrlToDocument(payload.documentId, payload.documentUrl),
           E.map((documents) => ({ ...request, documents })),
-          E.chain(setNextStatusAs("UPLOAD_DOCUMENT"))
+          E.chain(dispatch("UPLOAD_DOCUMENT"))
         )
       ),
       TE.chain(upsertSignatureRequest)
