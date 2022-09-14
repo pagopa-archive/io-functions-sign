@@ -108,7 +108,8 @@ paths:
           $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
-    patch:
+  /signature-requests/{signatureRequestId/status:
+    put:
       operationId: setSignatureRequestStatus
       summary: Change the status of a signature request
       parameters:
@@ -123,7 +124,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchSignatureStatusBody"
+              $ref: "#/components/schemas/PutSignatureStatusBody"
       responses:
         "204":
           description: Signature status successfully changed.
@@ -356,7 +357,7 @@ components:
         - productId
         - fiscalCode
 
-    PatchSignatureStatusBody:
+    PutSignatureStatusBody:
       type: object
       properties:
         status:
