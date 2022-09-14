@@ -31,8 +31,8 @@ import {
   upsertSignatureRequest,
 } from "../cosmos/signature-request";
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
-import { PatchSignatureStatusBody } from "../../api-models/PatchSignatureStatusBody";
 import { updateStatusRequestSignature } from "../../../app/use-cases/request-signature";
+import { PutSignatureStatusBody } from "../../api-models/PutSignatureStatusBody";
 
 const updateStatus = updateStatusRequestSignature(
   upsertSignatureRequest,
@@ -52,7 +52,7 @@ const requireSignatureRequestStatus = (
 ): E.Either<Error, SignatureRequestStatus> =>
   pipe(
     req,
-    body(PatchSignatureStatusBody),
+    body(PutSignatureStatusBody),
     E.map((body) => body.status)
   );
 
