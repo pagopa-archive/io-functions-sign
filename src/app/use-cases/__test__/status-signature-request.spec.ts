@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import {
-  nextStatus,
+  setNextStatusAs,
   SignatureRequestAction,
 } from "../status-signature-request";
 import { SignatureRequest } from "../../../signature-request/signature-request";
@@ -93,7 +93,7 @@ describe("CheckStatusSignatureRequest", () => {
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
       payload.request as SignatureRequest,
-      nextStatus(payload.action as SignatureRequestAction),
+      setNextStatusAs(payload.action as SignatureRequestAction),
       E.mapLeft((e) => {
         expect(e).toBeInstanceOf(ActionNotAllowedError);
       })

@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-small-switch */
 import * as E from "fp-ts/Either";
 import * as t from "io-ts";
 
@@ -16,7 +15,7 @@ export const SignatureRequestAction = t.keyof({
 });
 export type SignatureRequestAction = t.TypeOf<typeof SignatureRequestAction>;
 
-export const nextStatus =
+export const setNextStatusAs =
   (action: SignatureRequestAction) =>
   (
     request: SignatureRequest
@@ -46,6 +45,7 @@ const whenDraft =
   (
     action: SignatureRequestAction
   ): E.Either<ActionNotAllowedError, SignatureRequest> => {
+    // eslint-disable-next-line sonarjs/no-small-switch
     switch (action) {
       case "UPLOAD_DOCUMENT":
         return pipe(
@@ -109,6 +109,7 @@ const whenWaitForSignature =
   (
     action: SignatureRequestAction
   ): E.Either<ActionNotAllowedError, SignatureRequest> => {
+    // eslint-disable-next-line sonarjs/no-small-switch
     switch (action) {
       case "MARK_AS_SIGNED":
         return pipe(E.right({ ...request, status: "SIGNED" }));
