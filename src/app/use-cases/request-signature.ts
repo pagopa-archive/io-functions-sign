@@ -105,21 +105,15 @@ export const updateStatusRequestSignature =
       validate(t.literal("READY"), "Only READY status is allowed!"),
       TE.fromEither,
       TE.chain((_) =>
-        pipe(
-          getSignatureRequest(
-            payload.signatureRequestId,
-            payload.subscriptionId
+        getSignatureRequest(payload.signatureRequestId, payload.subscriptionId)
+      ),
+      TE.chainEitherKW(
+        flow(
+          E.fromOption(
+            () => new EntityNotFoundError("Error getting the Signature Request")
           ),
-          TE.chainEitherKW(
-            flow(
-              E.fromOption(
-                () =>
-                  new EntityNotFoundError("Error getting the Signature Request")
-              ),
-              E.chainW((request) => pipe("MARK_AS_READY", nextStatus(request)))
-            )
-          ),
-          TE.chain(upsertSignatureRequest)
+          E.chainW((request) => pipe("MARK_AS_READY", nextStatus(request)))
         )
-      )
+      ),
+      TE.chain(upsertSignatureRequest)
     );

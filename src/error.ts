@@ -21,3 +21,13 @@ export class InvalidEntityError extends Error implements ProblemDetail {
     this.name = "InvalidEntityError";
   }
 }
+
+export class ActionNotAllowedError extends Error implements ProblemDetail {
+  type = "/problems/action-not-allowed";
+  title = "Action not allowed";
+  status = "400";
+  constructor(public detail: string) {
+    super(detail);
+    this.name = "ActionNotAllowedError";
+  }
+}

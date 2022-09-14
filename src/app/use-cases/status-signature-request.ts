@@ -1,21 +1,12 @@
+/* eslint-disable sonarjs/no-small-switch */
 import * as E from "fp-ts/Either";
 import * as t from "io-ts";
 
 import { pipe } from "fp-ts/function";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
-import { ProblemDetail } from "@pagopa/handler-kit/lib/problem-detail";
 import { SignatureRequest } from "../../signature-request/signature-request";
-
-export class ActionNotAllowedError extends Error implements ProblemDetail {
-  type = "/problems/action-not-allowed";
-  title = "Action not allowed";
-  status = "400";
-  constructor(public detail: string) {
-    super(detail);
-    this.name = "ActionNotAllowedError";
-  }
-}
+import { ActionNotAllowedError } from "../../error";
 
 export const SignatureRequestAction = t.keyof({
   UPLOAD_DOCUMENT: null,
@@ -42,11 +33,11 @@ export const nextStatus =
       case "SIGNED":
         return E.left(
           new ActionNotAllowedError(
-            "This action is not allowed when signature request is already SIGNED!"
+            "This operation is prohibited if the signature request has already been signed"
           )
         );
       default:
-        return E.left(new ActionNotAllowedError("Status not valid!"));
+        return E.left(new ActionNotAllowedError("Invalid status!"));
     }
   };
 
@@ -54,18 +45,22 @@ const whenDraft =
   (request: SignatureRequest) =>
   (
     action: SignatureRequestAction
-  ): E.Either<ActionNotAllowedError, SignatureRequest> =>
-    action === "UPLOAD_DOCUMENT"
-      ? pipe(
+  ): E.Either<ActionNotAllowedError, SignatureRequest> => {
+    switch (action) {
+      case "UPLOAD_DOCUMENT":
+        return pipe(
           request.documents.every((document) => NonEmptyString.is(document.url))
             ? E.right({ ...request, status: "WAIT_FOR_ISSUER" })
             : E.right({ ...request, status: "DRAFT" })
-        )
-      : E.left(
+        );
+      default:
+        return E.left(
           new ActionNotAllowedError(
-            "This action is not allowed when signature request is in DRAFT status!"
+            "This operation is prohibited if the signature request is in DRAFT status!"
           )
         );
+    }
+  };
 
 const whenWaitForIssuer =
   (request: SignatureRequest) =>
@@ -80,7 +75,7 @@ const whenWaitForIssuer =
       default:
         return E.left(
           new ActionNotAllowedError(
-            "This action is not allowed when signature request is in WAIT_FOR_ISSUER status!"
+            "This operation is prohibited if the signature request is in WAIT_FOR_ISSUER status!"
           )
         );
     }
@@ -103,7 +98,7 @@ const whenReady =
       default:
         return E.left(
           new ActionNotAllowedError(
-            "This action is not allowed when signature request is in WAIT_FOR_ISSUER status!"
+            "This operation is prohibited if the signature request is in WAIT_FOR_ISSUER status!"
           )
         );
     }
@@ -113,11 +108,15 @@ const whenWaitForSignature =
   (request: SignatureRequest) =>
   (
     action: SignatureRequestAction
-  ): E.Either<ActionNotAllowedError, SignatureRequest> =>
-    action === "MARK_AS_SIGNED"
-      ? pipe(E.right({ ...request, status: "SIGNED" }))
-      : E.left(
+  ): E.Either<ActionNotAllowedError, SignatureRequest> => {
+    switch (action) {
+      case "MARK_AS_SIGNED":
+        return pipe(E.right({ ...request, status: "SIGNED" }));
+      default:
+        return E.left(
           new ActionNotAllowedError(
-            "This action is not allowed when signature request is in WAIT_FOR_SIGNATURE status!"
+            "This operation is prohibited if the signature request is in WAIT_FOR_SIGNATURE status!"
           )
         );
+    }
+  };

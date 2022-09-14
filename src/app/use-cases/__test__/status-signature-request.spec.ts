@@ -1,11 +1,11 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import {
-  ActionNotAllowedError,
   nextStatus,
   SignatureRequestAction,
 } from "../status-signature-request";
 import { SignatureRequest } from "../../../signature-request/signature-request";
+import { ActionNotAllowedError } from "../../../error";
 
 const baseRequest = {
   id: "SR-ID1",
