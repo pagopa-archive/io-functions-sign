@@ -66,7 +66,7 @@ export const makeValidateDocument =
           request,
           addUrlToDocument(payload.documentId, payload.documentUrl),
           E.map((documents) => ({ ...request, documents })),
-          E.chain((request) => pipe("UPLOAD_DOCUMENT", nextStatus(request)))
+          E.chain(nextStatus("UPLOAD_DOCUMENT"))
         )
       ),
       TE.chain(upsertSignatureRequest)

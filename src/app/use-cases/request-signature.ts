@@ -1,8 +1,7 @@
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { constant, pipe, flow } from "fp-ts/lib/function";
+import { constant, pipe } from "fp-ts/lib/function";
 
 import * as TE from "fp-ts/TaskEither";
-import * as E from "fp-ts/lib/Either";
 import * as t from "io-ts";
 
 import { sequenceS } from "fp-ts/lib/Apply";
@@ -104,16 +103,14 @@ export const updateStatusRequestSignature =
       payload.signatureRequestStatus,
       validate(t.literal("READY"), "Only READY status is allowed!"),
       TE.fromEither,
-      TE.chain((_) =>
+      TE.chain(() =>
         getSignatureRequest(payload.signatureRequestId, payload.subscriptionId)
       ),
-      TE.chainEitherKW(
-        flow(
-          E.fromOption(
-            () => new EntityNotFoundError("Error getting the Signature Request")
-          ),
-          E.chainW((request) => pipe("MARK_AS_READY", nextStatus(request)))
+      TE.chainW(
+        TE.fromOption(
+          () => new EntityNotFoundError("Error getting the Signature Request")
         )
       ),
+      TE.chainEitherKW(nextStatus("MARK_AS_READY")),
       TE.chain(upsertSignatureRequest)
     );

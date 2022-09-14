@@ -17,9 +17,9 @@ export const SignatureRequestAction = t.keyof({
 export type SignatureRequestAction = t.TypeOf<typeof SignatureRequestAction>;
 
 export const nextStatus =
-  (request: SignatureRequest) =>
+  (action: SignatureRequestAction) =>
   (
-    action: SignatureRequestAction
+    request: SignatureRequest
   ): E.Either<ActionNotAllowedError, SignatureRequest> => {
     switch (request.status) {
       case "DRAFT":

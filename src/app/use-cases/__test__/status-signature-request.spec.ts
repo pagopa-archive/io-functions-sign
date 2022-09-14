@@ -92,8 +92,8 @@ describe("CheckStatusSignatureRequest", () => {
     },
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
-      payload.action as SignatureRequestAction,
-      nextStatus(payload.request as SignatureRequest),
+      payload.request as SignatureRequest,
+      nextStatus(payload.action as SignatureRequestAction),
       E.mapLeft((e) => {
         expect(e).toBeInstanceOf(ActionNotAllowedError);
       })
