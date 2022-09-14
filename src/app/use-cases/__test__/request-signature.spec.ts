@@ -1,7 +1,6 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import { addDays, subDays } from "date-fns/fp";
-import { ValidationError } from "@pagopa/handler-kit/lib/validation";
 import {
   makeRequestSignature,
   RequestSignaturePayload,
@@ -96,12 +95,6 @@ describe("updateStatusRequestSignatureList", () => {
       )
     )();
     return updateRequest.then((data) => {
-      pipe(
-        data,
-        E.mapLeft((e) => {
-          expect(e).toBeInstanceOf(ValidationError);
-        })
-      );
       expect(pipe(data, E.isRight)).toBe(expected);
     });
   });

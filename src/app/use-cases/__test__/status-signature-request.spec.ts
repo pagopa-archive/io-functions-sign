@@ -5,7 +5,6 @@ import {
   SignatureRequestAction,
 } from "../status-signature-request";
 import { SignatureRequest } from "../../../signature-request/signature-request";
-import { ActionNotAllowedError } from "../../../error";
 
 const baseRequest = {
   id: "SR-ID1",
@@ -93,10 +92,7 @@ describe("CheckStatusSignatureRequest", () => {
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
       payload.request as SignatureRequest,
-      setNextStatusAs(payload.action as SignatureRequestAction),
-      E.mapLeft((e) => {
-        expect(e).toBeInstanceOf(ActionNotAllowedError);
-      })
+      setNextStatusAs(payload.action as SignatureRequestAction)
     );
     expect(pipe(makeRequest, E.isRight)).toBe(expected);
   });
