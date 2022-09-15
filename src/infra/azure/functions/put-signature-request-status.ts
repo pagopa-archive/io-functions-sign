@@ -40,11 +40,7 @@ const updateStatus = updateStatusRequestSignature(
 const requireSignatureRequestStatus = (
   req: HttpRequest
 ): E.Either<Error, SignatureRequestStatus> =>
-  pipe(
-    req,
-    body(ApiSignatureRequestStatus),
-    E.map((status) => status)
-  );
+  pipe(req, body(ApiSignatureRequestStatus));
 
 export const extractPatchSignatureRequestPayload: RE.ReaderEither<
   HttpRequest,
