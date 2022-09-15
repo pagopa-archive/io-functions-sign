@@ -25,7 +25,7 @@ const baseRequest = {
 
 describe("CheckStatusSignatureRequest", () => {
   it.each([
-    { payload: { request: {}, status: "" }, expected: false },
+    { payload: { request: {}, status: "" }, expected: "INVALID" },
     {
       payload: {
         request: {
@@ -34,7 +34,7 @@ describe("CheckStatusSignatureRequest", () => {
         },
         action: "UPLOAD_DOCUMENT",
       },
-      expected: true,
+      expected: "DRAFT",
     },
     {
       payload: {
@@ -44,7 +44,7 @@ describe("CheckStatusSignatureRequest", () => {
         },
         action: "MARK_AS_READY",
       },
-      expected: false,
+      expected: "INVALID",
     },
     {
       payload: {
@@ -54,7 +54,23 @@ describe("CheckStatusSignatureRequest", () => {
         },
         action: "VALIDATE_DOCUMENT",
       },
-      expected: false,
+      expected: "INVALID",
+    },
+    {
+      payload: {
+        request: {
+          ...baseRequest,
+          status: "DRAFT",
+          documents: [
+            {
+              ...baseRequest.documents[0],
+              url: "https://example.com",
+            },
+          ],
+        },
+        action: "UPLOAD_DOCUMENT",
+      },
+      expected: "WAIT_FOR_ISSUER",
     },
     {
       payload: {
@@ -64,7 +80,7 @@ describe("CheckStatusSignatureRequest", () => {
         },
         action: "UPLOAD_DOCUMENT",
       },
-      expected: true,
+      expected: "WAIT_FOR_ISSUER",
     },
     {
       payload: {
@@ -74,7 +90,7 @@ describe("CheckStatusSignatureRequest", () => {
         },
         action: "MARK_AS_READY",
       },
-      expected: true,
+      expected: "READY",
     },
     {
       payload: {
@@ -84,13 +100,19 @@ describe("CheckStatusSignatureRequest", () => {
         },
         action: "VALIDATE_DOCUMENT",
       },
-      expected: true,
+      expected: "WAIT_FOR_SIGNATURE",
     },
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
       payload.request as SignatureRequest,
       dispatch(payload.action as SignatureRequestAction)
     );
-    expect(pipe(makeRequest, E.isRight)).toBe(expected);
+    expect(
+      pipe(
+        makeRequest,
+        E.map((req) => req.status),
+        E.getOrElse(() => "INVALID")
+      )
+    ).toBe(expected);
   });
 });
