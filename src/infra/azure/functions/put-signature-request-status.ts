@@ -10,20 +10,17 @@ import { createHandler } from "@pagopa/handler-kit";
 import {
   success,
   HttpRequest,
-  path,
   error,
   body,
 } from "@pagopa/handler-kit/lib/http";
 import * as azure from "@pagopa/handler-kit/lib/azure";
 
-import { validate } from "@pagopa/handler-kit/lib/validation";
 import { requireSubscriptionId } from "../../http";
 
 import { Subscription } from "../../../signature-request/subscription";
 
 import {
   SignatureRequest,
-  SignatureRequestId,
   SignatureRequestStatus,
 } from "../../../signature-request/signature-request";
 import {
@@ -32,19 +29,12 @@ import {
 } from "../cosmos/signature-request";
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 import { updateStatusRequestSignature } from "../../../app/use-cases/request-signature";
-import { PutSignatureStatusBody } from "../../api-models/PutSignatureStatusBody";
+import { SignatureRequestStatus as ApiSignatureRequestStatus } from "../../api-models/SignatureRequestStatus";
+import { requireSignatureRequestId } from "./get-signature-request";
 
 const updateStatus = updateStatusRequestSignature(
   upsertSignatureRequest,
   getSignatureRequest
-);
-
-export const requireSignatureRequestId: (
-  req: HttpRequest
-) => E.Either<Error, SignatureRequest["id"]> = flow(
-  path("signatureRequestId"),
-  E.fromOption(() => new Error("Missing signatureRequestId in path")),
-  E.chainW(validate(SignatureRequestId, "Invalid signatureRequestId in path"))
 );
 
 const requireSignatureRequestStatus = (
@@ -52,8 +42,8 @@ const requireSignatureRequestStatus = (
 ): E.Either<Error, SignatureRequestStatus> =>
   pipe(
     req,
-    body(PutSignatureStatusBody),
-    E.map((body) => body.status)
+    body(ApiSignatureRequestStatus),
+    E.map((status) => status)
   );
 
 export const extractPatchSignatureRequestPayload: RE.ReaderEither<

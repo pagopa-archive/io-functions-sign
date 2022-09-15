@@ -92,8 +92,7 @@ paths:
         - in: path
           name: signatureRequestId
           schema:
-            type: string
-            format: ulid
+            $ref: "#/components/schemas/SignatureRequestId"
           required: true
       responses:
         "200":
@@ -108,7 +107,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
-  /signature-requests/{signatureRequestId/status:
+  /signature-requests/{signatureRequestId}/status:
     put:
       operationId: setSignatureRequestStatus
       summary: Change the status of a signature request
@@ -116,15 +115,14 @@ paths:
         - in: path
           name: signatureRequestId
           schema:
-            type: string
-            format: ulid
+            $ref: "#/components/schemas/SignatureRequestId"
           required: true
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PutSignatureStatusBody"
+              $ref: "#/components/schemas/SignatureRequestStatus"
       responses:
         "204":
           description: Signature status successfully changed.
@@ -146,8 +144,7 @@ paths:
         - in: path
           name: signatureRequestId
           schema:
-            type: string
-            format: ulid
+            $ref: "#/components/schemas/SignatureRequestId"
           required: true
         - in: path
           name: documentId
@@ -357,18 +354,14 @@ components:
         - productId
         - fiscalCode
 
-    PutSignatureStatusBody:
-      type: object
-      properties:
-        status:
-          $ref: "#/components/schemas/StatusSignatureRequest"
-      required:
-        - status
-
-    StatusSignatureRequest:
+    SignatureRequestStatus:
       type: string
-      enum:
-        ["DRAFT", "WAIT_FOR_ISSUER", "READY", "WAIT_FOR_SIGNATURE", "SIGNED"]
+      x-extensible-enum:
+        - DRAFT
+        - WAIT_FOR_ISSUER
+        - READY
+        - WAIT_FOR_SIGNATURE
+        - SIGNED
       description: >
         Signature request status:
          * `DRAFT` - The signature request has been created but not all documents have been uploaded yet.
@@ -376,6 +369,7 @@ components:
          * `READY` - The signature request is ready for processing. In this phase the documents will be analyzed and prepared for sending to the USER.
          * `WAIT_FOR_SIGNATURE` - The signature request has been sent to the user and is awaiting signature
          * `SIGNED` - The signature request was successfully signed.
+
     SignatureRequestDetailView:
       type: object
       properties:
@@ -383,7 +377,7 @@ components:
           type: string
           format: ulid
         status:
-          $ref: "#/components/schemas/StatusSignatureRequest"
+          $ref: "#/components/schemas/SignatureRequestStatus"
         productId:
           $ref: "#/components/schemas/ProductId"
         expiresAt:
@@ -399,3 +393,7 @@ components:
         - productId
         - qrCodeUrl
         - documents
+    SignatureRequestId:
+      type: string
+      format: ulid
+      minLength: 1

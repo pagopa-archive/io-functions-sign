@@ -22,18 +22,21 @@ import { Subscription } from "../../../signature-request/subscription";
 
 import {
   SignatureRequest,
-  SignatureRequestId,
   signatureRequestNotFoundError,
 } from "../../../signature-request/signature-request";
 import { getSignatureRequest } from "../cosmos/signature-request";
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
+
+import { SignatureRequestId as ApiSignatureRequestId } from "../../api-models/SignatureRequestId";
 
 export const requireSignatureRequestId: (
   req: HttpRequest
 ) => E.Either<Error, SignatureRequest["id"]> = flow(
   path("signatureRequestId"),
   E.fromOption(() => new Error("Missing signatureRequestId in path")),
-  E.chainW(validate(SignatureRequestId, "Invalid signatureRequestId in path"))
+  E.chainW(
+    validate(ApiSignatureRequestId, "Invalid signatureRequestId in path")
+  )
 );
 
 export const extractGetSignatureRequestPayload: RE.ReaderEither<
