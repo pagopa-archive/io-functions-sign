@@ -15,11 +15,16 @@ import {
   StorageConfig,
   getStorageConfigFromEnvironment,
 } from "../infra/azure/storage/config";
+import {
+  getTokenizerApiClientConfigFromEnvironment,
+  TokenizerApiClientConfig,
+} from "../infra/tokenizer/config";
 
 export const Config = t.type({
   cosmos: CosmosConfig,
   ioapi: IOApiClientConfig,
   storage: StorageConfig,
+  tokenizer: TokenizerApiClientConfig,
 });
 
 export type Config = t.TypeOf<typeof Config>;
@@ -32,6 +37,7 @@ export const getConfigFromEnvironment: RE.ReaderEither<
   cosmos: getCosmosConfigFromEnvironment,
   ioapi: getIOApiClientConfigFromEnvironment,
   storage: getStorageConfigFromEnvironment,
+  tokenizer: getTokenizerApiClientConfigFromEnvironment,
 });
 
 export const config = getConfigFromEnvironment(process.env);

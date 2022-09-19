@@ -11,7 +11,8 @@
     "prepare": "husky install",
     "func:ext-install": "func extensions install",
     "start": "func start",
-    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/infra/api-models"
+    "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/infra/api-models",
+    "generate:tokenizer-api-models": "gen-api-models --api-spec ./openapi-tokenizer.yaml --out-dir ./src/infra/api-models-tokenizer --request-types  --response-decoders --client"
   },
   "repository": {
     "type": "git",
