@@ -7,4 +7,5 @@ local.settings.json
 coverage
 bin
 obj
-src/infra/api-models*
+src/infra/api-models
+src/infra/tokenizer/models

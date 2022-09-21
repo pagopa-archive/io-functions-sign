@@ -5,9 +5,8 @@ import { pipe } from "fp-ts/lib/function";
 import { FiscalCode } from "@pagopa/io-functions-services-sdk/FiscalCode";
 import { config } from "../../app/config";
 import { tokenizerApiClient } from "./client";
-import { SignerId } from "../../signer/signer";
 
-export const getSignerIdFromFiscalCode = (fiscalCode: FiscalCode) =>
+export const getTokenFromFiscalCode = (fiscalCode: FiscalCode) =>
   pipe(
     config,
     TE.fromEither,
@@ -29,7 +28,7 @@ export const getSignerIdFromFiscalCode = (fiscalCode: FiscalCode) =>
     )
   );
 
-export const getFiscalCodeFromSignerId = (signerId: SignerId) =>
+export const getFiscalCodeFromToken = (token: string) =>
   pipe(
     config,
     TE.fromEither,
@@ -42,7 +41,7 @@ export const getFiscalCodeFromSignerId = (signerId: SignerId) =>
             () =>
               client.findPiiUsingGET({
                 api_key: config.tokenizer.tokenizerApiSubscriptionKey,
-                body: { token: signerId },
+                token,
               }),
             E.toError
           )

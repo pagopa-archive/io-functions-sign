@@ -9,7 +9,7 @@ import { pipe } from "fp-ts/lib/function";
 
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import { config } from "../../app/config";
-import { createClient } from "../api-models-tokenizer/client";
+import { createClient } from "./models/client";
 
 const httpApiFetch = agent.getHttpFetch(process.env);
 const abortableFetch = AbortableFetch(httpApiFetch);
