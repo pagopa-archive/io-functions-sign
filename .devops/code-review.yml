@@ -62,7 +62,7 @@ jobs:
     continueOnError: false
     steps:
       - template: project-setup.yml
-      - script: yarn test
+      - script: yarn test --ci
         displayName: "Execute tests"
       - bash: bash <(curl -s https://codecov.io/bash)
         displayName: "Code coverage"
