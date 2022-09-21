@@ -39,12 +39,6 @@ describe("MakeRequestSignatureList", () => {
       TE.flatten
     )();
     return makeRequest.then((data) => {
-      pipe(
-        data,
-        E.mapLeft((e) => {
-          expect(e).toBeInstanceOf(InvalidEntityError);
-        })
-      );
       expect(pipe(data, E.isRight)).toBe(expected);
     });
   });

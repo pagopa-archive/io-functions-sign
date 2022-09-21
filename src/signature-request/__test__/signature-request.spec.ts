@@ -11,6 +11,7 @@ describe("SignatureRequestList", () => {
         subscriptionId: "sub-id",
         productId: "prod-id",
         signerId: "sign-id",
+        status: "DRAFT",
         qrCodeUrl: mockQrCodeUrl,
         documents: [
           {

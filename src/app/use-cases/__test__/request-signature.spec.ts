@@ -4,13 +4,17 @@ import { addDays, subDays } from "date-fns/fp";
 import {
   makeRequestSignature,
   RequestSignaturePayload,
+  RequestSignatureStatusPayload,
+  updateStatusRequestSignature,
 } from "../request-signature";
 
 import { InvalidEntityError } from "../../../error";
 import {
   mockAddSignatureRequest,
   mockGetProduct,
+  mockGetSignatureRequest,
   mockGetSignerByFiscalCode,
+  mockUpsertSignatureRequest,
 } from "./mock";
 
 describe("MakeRequestSignatureList", () => {
@@ -58,6 +62,39 @@ describe("MakeRequestSignatureList", () => {
           expect(e).toBeInstanceOf(InvalidEntityError);
         })
       );
+      expect(pipe(data, E.isRight)).toBe(expected);
+    });
+  });
+});
+
+describe("updateStatusRequestSignatureList", () => {
+  it.each([
+    { payload: {}, expected: false },
+    {
+      payload: {
+        signatureRequestId: "sig-id",
+        subscriptionId: "sub-id",
+        signatureRequestStatus: "WAIT_FOR_ISSUER",
+      },
+      expected: false,
+    },
+    {
+      payload: {
+        signatureRequestId: "sig-id",
+        subscriptionId: "sub-id",
+        signatureRequestStatus: "READY",
+      },
+      expected: true,
+    },
+  ])("should be valid ($#)", ({ payload, expected }) => {
+    const updateRequest = pipe(
+      payload as RequestSignatureStatusPayload,
+      updateStatusRequestSignature(
+        mockUpsertSignatureRequest,
+        mockGetSignatureRequest
+      )
+    )();
+    return updateRequest.then((data) => {
       expect(pipe(data, E.isRight)).toBe(expected);
     });
   });

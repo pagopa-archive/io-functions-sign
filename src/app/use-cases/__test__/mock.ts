@@ -7,6 +7,7 @@ import {
   AddSignatureRequest,
   GetSignatureRequest,
   SignatureRequest,
+  UpsertSignatureRequest,
 } from "../../../signature-request/signature-request";
 import { InvalidEntityError } from "../../../error";
 
@@ -49,6 +50,7 @@ export const mockGetSignatureRequest: GetSignatureRequest = (
       subscriptionId,
       signerId: "Signer-SPNDNL80R13C555X",
       productId: "prod-id",
+      status: "WAIT_FOR_ISSUER",
       documents: [
         {
           id: "doc-id",
@@ -65,5 +67,9 @@ export const mockGetSignatureRequest: GetSignatureRequest = (
   );
 
 export const mockAddSignatureRequest: AddSignatureRequest = (
+  request: SignatureRequest
+) => TE.right(request);
+
+export const mockUpsertSignatureRequest: UpsertSignatureRequest = (
   request: SignatureRequest
 ) => TE.right(request);
