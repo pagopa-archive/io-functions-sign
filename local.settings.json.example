@@ -10,8 +10,8 @@
     "WaitingMessageQueueName": "QUEUE_STORAGE_NAME_FOR_WAITING_MESSAGE",
     "IOApiBasePath": "IO_SERVICES_API_URL",
     "IOApiSubscriptionKey": "IO_SERVICES_API_SUBSCRIPTION_KEY",
-    "TokenizerApiBasePath": "tokenizer_SERVICES_API_URL",
-    "TokenizerApiSubscriptionKey": "tokenizer_SERVICES_API_SUBSCRIPTION_KEY",
+    "TokenizerApiBasePath": "TOKENIZER_SERVICES_API_URL",
+    "TokenizerApiSubscriptionKey": "TOKENIZER_SERVICES_API_SUBSCRIPTION_KEY",
     "IOApiRequestTimeout": 10000
   }
 }
