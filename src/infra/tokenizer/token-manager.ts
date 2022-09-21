@@ -28,7 +28,7 @@ export const getTokenFromFiscalCode = (fiscalCode: FiscalCode) =>
     )
   );
 
-export const getFiscalCodeFromToken = (token: string) =>
+export const getFiscalCodeFromToken = (tokenId: string) =>
   pipe(
     config,
     TE.fromEither,
@@ -41,7 +41,7 @@ export const getFiscalCodeFromToken = (token: string) =>
             () =>
               client.findPiiUsingGET({
                 api_key: config.tokenizer.tokenizerApiSubscriptionKey,
-                token,
+                token: tokenId,
               }),
             E.toError
           )
