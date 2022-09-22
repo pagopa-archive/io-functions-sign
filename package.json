@@ -12,7 +12,8 @@
     "func:ext-install": "func extensions install",
     "start": "func start",
     "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/infra/api-models",
-    "generate:tokenizer-api-models": "gen-api-models --api-spec ./openapi-tokenizer.yaml --out-dir ./src/infra/tokenizer/models --request-types  --response-decoders --client"
+    "generate:tokenizer-yaml-specification": "curl -s https://api.uat.tokenizer.pdv.pagopa.it/docs/tokenizeruapis/openapi.json -o ./tokenizer.json; json2yaml ./tokenizer.json > ./tokenizer.yaml; gen-api-models --api-spec ./tokenizer.yaml --out-dir ./src/infra/tokenizer/models-json2yaml --client",
+    "generate:tokenizer-api-models": "gen-api-models --api-spec ./openapi-tokenizer.yaml --out-dir ./src/infra/tokenizer/models --client"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "fast-check": "^2.24.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
+    "json2yaml": "^1.1.0",
     "lint-staged": "^12.3.7",
     "prettier": "2.6.2",
     "ts-jest": "^27.1.4",
