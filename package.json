@@ -12,8 +12,7 @@
     "func:ext-install": "func extensions install",
     "start": "func start",
     "generate:issuer-api-models": "gen-api-models --api-spec ./openapi-issuer.yaml --out-dir ./src/infra/api-models",
-    "generate:tokenizer-yaml-specification": "curl -s https://api.uat.tokenizer.pdv.pagopa.it/docs/tokenizeruapis/openapi.json -o ./tokenizer.json; json2yaml ./tokenizer.json > ./tokenizer.yaml; gen-api-models --api-spec ./tokenizer.yaml --out-dir ./src/infra/tokenizer/models-json2yaml --client",
-    "generate:tokenizer-api-models": "gen-api-models --api-spec ./openapi-tokenizer.yaml --out-dir ./src/infra/tokenizer/models --client"
+    "generate:tokenizer-api-models": "curl -s https://api.tokenizer.pdv.pagopa.it/docs/tokenizerpapis/openapi.json -o ./openapi-tokenizer.json; json2yaml ./openapi-tokenizer.json > ./openapi-tokenizer.yaml; gen-api-models --api-spec ./openapi-tokenizer.yaml --out-dir ./src/infra/tokenizer/models --client"
   },
   "repository": {
     "type": "git",
