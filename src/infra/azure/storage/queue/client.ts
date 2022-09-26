@@ -13,7 +13,7 @@ export const queueClient: E.Either<Error, QueueClient> = pipe(
       config.storage.webJobs.connectionString
     );
     return queueServiceClient.getQueueClient(
-      config.storage.webJobs.WaitingMessageQueueName
+      config.storage.webJobs.waitingMessageQueueName
     );
   })
 );
