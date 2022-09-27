@@ -2,10 +2,12 @@ import * as t from "io-ts";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
 export const ClauseTitle = NonEmptyString;
+export const SignatureFieldId = NonEmptyString;
 
 export const Clause = t.type({
   title: ClauseTitle,
   required: t.boolean,
+  signatureFieldId: SignatureFieldId,
 });
 
 export type Clause = t.TypeOf<typeof Clause>;

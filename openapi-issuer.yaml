@@ -271,10 +271,13 @@ components:
       properties:
         title:
           type: string
+        signatureFieldId:
+          type: string
         required:
           type: boolean
       required:
         - title
+        - signatureFieldId
         - required
     DocumentMetadata:
       type: object
