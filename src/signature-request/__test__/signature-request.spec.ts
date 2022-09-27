@@ -20,6 +20,7 @@ describe("SignatureRequestList", () => {
             clauses: [
               {
                 title: "Clause 1",
+                signatureFieldId: "sign1",
                 required: false,
               },
             ],
