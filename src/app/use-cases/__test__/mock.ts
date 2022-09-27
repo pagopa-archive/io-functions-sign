@@ -32,6 +32,7 @@ export const mockGetProduct: GetProduct = (
           clauses: [
             {
               title: "doc-tos",
+              signatureFieldId: "sign1",
               required: false,
             },
           ],
@@ -58,6 +59,7 @@ export const mockGetSignatureRequest: GetSignatureRequest = (
           clauses: [
             {
               title: "doc-tos",
+              signatureFieldId: "sign1",
               required: false,
             },
           ],
