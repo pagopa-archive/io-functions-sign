@@ -25,7 +25,6 @@ export const SignatureRequestId = t.string;
  */
 export const SignatureRequestStatus = t.keyof({
   DRAFT: null,
-  WAIT_FOR_ISSUER: null,
   READY: null,
   WAIT_FOR_SIGNATURE: null,
   SIGNED: null,

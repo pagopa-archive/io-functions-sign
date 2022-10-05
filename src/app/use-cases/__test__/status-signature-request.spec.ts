@@ -1,6 +1,9 @@
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
-import { dispatch, SignatureRequestAction } from "../status-signature-request";
+import {
+  dispatchOnSignatureRequest,
+  SignatureRequestAction,
+} from "../status-signature-request";
 import { SignatureRequest } from "../../../signature-request/signature-request";
 
 const baseRequest = {
@@ -13,6 +16,7 @@ const baseRequest = {
     {
       id: "doc-id",
       title: "doc-title",
+      status: "WAIT_FOR_UPLOAD",
       clauses: [
         {
           title: "doc-tos",
@@ -26,16 +30,6 @@ const baseRequest = {
 describe("CheckStatusSignatureRequest", () => {
   it.each([
     { payload: { request: {}, status: "" }, expected: "INVALID" },
-    {
-      payload: {
-        request: {
-          ...baseRequest,
-          status: "DRAFT",
-        },
-        action: "UPLOAD_DOCUMENT",
-      },
-      expected: "DRAFT",
-    },
     {
       payload: {
         request: {
@@ -64,29 +58,44 @@ describe("CheckStatusSignatureRequest", () => {
           documents: [
             {
               ...baseRequest.documents[0],
-              url: "https://example.com",
+              url: "https://example.com/1",
+              status: "WAIT_FOR_UPLOAD",
             },
           ],
         },
-        action: "UPLOAD_DOCUMENT",
+        action: "MARK_AS_READY",
       },
-      expected: "WAIT_FOR_ISSUER",
+      expected: "INVALID",
     },
     {
       payload: {
         request: {
           ...baseRequest,
-          status: "WAIT_FOR_ISSUER",
+          status: "DRAFT",
+          documents: [
+            {
+              ...baseRequest.documents[0],
+              url: "https://example.com/2",
+              status: "VALIDATION_IN_PROGRESS",
+            },
+          ],
         },
-        action: "UPLOAD_DOCUMENT",
+        action: "MARK_AS_READY",
       },
-      expected: "WAIT_FOR_ISSUER",
+      expected: "INVALID",
     },
     {
       payload: {
         request: {
           ...baseRequest,
-          status: "WAIT_FOR_ISSUER",
+          status: "DRAFT",
+          documents: [
+            {
+              ...baseRequest.documents[0],
+              url: "https://example.com/3",
+              status: "READY",
+            },
+          ],
         },
         action: "MARK_AS_READY",
       },
@@ -105,7 +114,7 @@ describe("CheckStatusSignatureRequest", () => {
   ])("should be valid ($#)", ({ payload, expected }) => {
     const makeRequest = pipe(
       payload.request as SignatureRequest,
-      dispatch(payload.action as SignatureRequestAction)
+      dispatchOnSignatureRequest(payload.action as SignatureRequestAction)
     );
     expect(
       pipe(

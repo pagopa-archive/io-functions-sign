@@ -51,11 +51,12 @@ export const mockGetSignatureRequest: GetSignatureRequest = (
       subscriptionId,
       signerId: "Signer-SPNDNL80R13C555X",
       productId: "prod-id",
-      status: "WAIT_FOR_ISSUER",
+      status: "DRAFT",
       documents: [
         {
           id: "doc-id",
           title: "doc-title",
+          status: "READY",
           clauses: [
             {
               title: "doc-tos",
