@@ -32,20 +32,14 @@ describe("CheckStatusSignatureRequest", () => {
     { payload: { request: {}, status: "" }, expected: "INVALID" },
     {
       payload: {
-        request: {
-          ...baseRequest,
-          status: "DRAFT",
-        },
+        request: baseRequest,
         action: "MARK_AS_READY",
       },
       expected: "INVALID",
     },
     {
       payload: {
-        request: {
-          ...baseRequest,
-          status: "DRAFT",
-        },
+        request: baseRequest,
         action: "VALIDATE_DOCUMENT",
       },
       expected: "INVALID",
@@ -54,7 +48,6 @@ describe("CheckStatusSignatureRequest", () => {
       payload: {
         request: {
           ...baseRequest,
-          status: "DRAFT",
           documents: [
             {
               ...baseRequest.documents[0],
@@ -71,7 +64,6 @@ describe("CheckStatusSignatureRequest", () => {
       payload: {
         request: {
           ...baseRequest,
-          status: "DRAFT",
           documents: [
             {
               ...baseRequest.documents[0],
@@ -88,7 +80,6 @@ describe("CheckStatusSignatureRequest", () => {
       payload: {
         request: {
           ...baseRequest,
-          status: "DRAFT",
           documents: [
             {
               ...baseRequest.documents[0],
