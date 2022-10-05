@@ -18,7 +18,6 @@ export const SignatureRequestId = t.string;
 /*
  * Signature request status meaning:
  * - DRAFT: The signature request has been created but not all documents have been uploaded yet.
- * - WAIT_FOR_ISSUER: All documents have been uploaded but the ISSUER has not yet marked the signature request as READY.
  * - READY: The signature request is ready for processing. In this phase the documents will be analyzed and prepared for sending to the USER.
  * - WAIT_FOR_SIGNATURE: The signature request has been sent to the user and is awaiting signature
  * - SIGNED: The signature request was successfully signed.
