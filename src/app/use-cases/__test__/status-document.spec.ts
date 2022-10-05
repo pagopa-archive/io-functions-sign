@@ -3,7 +3,7 @@ import * as E from "fp-ts/Either";
 import { Document } from "../../../signature-request/document";
 import { dispatchOnDocument, DocumentAction } from "../status-document";
 
-const baseDocument = {
+export const baseDocument = {
   id: "doc-id",
   title: "doc-title",
   status: "WAIT_FOR_UPLOAD",

@@ -5,6 +5,7 @@ import {
   SignatureRequestAction,
 } from "../status-signature-request";
 import { SignatureRequest } from "../../../signature-request/signature-request";
+import { baseDocument } from "./status-document.spec";
 
 const baseRequest = {
   id: "SR-ID1",
@@ -12,19 +13,7 @@ const baseRequest = {
   signerId: "Signer-SPNDNL80R13C555X",
   productId: "prod-id",
   status: "DRAFT",
-  documents: [
-    {
-      id: "doc-id",
-      title: "doc-title",
-      status: "WAIT_FOR_UPLOAD",
-      clauses: [
-        {
-          title: "doc-tos",
-          required: false,
-        },
-      ],
-    },
-  ],
+  documents: [baseDocument],
 };
 
 describe("CheckStatusSignatureRequest", () => {
@@ -50,8 +39,7 @@ describe("CheckStatusSignatureRequest", () => {
           ...baseRequest,
           documents: [
             {
-              ...baseRequest.documents[0],
-              url: "https://example.com/1",
+              ...baseDocument,
               status: "WAIT_FOR_UPLOAD",
             },
           ],
@@ -66,8 +54,7 @@ describe("CheckStatusSignatureRequest", () => {
           ...baseRequest,
           documents: [
             {
-              ...baseRequest.documents[0],
-              url: "https://example.com/2",
+              ...baseDocument,
               status: "VALIDATION_IN_PROGRESS",
             },
           ],
@@ -82,8 +69,7 @@ describe("CheckStatusSignatureRequest", () => {
           ...baseRequest,
           documents: [
             {
-              ...baseRequest.documents[0],
-              url: "https://example.com/3",
+              ...baseDocument,
               status: "READY",
             },
           ],
