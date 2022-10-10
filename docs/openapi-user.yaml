@@ -311,6 +311,14 @@ components:
       format: base64url
       description: SPID SAML assertion encoded in base64
 
+    ClausesSignature:
+      type: object
+      properties:
+        signatureFieldId:
+          type: string
+        accepted:
+          type: boolean
+
     DocumentSignature:
       type: object
       properties:
@@ -321,9 +329,14 @@ components:
           type: string
           format: base64url
           description: Signature of document digest concatenated with document clauses
+        clauses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClausesSignature"
       required:
         - documentId
         - signature
+        - clauses
 
     QtspClausesMetadata:
       type: object
