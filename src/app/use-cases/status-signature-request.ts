@@ -2,20 +2,18 @@ import * as E from "fp-ts/Either";
 import * as t from "io-ts";
 
 import { pipe } from "fp-ts/function";
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
 import { SignatureRequest } from "../../signature-request/signature-request";
 import { ActionNotAllowedError } from "../../error";
 
 export const SignatureRequestAction = t.keyof({
-  UPLOAD_DOCUMENT: null,
   MARK_AS_READY: null,
   VALIDATE_DOCUMENT: null,
   MARK_AS_SIGNED: null,
 });
 export type SignatureRequestAction = t.TypeOf<typeof SignatureRequestAction>;
 
-export const dispatch =
+export const dispatchOnSignatureRequest =
   (action: SignatureRequestAction) =>
   (
     request: SignatureRequest
@@ -23,8 +21,6 @@ export const dispatch =
     switch (request.status) {
       case "DRAFT":
         return pipe(action, whenDraft(request));
-      case "WAIT_FOR_ISSUER":
-        return pipe(action, whenWaitForIssuer(request));
       case "READY":
         return pipe(action, whenReady(request));
       case "WAIT_FOR_SIGNATURE":
@@ -47,35 +43,20 @@ const whenDraft =
   ): E.Either<ActionNotAllowedError, SignatureRequest> => {
     // eslint-disable-next-line sonarjs/no-small-switch
     switch (action) {
-      case "UPLOAD_DOCUMENT":
+      case "MARK_AS_READY":
         return pipe(
-          request.documents.every((document) => NonEmptyString.is(document.url))
-            ? E.right({ ...request, status: "WAIT_FOR_ISSUER" })
-            : E.right({ ...request, status: "DRAFT" })
+          request.documents.every((document) => document.status === "READY")
+            ? E.right({ ...request, status: "READY" })
+            : E.left(
+                new ActionNotAllowedError(
+                  "This operation is not possible unless all documents are READY."
+                )
+              )
         );
       default:
         return E.left(
           new ActionNotAllowedError(
             "This operation is prohibited if the signature request is in DRAFT status!"
-          )
-        );
-    }
-  };
-
-const whenWaitForIssuer =
-  (request: SignatureRequest) =>
-  (
-    action: SignatureRequestAction
-  ): E.Either<ActionNotAllowedError, SignatureRequest> => {
-    switch (action) {
-      case "MARK_AS_READY":
-        return E.right({ ...request, status: "READY" });
-      case "UPLOAD_DOCUMENT":
-        return E.right({ ...request, status: "WAIT_FOR_ISSUER" });
-      default:
-        return E.left(
-          new ActionNotAllowedError(
-            "This operation is prohibited if the signature request is in WAIT_FOR_ISSUER status!"
           )
         );
     }
