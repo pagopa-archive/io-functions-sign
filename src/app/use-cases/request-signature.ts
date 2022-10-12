@@ -26,6 +26,8 @@ import {
 } from "../../signature-request/product";
 import { timestamps } from "../../timestamps";
 import { EntityNotFoundError, InvalidEntityError } from "../../error";
+
+import { GenerateDocumentSnapshots } from "../../signature-request/snapshot";
 import { dispatchOnSignatureRequest } from "./status-signature-request";
 
 export type RequestSignaturePayload = {
@@ -94,7 +96,8 @@ export const makeRequestSignature =
 export const updateStatusRequestSignature =
   (
     upsertSignatureRequest: UpsertSignatureRequest,
-    getSignatureRequest: GetSignatureRequest
+    getSignatureRequest: GetSignatureRequest,
+    generateDocumentSnapshots: GenerateDocumentSnapshots
   ) =>
   (
     payload: RequestSignatureStatusPayload
@@ -111,6 +114,7 @@ export const updateStatusRequestSignature =
           () => new EntityNotFoundError("Error getting the Signature Request")
         )
       ),
+      TE.chain(generateDocumentSnapshots),
       TE.chainEitherKW(dispatchOnSignatureRequest("MARK_AS_READY")),
       TE.chain(upsertSignatureRequest)
     );

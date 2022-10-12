@@ -10,6 +10,7 @@ import {
   UpsertSignatureRequest,
 } from "../../../signature-request/signature-request";
 import { InvalidEntityError } from "../../../error";
+import { GenerateDocumentSnapshots } from "../../../signature-request/snapshot";
 
 export const mockGetSignerByFiscalCode: GetSignerByFiscalCode = (fiscalCode) =>
   pipe(
@@ -74,5 +75,9 @@ export const mockAddSignatureRequest: AddSignatureRequest = (
 ) => TE.right(request);
 
 export const mockUpsertSignatureRequest: UpsertSignatureRequest = (
+  request: SignatureRequest
+) => TE.right(request);
+
+export const mockGenerateDocumentSnapshots: GenerateDocumentSnapshots = (
   request: SignatureRequest
 ) => TE.right(request);

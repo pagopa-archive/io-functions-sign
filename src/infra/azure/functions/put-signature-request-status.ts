@@ -30,11 +30,31 @@ import {
 import { SignatureRequestDetailView } from "../../api-models/SignatureRequestDetailView";
 import { updateStatusRequestSignature } from "../../../app/use-cases/request-signature";
 import { SignatureRequestStatus as ApiSignatureRequestStatus } from "../../api-models/SignatureRequestStatus";
+import { config } from "../../../app/config";
+import { createContainerClient } from "../storage/client";
+import { makeGetDocumentSnapshot } from "../storage/snapshot";
+import { makeGenerateDocumentSnapshots } from "../../../app/use-cases/generate-document-snapshots";
 import { requireSignatureRequestId } from "./get-signature-request";
+
+const generateDocumentSnapshot = pipe(
+  config,
+  E.map((config) =>
+    createContainerClient(
+      config.storage.connectionString,
+      config.storage.issuerBlobContainerName
+    )
+  ),
+  E.map(makeGetDocumentSnapshot),
+  E.map((blob) => makeGenerateDocumentSnapshots(blob)),
+  E.getOrElse(
+    () => (_) => TE.left(new Error("Unable to connect to Blob Storage Service"))
+  )
+);
 
 const updateStatus = updateStatusRequestSignature(
   upsertSignatureRequest,
-  getSignatureRequest
+  getSignatureRequest,
+  generateDocumentSnapshot
 );
 
 const requireSignatureRequestStatus = (

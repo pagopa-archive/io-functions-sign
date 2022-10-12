@@ -11,6 +11,7 @@ import {
 import { InvalidEntityError } from "../../../error";
 import {
   mockAddSignatureRequest,
+  mockGenerateDocumentSnapshots,
   mockGetProduct,
   mockGetSignatureRequest,
   mockGetSignerByFiscalCode,
@@ -91,7 +92,8 @@ describe("updateStatusRequestSignatureList", () => {
       payload as RequestSignatureStatusPayload,
       updateStatusRequestSignature(
         mockUpsertSignatureRequest,
-        mockGetSignatureRequest
+        mockGetSignatureRequest,
+        mockGenerateDocumentSnapshots
       )
     )();
     return updateRequest.then((data) => {
