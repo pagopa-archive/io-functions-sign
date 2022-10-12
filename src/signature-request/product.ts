@@ -11,7 +11,7 @@ import { id, Id } from "../id";
 import { timestamps, Timestamps } from "../timestamps";
 import { EntityNotFoundError } from "../error";
 import { SubscriptionId } from "./subscription";
-import { DocumentList, DocumentMetadataList } from "./document";
+import { DocumentList, DocumentMetadataList, Document } from "./document";
 
 export const ProductId = Id;
 
@@ -35,11 +35,14 @@ export type GetProduct = (
 
 export const getDocumentsByMetadata = flow(
   (product: Product) => product.documents,
-  map((metadata) => ({
-    id: id(),
-    ...metadata,
-    ...timestamps(),
-  })),
+  map(
+    (metadata): Document => ({
+      id: id(),
+      status: "WAIT_FOR_UPLOAD",
+      ...metadata,
+      ...timestamps(),
+    })
+  ),
   DocumentList.decode,
   E.mapLeft(() => new Error("Invalid Product"))
 );

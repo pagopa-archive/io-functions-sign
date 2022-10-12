@@ -1,9 +1,9 @@
 import * as TE from "fp-ts/TaskEither";
 import * as O from "fp-ts/Option";
 import * as E from "fp-ts/Either";
+import * as A from "fp-ts/Array";
 import { identity, pipe } from "fp-ts/function";
 
-import { findIndex, modifyAt } from "fp-ts/Array";
 import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   GetSignatureRequest,
@@ -18,25 +18,51 @@ import {
   DocumentList,
   IsDocumentUploaded,
 } from "../../signature-request/document";
-import { dispatch } from "./status-signature-request";
 
 import { GetDocumentPayload } from "./get-document";
+import { dispatchOnDocument, DocumentAction } from "./status-document";
 
+const documentNotFoundError = new EntityNotFoundError("Document not found");
 export const addUrlToDocument =
   (documentId: Document["id"], url: string) => (request: SignatureRequest) =>
     pipe(
       request.documents,
-      findIndex((document) => document.id === documentId),
+      A.findIndex((document) => document.id === documentId),
       O.chain((index) =>
         pipe(
           request.documents,
-          modifyAt(index, (document) => ({
+          A.modifyAt(index, (document) => ({
             ...document,
             url,
           }))
         )
       ),
-      E.fromOption(() => new EntityNotFoundError("Document not found")),
+      E.fromOption(() => documentNotFoundError),
+      E.chainW(validate(DocumentList, "Unable to validate document list"))
+    );
+
+export const changeDocumentStatus =
+  (documentId: Document["id"], action: DocumentAction) =>
+  (request: SignatureRequest) =>
+    pipe(
+      request.documents,
+      A.findIndex((document) => document.id === documentId),
+      E.fromOption(() => documentNotFoundError),
+      E.chainW((index) =>
+        pipe(
+          request.documents,
+          A.lookup(index),
+          E.fromOption(() => documentNotFoundError),
+          E.chain(dispatchOnDocument(action)),
+          E.chain((document) =>
+            pipe(
+              request.documents,
+              A.modifyAt(index, () => document),
+              E.fromOption(() => documentNotFoundError)
+            )
+          )
+        )
+      ),
       E.chainW(validate(DocumentList, "Unable to validate document list"))
     );
 
@@ -65,8 +91,29 @@ export const makeValidateDocument =
         pipe(
           request,
           addUrlToDocument(payload.documentId, payload.documentUrl),
-          E.map((documents) => ({ ...request, documents })),
-          E.chain(dispatch("UPLOAD_DOCUMENT"))
+          E.map((documents) => ({ ...request, documents }))
+        )
+      ),
+      TE.chain(upsertSignatureRequest)
+    );
+/*
+ * Dispatches an action on a document within a signature request and then updates the document status on DB.
+ */
+export const makeChangeDocumentStatus =
+  (
+    getSignatureRequest: GetSignatureRequest,
+    upsertSignatureRequest: UpsertSignatureRequest
+  ) =>
+  (action: DocumentAction) =>
+  (payload: ValidateDocumentPayload) =>
+    pipe(
+      getSignatureRequest(payload.signatureRequestId, payload.subscriptionId),
+      TE.chainW(TE.fromOption(() => signatureRequestNotFoundError)),
+      TE.chainEitherKW((request) =>
+        pipe(
+          request,
+          changeDocumentStatus(payload.documentId, action),
+          E.map((documents) => ({ ...request, documents }))
         )
       ),
       TE.chain(upsertSignatureRequest)
