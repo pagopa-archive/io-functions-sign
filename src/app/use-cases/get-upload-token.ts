@@ -10,6 +10,9 @@ import { GetDocumentUploadToken } from "../../signature-request/upload-token";
 
 import { documentNotFoundError } from "../../signature-request/document";
 import { ActionNotAllowedError } from "../../error";
+import { id } from "../../id";
+import { timestamps } from "../../timestamps";
+import { addUploadDocument } from "../../infra/azure/cosmos/upload-document";
 import { GetDocumentPayload } from "./get-document";
 
 export const makeGetDocumentUploadToken =
@@ -28,9 +31,22 @@ export const makeGetDocumentUploadToken =
             "Upload token can only be generated if the signature request is in the DRAFT state"
           )
       ),
-      TE.map((signatureRequest) => signatureRequest.documents),
-      TE.chainOptionK((): Error => documentNotFoundError)(
-        findFirst((document) => document.id === payload.documentId)
+
+      TE.chain((signatureRequest) =>
+        pipe(
+          signatureRequest.documents,
+          findFirst((document) => document.id === payload.documentId),
+          TE.fromOption((): Error => documentNotFoundError),
+          TE.map(() => ({
+            id: id(),
+            signatureRequestSubscriptionId: payload.subscriptionId,
+            signatureRequestId: payload.signatureRequestId,
+            signatureRequestDocumentId: payload.documentId,
+            ...timestamps(),
+          })),
+          TE.chainFirst(addUploadDocument)
+        )
       ),
-      TE.chain((document) => getDocumentUploadToken(document.id))
+
+      TE.chain((uploadDocument) => getDocumentUploadToken(uploadDocument.id))
     );

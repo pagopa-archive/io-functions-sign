@@ -15,6 +15,7 @@ import {
 export const StorageConfig = t.type({
   connectionString: t.string,
   issuerBlobContainerName: t.string,
+  issuerValidatedBlobContainerName: t.string,
   webJobs: WebJobsStorageConfig,
 });
 
@@ -29,6 +30,10 @@ export const getStorageConfigFromEnvironment: RE.ReaderEither<
   issuerBlobContainerName: pipe(
     readFromNodeEnv("IssuerBlobContainerName"),
     RE.orElse(() => RE.right("documents"))
+  ),
+  issuerValidatedBlobContainerName: pipe(
+    readFromNodeEnv("IssuerValidatedBlobContainerName"),
+    RE.orElse(() => RE.right("validated-documents"))
   ),
   webJobs: getWebJobsStorageConfigFromEnvironment,
 });

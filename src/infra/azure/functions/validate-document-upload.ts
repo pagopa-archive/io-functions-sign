@@ -11,13 +11,13 @@ import { validate } from "@pagopa/handler-kit/lib/validation";
 import * as E from "fp-ts/Either";
 import * as A from "fp-ts/Array";
 
-import { SignatureRequestId } from "../../../signature-request/signature-request";
-import { SubscriptionId } from "../../../signature-request/subscription";
-import { DocumentId } from "../../../signature-request/document";
+import {
+  DocumentId,
+  documentNotFoundError,
+} from "../../../signature-request/document";
 import {
   makeChangeDocumentStatus,
   makeValidateDocument,
-  ValidateDocumentPayload,
 } from "../../../app/use-cases/validate-document";
 import {
   getSignatureRequest,
@@ -28,6 +28,7 @@ import { config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
 import { makeIsDocumentUploaded } from "../storage/document";
+import { getUploadDocument } from "../cosmos/upload-document";
 
 const isDocumentUploadedToBlobStorage = pipe(
   config,
@@ -62,26 +63,21 @@ const updateDocumentStatus = makeChangeDocumentStatus(
 
 export const run = pipe(
   createHandler(
-    flow(
-      azure.fromBlobStorage(
-        t.type({
-          signatureRequestId: SignatureRequestId,
-          subscriptionId: SubscriptionId,
-        })
-      ),
-      TE.fromEither
-    ),
+    flow(azure.fromBlobStorage(t.type({})), TE.fromEither),
     (blob) =>
       pipe(
         pipe(blob.uri, split("/"), last),
         validate(DocumentId, "Unable to validate the document id"),
         TE.fromEither,
-        TE.map(
-          (documentId): ValidateDocumentPayload => ({
-            ...blob.metadata,
-            documentId,
-            documentUrl: blob.uri,
-          })
+        TE.chain((documentId) =>
+          pipe(
+            getUploadDocument(documentId),
+            TE.chain(TE.fromOption((): Error => documentNotFoundError)),
+            TE.map((uploadedDocument) => ({
+              ...uploadedDocument,
+              url: blob.uri,
+            }))
+          )
         ),
         TE.chain((payload) =>
           pipe(
