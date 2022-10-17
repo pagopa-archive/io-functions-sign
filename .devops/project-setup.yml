@@ -14,3 +14,5 @@ steps:
       persistCredentials: ${{ parameters.persistCredentials }}
   - script: yarn generate:issuer-api-models
     displayName: "Generate model definitons for Issuer API"
+  - script: yarn generate:tokenizer-api-models
+    displayName: "Generate model definitons for Tokenizer API"
