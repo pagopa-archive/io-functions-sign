@@ -17,6 +17,7 @@ describe("SignatureRequestList", () => {
           {
             id: "my-document",
             title: "Document 1",
+            status: "WAIT_FOR_UPLOAD",
             clauses: [
               {
                 title: "Clause 1",

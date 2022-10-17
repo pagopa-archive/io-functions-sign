@@ -9,10 +9,13 @@ import { last } from "fp-ts/ReadonlyNonEmptyArray";
 import { split } from "fp-ts/string";
 import { validate } from "@pagopa/handler-kit/lib/validation";
 import * as E from "fp-ts/Either";
+import * as A from "fp-ts/Array";
+
 import { SignatureRequestId } from "../../../signature-request/signature-request";
 import { SubscriptionId } from "../../../signature-request/subscription";
 import { DocumentId } from "../../../signature-request/document";
 import {
+  makeChangeDocumentStatus,
   makeValidateDocument,
   ValidateDocumentPayload,
 } from "../../../app/use-cases/validate-document";
@@ -52,6 +55,11 @@ const validateDocument = makeValidateDocument(
   isDocumentUploadedToBlobStorage
 );
 
+const updateDocumentStatus = makeChangeDocumentStatus(
+  getSignatureRequest,
+  upsertSignatureRequest
+);
+
 export const run = pipe(
   createHandler(
     flow(
@@ -75,7 +83,17 @@ export const run = pipe(
             documentUrl: blob.uri,
           })
         ),
-        TE.chain(validateDocument)
+        TE.chain((payload) =>
+          pipe(
+            [
+              pipe(payload, updateDocumentStatus("START_VALIDATION")),
+              pipe(payload, validateDocument),
+              pipe(payload, updateDocumentStatus("MARK_AS_READY")),
+            ],
+            A.sequence(TE.ApplicativeSeq),
+            TE.altW(() => updateDocumentStatus("MARK_AS_INVALID")(payload))
+          )
+        )
       ),
     identity,
     constVoid
