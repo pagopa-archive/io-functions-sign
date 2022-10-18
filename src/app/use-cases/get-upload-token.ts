@@ -12,13 +12,15 @@ import { documentNotFoundError } from "../../signature-request/document";
 import { ActionNotAllowedError } from "../../error";
 import { id } from "../../id";
 import { timestamps } from "../../timestamps";
-import { addUploadDocument } from "../../infra/azure/cosmos/upload-document";
+
+import { AddUploadDocument } from "../../signature-request/upload-document";
 import { GetDocumentPayload } from "./get-document";
 
 export const makeGetDocumentUploadToken =
   (
     getSignatureRequest: GetSignatureRequest,
-    getDocumentUploadToken: GetDocumentUploadToken
+    getDocumentUploadToken: GetDocumentUploadToken,
+    addUploadDocument: AddUploadDocument
   ) =>
   (payload: GetDocumentPayload) =>
     pipe(

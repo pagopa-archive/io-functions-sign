@@ -27,6 +27,7 @@ import { makeGetDocumentUploadToken as makeBlobStorageGetDocumentUploadToken } f
 import { createContainerClient } from "../storage/client";
 import { config } from "../../../app/config";
 import { getSignatureRequest } from "../cosmos/signature-request";
+import { addUploadDocument } from "../cosmos/upload-document";
 import { requireSignatureRequestId } from "./get-signature-request";
 
 export const requireDocumentId: (
@@ -67,7 +68,9 @@ const getDocumentUploadToken = pipe(
     )
   ),
   E.map(makeBlobStorageGetDocumentUploadToken),
-  E.map((blob) => makeGetDocumentUploadToken(getSignatureRequest, blob)),
+  E.map((blob) =>
+    makeGetDocumentUploadToken(getSignatureRequest, blob, addUploadDocument)
+  ),
   E.getOrElse(
     () => (_) => TE.left(new Error("Unable to connect to Blob Storage Service"))
   )
