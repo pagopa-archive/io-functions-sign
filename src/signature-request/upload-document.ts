@@ -38,6 +38,11 @@ export type AddUploadDocument = (
   request: UploadDocument
 ) => TaskEither<Error, UploadDocument>;
 
+export type MoveUploadDocument = (
+  sourceDocumentUrl: string,
+  destinationDocumentId: UploadDocument["signatureRequestDocumentId"]
+) => TaskEither<Error, string>;
+
 export const uploadDocumentNotFoundError = new EntityNotFoundError(
   "Upload document not found"
 );

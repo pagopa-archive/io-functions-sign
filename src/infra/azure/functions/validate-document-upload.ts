@@ -27,7 +27,10 @@ import {
 import { config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
-import { makeIsDocumentUploaded } from "../storage/document";
+import {
+  makeIsDocumentUploaded,
+  makeMoveUploadDocument,
+} from "../storage/document";
 import { getUploadDocument } from "../cosmos/upload-document";
 
 const isDocumentUploadedToBlobStorage = pipe(
@@ -44,6 +47,21 @@ const isDocumentUploadedToBlobStorage = pipe(
   )
 );
 
+const moveDocumentUrlToValidatedBlobStorage = pipe(
+  config,
+  E.map((config) =>
+    createContainerClient(
+      config.storage.connectionString,
+      config.storage.issuerValidatedBlobContainerName
+    )
+  ),
+  E.map(makeMoveUploadDocument),
+  E.getOrElse(
+    () => (_sourceDocumentUrl, _documentId) =>
+      TE.left(new Error("Unable to connect to Blob Storage Service"))
+  )
+);
+
 /*
  * Validates the documents uploaded by the issuer by populating the database with the url in case of success.
  * When all the documents have been uploaded and validated, it is necessary to communicate to other services
@@ -53,7 +71,8 @@ const isDocumentUploadedToBlobStorage = pipe(
 const validateDocument = makeValidateDocument(
   getSignatureRequest,
   upsertSignatureRequest,
-  isDocumentUploadedToBlobStorage
+  isDocumentUploadedToBlobStorage,
+  moveDocumentUrlToValidatedBlobStorage
 );
 
 const updateDocumentStatus = makeChangeDocumentStatus(
