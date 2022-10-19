@@ -44,30 +44,6 @@ paths:
           $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
-  /signatures/{signatureId}:
-    get:
-      operationId: getSignatureById
-      summary: Get a Signature By Id
-      parameters:
-        - in: path
-          name: signatureId
-          schema:
-            $ref: "#/components/schemas/SignatureId"
-          required: true
-      responses:
-        "200":
-          description: The Signature Request detail
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignatureDetailView"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/Unexpected"
-
   /signatures:
     post:
       operationId: createSignature
@@ -81,10 +57,6 @@ paths:
       responses:
         "201":
           description: Signature created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignatureDetailView"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
@@ -151,6 +123,11 @@ components:
       format: base64url
       description: PEM public key encoded in base64
 
+    PublicKeyDigest:
+      type: string
+      format: base64url
+      description: Hash of PEM public key encoded in base64
+
     SamlAssertion:
       type: string
       format: base64url
@@ -208,6 +185,8 @@ components:
       properties:
         signatureRequestId:
           $ref: "#/components/schemas/SignatureRequestId"
+        publicKeyDigest:
+          $ref: "#/components/schemas/PublicKeyDigest"
         documentSignatures:
           type: array
           items:
@@ -218,9 +197,7 @@ components:
           $ref: "#/components/schemas/QtspClausesMetadata"
       required:
         - signatureRequestId
-        - email
-        - publicKey
-        - spidSamlAssertion
+        - publicKeyDigest
         - documentSignatures
         - qtspClauses
 
@@ -228,31 +205,3 @@ components:
       type: string
       format: ulid
       minLength: 1
-
-    SignatureDetailView:
-      type: object
-      properties:
-        id:
-          $ref: "#/components/schemas/SignatureId"
-        signatureRequestId:
-          $ref: "#/components/schemas/SignatureRequestId"
-        email:
-          $ref: "#/components/schemas/Email"
-        publicKey:
-          $ref: "#/components/schemas/PublicKey"
-        spidSamlAssertion:
-          $ref: "#/components/schemas/SamlAssertion"
-        documentSignatures:
-          type: array
-          items:
-            $ref: "#/components/schemas/DocumentSignature"
-        qtspClauses:
-          $ref: "#/components/schemas/QtspClausesMetadata"
-      required:
-        - id
-        - signatureRequestId
-        - email
-        - publicKey
-        - spidSamlAssertion
-        - documentSignatures
-        - qtspClauses
