@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: IO Sign - User API
+  title: IO Sign - Backend API
   version: 0.0.1
 paths:
   /signature-requests/{signatureRequestId}:
@@ -93,12 +93,6 @@ paths:
           $ref: "#/components/responses/Unexpected"
 
 components:
-  securitySchemes:
-    SubscriptionKey:
-      type: apiKey
-      name: Authorization
-      in: header
-
   responses:
     NotFound:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/responses/NotFound"
@@ -109,22 +103,6 @@ components:
     Unexpected:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/responses/Unexpected"
   schemas:
-    ProblemJson:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/ProblemJson"
-    Clause:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Clause"
-    DocumentMetadata:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/DocumentMetadata"
-    Document:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Document"
-    Timestamp:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Timestamp"
-    QrCodeUrl:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/QrCodeUrl"
-
-    SignatureRequestStatus:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestStatus"
-
     SignatureRequestDetailView:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestDetailView"
 
@@ -230,12 +208,6 @@ components:
       properties:
         signatureRequestId:
           $ref: "#/components/schemas/SignatureRequestId"
-        email:
-          $ref: "#/components/schemas/Email"
-        publicKey:
-          $ref: "#/components/schemas/PublicKey"
-        spidSamlAssertion:
-          $ref: "#/components/schemas/SamlAssertion"
         documentSignatures:
           type: array
           items:
