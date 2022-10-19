@@ -38,6 +38,12 @@ paths:
     get:
       operationId: getQtspClauses
       summary: Get clauses list and MRC from QTSP
+      parameters:
+        - in: header
+          name: FiscalCode
+          schema:
+            $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/FiscalCode"
+          required: true
       responses:
         "200":
           description: The QTSP clauses list

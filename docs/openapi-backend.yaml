@@ -81,13 +81,6 @@ components:
     SignatureRequestId:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestId"
 
-    Email:
-      type: string
-      description: User's email.
-      format: EmailString
-      x-import: "@pagopa/ts-commons/lib/strings"
-      example: me@example.com
-
     QtspClauses:
       type: object
       properties:
@@ -118,20 +111,10 @@ components:
       required:
         - text
 
-    PublicKey:
-      type: string
-      format: base64url
-      description: PEM public key encoded in base64
-
     PublicKeyDigest:
       type: string
       format: base64url
       description: Hash of PEM public key encoded in base64
-
-    SamlAssertion:
-      type: string
-      format: base64url
-      description: SPID SAML assertion encoded in base64
 
     ClausesSignature:
       type: object
@@ -200,8 +183,3 @@ components:
         - publicKeyDigest
         - documentSignatures
         - qtspClauses
-
-    SignatureId:
-      type: string
-      format: ulid
-      minLength: 1
