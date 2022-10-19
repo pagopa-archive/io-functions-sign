@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: IO Sign - User API
   version: 0.0.1
+security:
+  - FunctionsKey: []
 paths:
   /signature-requests/{signatureRequestId}:
     get:
@@ -110,9 +112,9 @@ paths:
 
 components:
   securitySchemes:
-    SubscriptionKey:
+    FunctionsKey:
       type: apiKey
-      name: Authorization
+      name: X-Functions-Key
       in: header
 
   responses:
