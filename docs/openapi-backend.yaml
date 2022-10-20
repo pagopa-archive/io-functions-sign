@@ -3,7 +3,7 @@ info:
   title: IO Sign - Backend API
   version: 0.0.1
 servers:
-  - url: https://app-backend.io.italia.it/fci/v1
+  - url: https://app-backend.io.italia.it/api/v1/fci
     description: Production
 security:
   - Bearer: []
