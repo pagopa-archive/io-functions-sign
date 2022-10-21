@@ -32,7 +32,10 @@ import {
   makeIsDocumentUploaded,
   makeMoveUploadDocument,
 } from "../storage/document";
-import { getUploadDocument } from "../cosmos/upload-document";
+import {
+  getUploadDocument,
+  upsertUploadDocument,
+} from "../cosmos/upload-document";
 import { makeDeleteUploadedDocument } from "../../../app/use-cases/delete-uploaded-document";
 
 const issuerContainerClient = (cfg: Config) =>
@@ -92,7 +95,9 @@ const updateDocumentStatus = makeChangeDocumentStatus(
 );
 
 const removeUploadedDocumentReferences = makeDeleteUploadedDocument(
-  deleteDocumentUploadedFromBlobStorage
+  getUploadDocument,
+  deleteDocumentUploadedFromBlobStorage,
+  upsertUploadDocument
 );
 
 export const run = pipe(
