@@ -61,3 +61,12 @@ export const copyFromUrl = (sourceUrl: string) => (blobClient: BlobClient) =>
     ),
     TE.map(() => blobClient.url)
   );
+
+export const blobDelete = (blobClient: BlobClient) =>
+  pipe(
+    TE.tryCatch(
+      () => blobClient.deleteIfExists(),
+      () => new Error("The specified blob does not exists")
+    ),
+    TE.map((response) => response.succeeded)
+  );

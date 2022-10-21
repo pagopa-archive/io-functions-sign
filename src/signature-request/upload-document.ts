@@ -43,6 +43,10 @@ export type MoveUploadDocument = (
   destinationDocumentId: UploadDocument["signatureRequestDocumentId"]
 ) => TaskEither<Error, string>;
 
+export type DeleteUploadDocument = (
+  documentId: UploadDocument["id"]
+) => TaskEither<Error, boolean>;
+
 export const uploadDocumentNotFoundError = new EntityNotFoundError(
   "Upload document not found"
 );

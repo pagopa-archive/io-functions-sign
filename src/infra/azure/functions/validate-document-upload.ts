@@ -24,42 +24,53 @@ import {
   upsertSignatureRequest,
 } from "../cosmos/signature-request";
 
-import { config } from "../../../app/config";
+import { Config, config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
 import {
+  makeDeleteDocumentUploaded,
   makeIsDocumentUploaded,
   makeMoveUploadDocument,
 } from "../storage/document";
 import { getUploadDocument } from "../cosmos/upload-document";
+import { makeDeleteUploadedDocument } from "../../../app/use-cases/delete-uploaded-document";
 
+const issuerContainerClient = (cfg: Config) =>
+  createContainerClient(
+    cfg.storage.connectionString,
+    cfg.storage.issuerBlobContainerName
+  );
+
+const issuerValidatedContainerClient = (cfg: Config) =>
+  createContainerClient(
+    cfg.storage.connectionString,
+    cfg.storage.issuerValidatedBlobContainerName
+  );
+
+const unableToConnectError = new Error(
+  "Unable to connect to Blob Storage Service"
+);
 const isDocumentUploadedToBlobStorage = pipe(
   config,
-  E.map((config) =>
-    createContainerClient(
-      config.storage.connectionString,
-      config.storage.issuerBlobContainerName
-    )
-  ),
+  E.map(issuerContainerClient),
   E.map(makeIsDocumentUploaded),
-  E.getOrElse(
-    () => (_) => TE.left(new Error("Unable to connect to Blob Storage Service"))
-  )
+  E.getOrElse(() => (_) => TE.left(unableToConnectError))
 );
 
 const moveDocumentUrlToValidatedBlobStorage = pipe(
   config,
-  E.map((config) =>
-    createContainerClient(
-      config.storage.connectionString,
-      config.storage.issuerValidatedBlobContainerName
-    )
-  ),
+  E.map(issuerValidatedContainerClient),
   E.map(makeMoveUploadDocument),
   E.getOrElse(
-    () => (_sourceDocumentUrl, _documentId) =>
-      TE.left(new Error("Unable to connect to Blob Storage Service"))
+    () => (_sourceDocumentUrl, _documentId) => TE.left(unableToConnectError)
   )
+);
+
+const deleteDocumentUploadedFromBlobStorage = pipe(
+  config,
+  E.map(issuerContainerClient),
+  E.map(makeDeleteDocumentUploaded),
+  E.getOrElse(() => (_documentID) => TE.left(unableToConnectError))
 );
 
 /*
@@ -78,6 +89,10 @@ const validateDocument = makeValidateDocument(
 const updateDocumentStatus = makeChangeDocumentStatus(
   getSignatureRequest,
   upsertSignatureRequest
+);
+
+const removeUploadedDocumentReferences = makeDeleteUploadedDocument(
+  deleteDocumentUploadedFromBlobStorage
 );
 
 export const run = pipe(
@@ -106,7 +121,8 @@ export const run = pipe(
               pipe(payload, updateDocumentStatus("MARK_AS_READY")),
             ],
             A.sequence(TE.ApplicativeSeq),
-            TE.altW(() => updateDocumentStatus("MARK_AS_INVALID")(payload))
+            TE.altW(() => updateDocumentStatus("MARK_AS_INVALID")(payload)),
+            TE.chain(() => removeUploadedDocumentReferences(payload))
           )
         )
       ),

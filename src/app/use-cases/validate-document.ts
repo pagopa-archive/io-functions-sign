@@ -95,11 +95,9 @@ export const makeValidateDocument =
             () => new Error("Unable to find the uploaded document")
           ),
           TE.chain(() =>
-            pipe(
-              moveDocumentUrlToValidatedBlobStorage(
-                payload.url as string,
-                payload.signatureRequestDocumentId
-              )
+            moveDocumentUrlToValidatedBlobStorage(
+              payload.url as string,
+              payload.signatureRequestDocumentId
             )
           ),
           TE.chain((validatedUrl) =>
