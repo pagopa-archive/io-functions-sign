@@ -17,6 +17,7 @@ import {
   AddUploadDocument,
   GetUploadDocument,
   UploadDocument,
+  uploadDocumentNotFoundError,
   UpsertUploadDocument,
 } from "../../../signature-request/upload-document";
 import { EntityNotFoundError } from "../../../error";
@@ -55,7 +56,7 @@ const uploadDocumentModelTE = TE.fromEither(uploadDocumentModel);
 export const addUploadDocument: AddUploadDocument = (request) =>
   pipe(
     NewUploadDocument.decode(request),
-    E.mapLeft(() => new EntityNotFoundError("Invalid Upload Document")),
+    E.mapLeft(() => uploadDocumentNotFoundError),
     TE.fromEither,
     TE.chain((newDocument) =>
       pipe(
@@ -84,10 +85,7 @@ export const getUploadDocument: GetUploadDocument = (id) =>
         TE.chain((model) =>
           pipe(
             model.find([id]),
-            TE.mapLeft(
-              (): Error =>
-                new EntityNotFoundError("Error getting the Upload Document")
-            )
+            TE.mapLeft((): Error => uploadDocumentNotFoundError)
           )
         )
       )
@@ -97,7 +95,7 @@ export const getUploadDocument: GetUploadDocument = (id) =>
 export const upsertUploadDocument: UpsertUploadDocument = (request) =>
   pipe(
     NewUploadDocument.decode(request),
-    E.mapLeft(() => new EntityNotFoundError("Invalid Upload Document")),
+    E.mapLeft(() => uploadDocumentNotFoundError),
     TE.fromEither,
     TE.chain((newDocument) =>
       pipe(
