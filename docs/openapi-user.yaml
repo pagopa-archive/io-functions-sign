@@ -318,8 +318,7 @@ components:
         qtspClauses:
           $ref: "#/components/schemas/QtspClausesMetadata"
         timestamp:
-          format: date-time
-          type: string
+          $ref: "#/components/schemas/Timestamp"
       required:
         - id
         - signatureRequestId
