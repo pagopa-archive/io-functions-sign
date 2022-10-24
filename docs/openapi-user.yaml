@@ -38,12 +38,6 @@ paths:
     get:
       operationId: getQtspClauses
       summary: Get clauses list and MRC from QTSP
-      parameters:
-        - in: header
-          name: FiscalCode
-          schema:
-            $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/FiscalCode"
-          required: true
       responses:
         "200":
           description: The QTSP clauses list
@@ -203,12 +197,17 @@ components:
       description: SPID SAML assertion encoded in base64
 
     ClausesSignature:
-      type: object
       properties:
-        signatureFieldId:
+        type:
           type: string
-        accepted:
-          type: boolean
+          enum:
+            - COORDS
+            - UNIQUE_NAME
+          description: base64 of coords object or fieldName string
+        signatureFieldData:
+          type: string
+          description: uniqueName or base64(Coords) base64({x,y,w,h,page})
+      description: accepted signature clause
 
     DocumentSignature:
       type: object
@@ -246,7 +245,8 @@ components:
           format: base64url
           description: Signature of MRC digest concatenated with QTSP accepted clauses
       required:
-        - qtspAcceptedClauses
+        - acceptedClauses
+        - mrcDocumentUrl
         - signature
 
     CreateSignatureBody:
@@ -300,6 +300,9 @@ components:
             $ref: "#/components/schemas/DocumentSignature"
         qtspClauses:
           $ref: "#/components/schemas/QtspClausesMetadata"
+        timestamp:
+          format: date-time
+          type: string
       required:
         - id
         - signatureRequestId
@@ -308,3 +311,4 @@ components:
         - spidSamlAssertion
         - documentSignatures
         - qtspClauses
+        - timestamp
