@@ -49,5 +49,5 @@ export type DeleteUploadDocument = (
 ) => TaskEither<Error, boolean>;
 
 export const uploadDocumentNotFoundError = new EntityNotFoundError(
-  "Upload document not found"
+  `Upload document not found`
 );

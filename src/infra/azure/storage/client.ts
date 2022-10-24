@@ -49,7 +49,7 @@ export const copyFromUrl = (sourceUrl: string) => (blobClient: BlobClient) =>
     TE.chain((copyPoller) =>
       TE.tryCatch(
         () => copyPoller.pollUntilDone(),
-        () => new Error("Unable to pool blob copy")
+        () => new Error("Unable to poll blob copy")
       )
     ),
     TE.filterOrElse(

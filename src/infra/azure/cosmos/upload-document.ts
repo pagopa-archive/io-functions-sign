@@ -29,12 +29,12 @@ const NewUploadDocument = t.intersection([UploadDocument, BaseModel]);
 
 type NewUploadDocument = t.TypeOf<typeof NewUploadDocument>;
 
-const RetrievedUploadDocumnet = t.intersection([
+const RetrievedUploadDocument = t.intersection([
   UploadDocument,
   CosmosResource,
 ]);
 
-type RetrievedUploadDocumnet = t.TypeOf<typeof RetrievedUploadDocumnet>;
+type RetrievedUploadDocumnet = t.TypeOf<typeof RetrievedUploadDocument>;
 
 class UploadDocumentModel extends CosmosdbModel<
   UploadDocument,
@@ -42,7 +42,7 @@ class UploadDocumentModel extends CosmosdbModel<
   RetrievedUploadDocumnet
 > {
   constructor(container: Container) {
-    super(container, NewUploadDocument, RetrievedUploadDocumnet);
+    super(container, NewUploadDocument, RetrievedUploadDocument);
   }
 }
 
