@@ -85,11 +85,44 @@ components:
     Unexpected:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/responses/Unexpected"
   schemas:
-    SignatureRequestDetailView:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestDetailView"
+    SignatureRequestStatus:
+      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestStatus"
+    ProductId:
+      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/ProductId"
+    Timestamp:
+      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Timestamp"
+    QrCodeUrl:
+      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/QrCodeUrl"
+    Document:
+      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Document"
 
+    SignatureRequestDetailView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: ulid
+        status:
+          $ref: "#/components/schemas/SignatureRequestStatus"
+        productId:
+          $ref: "#/components/schemas/ProductId"
+        expiresAt:
+          $ref: "#/components/schemas/Timestamp"
+        qrCodeUrl:
+          $ref: "#/components/schemas/QrCodeUrl"
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/Document"
+      required:
+        - id
+        - productId
+        - qrCodeUrl
+        - documents
     SignatureRequestId:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestId"
+      type: string
+      format: ulid
+      minLength: 1
 
     QtspClauses:
       type: object
@@ -195,8 +228,7 @@ components:
         qtspClauses:
           $ref: "#/components/schemas/QtspClausesMetadata"
         timestamp:
-          format: date-time
-          type: string
+          $ref: "#/components/schemas/Timestamp"
       required:
         - signatureRequestId
         - publicKeyDigest
