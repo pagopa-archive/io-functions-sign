@@ -409,9 +409,15 @@ components:
           $ref: "#/components/schemas/Id"
         documents_metadata:
           $ref: "#/components/schemas/DocumentMetadataList"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
       required:
         - id
         - documents_metadata
+        - created_at
+        - updated_at
 
     Timestamp:
       type: string
