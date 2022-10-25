@@ -26,6 +26,7 @@ Now you need to generate openapi types and then build the TypeScript sources:
 
 ```sh
 yarn generate:issuer-api-models
+yarn generate:tokenizer-api-models
 yarn build
 ```
 
