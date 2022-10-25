@@ -172,6 +172,14 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              x-extensible-enum:
+                - READY
       responses:
         "204":
           description: Signature Request status successfully set
