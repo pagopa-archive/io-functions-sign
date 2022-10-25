@@ -16,7 +16,9 @@ paths:
         - in: path
           name: signatureRequestId
           schema:
-            $ref: "#/components/schemas/SignatureRequestId"
+            type: string
+            format: ulid
+            minLength: 1
           required: true
       responses:
         "200":
@@ -29,8 +31,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/Unexpected"
 
   /qtsp/clauses:
     get:
@@ -47,8 +47,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/Unexpected"
+
   /signatures:
     post:
       operationId: createSignature
@@ -66,8 +65,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "403":
           $ref: "#/components/responses/Forbidden"
-        default:
-          $ref: "#/components/responses/Unexpected"
 
 components:
   securitySchemes:
@@ -163,7 +160,7 @@ components:
       properties:
         type:
           type: string
-          enum:
+          x-extensible-enum:
             - COORDS
             - UNIQUE_NAME
           description: base64 of coords object or fieldName string
