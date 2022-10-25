@@ -5,15 +5,18 @@ info:
 security:
   - FunctionsKey: []
 paths:
-  /signature-requests/{signatureRequestId}:
+  /signature-requests/{id}:
     get:
       operationId: getSignatureRequestById
       summary: Get a Signature Request By Id
       parameters:
         - in: path
-          name: signatureRequestId
+          name: id
           schema:
-            $ref: "#/components/schemas/SignatureRequestId"
+            type: string
+            description: Entity Id
+            format: ulid
+            example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
           required: true
         - in: header
           name: FiscalCode
@@ -31,8 +34,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/Unexpected"
 
   /qtsp/clauses:
     get:
@@ -51,15 +52,18 @@ paths:
           $ref: "#/components/responses/NotFound"
         default:
           $ref: "#/components/responses/Unexpected"
-  /signatures/{signatureId}:
+  /signatures/{id}:
     get:
       operationId: getSignatureById
       summary: Get a Signature By Id
       parameters:
         - in: path
-          name: signatureId
+          name: id
           schema:
-            $ref: "#/components/schemas/SignatureId"
+            type: string
+            description: Entity Id
+            format: ulid
+            example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
           required: true
         - in: header
           name: FiscalCode
@@ -127,51 +131,133 @@ components:
     Unexpected:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/responses/Unexpected"
   schemas:
-    SignatureRequestStatus:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/SignatureRequestStatus"
-    ProductId:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/ProductId"
+    Id:
+      type: string
+      description: Entity Id
+      format: ulid
+      example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
     Timestamp:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Timestamp"
-    QrCodeUrl:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/QrCodeUrl"
+      type: string
+      format: UTCISODateFromString
+      description: A date-time field in ISO-8601 format and UTC timezone.
+      x-import: "@pagopa/ts-commons/lib/dates"
+      example: "2018-10-13T00:00:00.000Z"
+
     Document:
-      $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/Document"
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        metadata:
+          $ref: "#/components/schemas/DocumentMetadata"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      required:
+        - id
+        - status
+        - metadata
+        - created_at
+        - updated_at
+
+    DocumentMetadata:
+      type: object
+      properties:
+        title:
+          type: string
+        signature_fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/SignatureField"
+
+    SignatureFieldAttributes:
+      type: object
+      properties:
+        unique_name:
+          type: string
+
+    SignatureFieldToBeCreatedAttributes:
+      type: object
+      properties:
+        coordinates:
+          type: object
+          properties:
+            x: { type: number, minimum: 0 }
+            y: { type: number, minimum: 0 }
+        page:
+          type: number
+          minimum: 0
+        size:
+          type: object
+          properties:
+            w: { type: number, minimum: 0 }
+            h: { type: number, minimum: 0 }
+    Clause:
+      type: object
+      properties:
+        title:
+          type: string
+        type:
+          type: string
+          enum: ["REQUIRED", "UNFAIR", "OPTIONAL"]
+      required:
+        - title
+        - type
+
+    SignatureField:
+      type: object
+      properties:
+        attrs:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/SignatureFieldAttributes"
+            - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttributes"
+        clause:
+          $ref: "#/components/schemas/Clause"
+      required:
+        - unique_name
+        - clause
+    DocumentUploaded:
+      allOf:
+        - $ref: "#/components/schemas/Document"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - READY
+            uploaded_at:
+              $ref: "#/components/schemas/Timestamp"
+            url:
+              type: string
+              format: uri
+          required:
+            - status
+            - uploaded_at
+            - url
 
     SignatureRequestDetailView:
       type: object
       properties:
         id:
-          type: string
-          format: ulid
-        status:
-          $ref: "#/components/schemas/SignatureRequestStatus"
-        productId:
-          $ref: "#/components/schemas/ProductId"
-        expiresAt:
+          $ref: "#/components/schemas/Id"
+        expires_at:
           $ref: "#/components/schemas/Timestamp"
-        qrCodeUrl:
-          $ref: "#/components/schemas/QrCodeUrl"
+        status:
+          type: string
+          enum:
+            - WAIT_FOR_SIGNATURE
+            - SIGNED
         documents:
           type: array
           items:
-            $ref: "#/components/schemas/Document"
+            $ref: "#/components/schemas/DocumentUploaded"
       required:
         - id
-        - productId
-        - qrCodeUrl
+        - expires_at
+        - status
         - documents
-    SignatureRequestId:
-      type: string
-      format: ulid
-      minLength: 1
-
-    Email:
-      type: string
-      description: User's email.
-      format: EmailString
-      x-import: "@pagopa/ts-commons/lib/strings"
-      example: me@example.com
 
     QtspClauses:
       type: object
@@ -182,13 +268,13 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        mrcDocumentUrl:
+        mrc_document_url:
           type: string
           format: uri
-        privacyDocumentUrl:
+        privacy_document_url:
           type: string
           format: uri
-        tosDocumentUrl:
+        tos_document_url:
           type: string
           format: uri
       required:
@@ -203,7 +289,14 @@ components:
       required:
         - text
 
-    PublicKey:
+    Email:
+      type: string
+      description: User's email.
+      format: EmailString
+      x-import: "@pagopa/ts-commons/lib/strings"
+      example: me@example.com
+
+    publicKey:
       type: string
       format: base64url
       description: PEM public key encoded in base64
@@ -217,19 +310,22 @@ components:
       properties:
         type:
           type: string
-          enum:
+          x-extensible-enum:
             - COORDS
             - UNIQUE_NAME
           description: base64 of coords object or fieldName string
-        signatureFieldData:
+        attrs:
           type: string
           description: uniqueName or base64(Coords) base64({x,y,w,h,page})
       description: accepted signature clause
+      required:
+        - type
+        - attrs
 
     DocumentSignature:
       type: object
       properties:
-        documentId:
+        document_id:
           type: string
           format: ulid
         signature:
@@ -241,20 +337,20 @@ components:
           items:
             $ref: "#/components/schemas/ClausesSignature"
       required:
-        - documentId
+        - document_id
         - signature
         - clauses
 
     QtspClausesMetadata:
       type: object
       properties:
-        acceptedClauses:
+        accepted_clauses:
           type: array
           items:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        mrcDocumentUrl:
+        mrc_document_url:
           type: string
           format: uri
         signature:
@@ -262,69 +358,64 @@ components:
           format: base64url
           description: Signature of MRC digest concatenated with QTSP accepted clauses
       required:
-        - acceptedClauses
-        - mrcDocumentUrl
+        - accepted_clauses
+        - mrc_document_url
         - signature
 
     CreateSignatureBody:
       type: object
       properties:
-        signatureRequestId:
-          $ref: "#/components/schemas/SignatureRequestId"
+        signature_request_id:
+          $ref: "#/components/schemas/Id"
         email:
           $ref: "#/components/schemas/Email"
-        publicKey:
-          $ref: "#/components/schemas/PublicKey"
-        spidSamlAssertion:
+        public_key:
+          $ref: "#/components/schemas/publicKey"
+        spid_saml_assertion:
           $ref: "#/components/schemas/SamlAssertion"
-        documentSignatures:
+        document_signatures:
           type: array
           items:
             $ref: "#/components/schemas/DocumentSignature"
           minItems: 1
           uniqueItems: true
-        qtspClauses:
+        qtsp_clauses:
           $ref: "#/components/schemas/QtspClausesMetadata"
       required:
-        - signatureRequestId
+        - signature_request_id
         - email
-        - publicKey
-        - spidSamlAssertion
-        - documentSignatures
-        - qtspClauses
-
-    SignatureId:
-      type: string
-      format: ulid
-      minLength: 1
+        - public_key
+        - spid_saml_assertion
+        - document_signatures
+        - qtsp_clauses
 
     SignatureDetailView:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/SignatureId"
-        signatureRequestId:
-          $ref: "#/components/schemas/SignatureRequestId"
+          $ref: "#/components/schemas/Id"
+        signature_request_id:
+          $ref: "#/components/schemas/Id"
         email:
           $ref: "#/components/schemas/Email"
-        publicKey:
-          $ref: "#/components/schemas/PublicKey"
-        spidSamlAssertion:
+        public_key:
+          $ref: "#/components/schemas/publicKey"
+        spid_saml_assertion:
           $ref: "#/components/schemas/SamlAssertion"
-        documentSignatures:
+        document_signatures:
           type: array
           items:
             $ref: "#/components/schemas/DocumentSignature"
-        qtspClauses:
+        qtsp_clauses:
           $ref: "#/components/schemas/QtspClausesMetadata"
         timestamp:
           $ref: "#/components/schemas/Timestamp"
       required:
         - id
-        - signatureRequestId
+        - signature_request_id
         - email
-        - publicKey
-        - spidSamlAssertion
-        - documentSignatures
-        - qtspClauses
+        - public_key
+        - spid_saml_assertion
+        - document_signatures
+        - qtsp_clauses
         - timestamp
