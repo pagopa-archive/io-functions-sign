@@ -102,16 +102,16 @@ paths:
 
   /signature-requests:
     post:
-      operationId: requestSignature
+      operationId: createSignatureRequest
       tags:
         - Signature Request
-      summary: Request a Signature
+      summary: Create a Signature Request
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RequestSignatureBody"
+              $ref: "#/components/schemas/CreateSignatureRequestBody"
       responses:
         "201":
           description: The Signature Request detail
@@ -373,6 +373,7 @@ components:
       type: object
       properties:
         attrs:
+          type: object
           oneOf:
             - $ref: "#/components/schemas/SignatureFieldAttributes"
             - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttributes"
