@@ -29,8 +29,12 @@ paths:
                 $ref: "#/components/schemas/DossierDetailView"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -53,10 +57,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DossierDetailView"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -81,8 +91,12 @@ paths:
                 $ref: "#/components/schemas/SignerDetailView"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -105,10 +119,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SignatureRequestDetailView"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -131,10 +149,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SignatureRequestDetailView"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -152,11 +174,17 @@ paths:
             $ref: "#/components/schemas/Id"
       responses:
         "204":
-          description: Signature Request status successfully setted
+          description: Signature Request status successfully set
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -184,10 +212,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UploadUrl"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
 
@@ -206,18 +240,35 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ProblemDetail"
+
     BadRequest:
       description: Validation error on body
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ProblemDetail"
+
     Forbidden:
       description: You don't have enough privileges to perform this action
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ProblemDetail"
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+
+    TooManyRequests:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+
     Unexpected:
       description: Unexpected error
       content:
@@ -287,18 +338,13 @@ components:
         - title
         - type
 
-    SignatureField:
+    SignatureFieldAttributes:
       type: object
       properties:
         unique_name:
           type: string
-        clause:
-          $ref: "#/components/schemas/Clause"
-      required:
-        - unique_name
-        - clause
 
-    SignatureFieldToBeCreated:
+    SignatureFieldToBeCreatedAttributes:
       type: object
       properties:
         coordinates:
@@ -314,12 +360,18 @@ components:
           properties:
             w: { type: number, minimum: 0 }
             h: { type: number, minimum: 0 }
+
+    SignatureField:
+      type: object
+      properties:
+        attrs:
+          oneOf:
+            - $ref: "#/components/schemas/SignatureFieldAttributes"
+            - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttributes"
         clause:
           $ref: "#/components/schemas/Clause"
       required:
-        - coordinates
-        - page
-        - size
+        - unique_name
         - clause
 
     DocumentMetadata:
@@ -330,9 +382,8 @@ components:
         signature_fields:
           type: array
           items:
-            oneOf:
-              - $ref: "#/components/schemas/SignatureField"
-              - $ref: "#/components/schemas/SignatureFieldToBeCreated"
+            $ref: "#/components/schemas/SignatureField"
+
       required:
         - title
         - signature_fields
