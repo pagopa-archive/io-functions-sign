@@ -463,7 +463,7 @@ components:
       required:
         - id
 
-    RequestSignatureBody:
+    CreateSignatureRequestBody:
       type: object
       properties:
         dossier_id:
@@ -474,6 +474,9 @@ components:
             - example: "01BX5ZZKBKACTAV9WEVGEMMVS0"
         expires_at:
           $ref: "#/components/schemas/Timestamp"
+        notify_user_via_io_message:
+          type: boolean
+          default: false
       required:
         - dossier_id
         - signer_id
