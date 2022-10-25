@@ -21,7 +21,11 @@ paths:
         - in: header
           name: FiscalCode
           schema:
-            $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/FiscalCode"
+            type: string
+            description: User's fiscal code.
+            format: FiscalCode
+            x-import: "@pagopa/ts-commons/lib/strings"
+            example: SPNDNL80R13C555X
           required: true
       responses:
         "200":
@@ -37,7 +41,7 @@ paths:
 
   /qtsp/clauses:
     get:
-      operationId: getQtspClauses
+      operationId: getQtspClausesMetadata
       summary: Get clauses list and MRC from QTSP
       responses:
         "200":
@@ -45,13 +49,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/QtspClauses"
+                $ref: "#/components/schemas/QtspClausesMetadata"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/Unexpected"
+
   /signatures/{id}:
     get:
       operationId: getSignatureById
@@ -68,7 +71,11 @@ paths:
         - in: header
           name: FiscalCode
           schema:
-            $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/FiscalCode"
+            type: string
+            description: User's fiscal code.
+            format: FiscalCode
+            x-import: "@pagopa/ts-commons/lib/strings"
+            example: SPNDNL80R13C555X
           required: true
       responses:
         "200":
@@ -81,8 +88,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/Unexpected"
 
   /signatures:
     post:
@@ -98,7 +103,11 @@ paths:
         - in: header
           name: FiscalCode
           schema:
-            $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/schemas/FiscalCode"
+            type: string
+            description: User's fiscal code.
+            format: FiscalCode
+            x-import: "@pagopa/ts-commons/lib/strings"
+            example: SPNDNL80R13C555X
           required: true
       responses:
         "201":
@@ -111,8 +120,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "403":
           $ref: "#/components/responses/Forbidden"
-        default:
-          $ref: "#/components/responses/Unexpected"
 
 components:
   securitySchemes:
@@ -259,7 +266,7 @@ components:
         - status
         - documents
 
-    QtspClauses:
+    QtspClausesMetadata:
       type: object
       properties:
         clauses:
@@ -278,8 +285,10 @@ components:
           type: string
           format: uri
       required:
-        - text
-        - mrcUrl
+        - clauses
+        - mrc_document_url
+        - privacy_document_url
+        - tos_document_url
 
     QtspClause:
       type: object
@@ -341,7 +350,7 @@ components:
         - signature
         - clauses
 
-    QtspClausesMetadata:
+    QtspClauses:
       type: object
       properties:
         accepted_clauses:
@@ -350,7 +359,7 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        mrc_document_url:
+        filled_mrc_document_url:
           type: string
           format: uri
         signature:
@@ -359,7 +368,7 @@ components:
           description: Signature of MRC digest concatenated with QTSP accepted clauses
       required:
         - accepted_clauses
-        - mrc_document_url
+        - filled_mrc_document_url
         - signature
 
     CreateSignatureBody:
@@ -380,7 +389,7 @@ components:
           minItems: 1
           uniqueItems: true
         qtsp_clauses:
-          $ref: "#/components/schemas/QtspClausesMetadata"
+          $ref: "#/components/schemas/QtspClauses"
       required:
         - signature_request_id
         - email

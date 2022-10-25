@@ -35,7 +35,7 @@ paths:
 
   /qtsp/clauses:
     get:
-      operationId: getQtspClauses
+      operationId: getQtspClausesMetadata
       summary: Get clauses list and MRC from QTSP
       responses:
         "200":
@@ -43,7 +43,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/QtspClauses"
+                $ref: "#/components/schemas/QtspClausesMetadata"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -213,7 +213,7 @@ components:
         - status
         - documents
 
-    QtspClauses:
+    QtspClausesMetadata:
       type: object
       properties:
         clauses:
@@ -222,18 +222,20 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        mrcDocumentUrl:
+        mrc_document_url:
           type: string
           format: uri
-        privacyDocumentUrl:
+        privacy_document_url:
           type: string
           format: uri
-        tosDocumentUrl:
+        tos_document_url:
           type: string
           format: uri
       required:
-        - text
-        - mrcUrl
+        - clauses
+        - mrc_document_url
+        - privacy_document_url
+        - tos_document_url
 
     QtspClause:
       type: object
@@ -283,7 +285,7 @@ components:
         - signature
         - clauses
 
-    QtspClausesMetadata:
+    QtspClauses:
       type: object
       properties:
         accepted_clauses:
@@ -292,7 +294,7 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        mrc_document_url:
+        filled_mrc_document_url:
           type: string
           format: uri
         signature:
@@ -301,7 +303,7 @@ components:
           description: Signature of MRC digest concatenated with QTSP accepted clauses
       required:
         - accepted_clauses
-        - mrc_document_url
+        - filled_mrc_document_url
         - signature
 
     CreateSignatureBody:
@@ -318,7 +320,7 @@ components:
           minItems: 1
           uniqueItems: true
         qtsp_clauses:
-          $ref: "#/components/schemas/QtspClausesMetadata"
+          $ref: "#/components/schemas/QtspClauses"
         timestamp:
           $ref: "#/components/schemas/Timestamp"
       required:
