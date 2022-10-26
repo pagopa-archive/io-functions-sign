@@ -206,11 +206,22 @@ components:
         title:
           type: string
         type:
-          type: string
-          enum: ["REQUIRED", "UNFAIR", "OPTIONAL"]
+          $ref: "#/components/schemas/ClausesType"
       required:
         - title
         - type
+
+    ClausesType:
+      description: |
+        Signature request status:
+        * `REQUIRED` - The clause is mandatory and the user sees it already accepted.
+        * `UNFAIR` - The clause is unfair and the user must explicitly accept it to continue
+        * `OPTIONAL` - The clause is optional and the user can also decide not to accept it
+      type: string
+      x-extensible-enum:
+        - REQUIRED
+        - UNFAIR
+        - OPTIONAL
 
     SignatureField:
       type: object
@@ -252,10 +263,7 @@ components:
         expires_at:
           $ref: "#/components/schemas/Timestamp"
         status:
-          type: string
-          enum:
-            - WAIT_FOR_SIGNATURE
-            - SIGNED
+          $ref: "#/components/schemas/ForwardedSignatureRequestStatus"
         documents:
           type: array
           items:
@@ -265,6 +273,16 @@ components:
         - expires_at
         - status
         - documents
+
+    ForwardedSignatureRequestStatus:
+      description: |
+        Signature request status:
+        * `WAIT_FOR_SIGNATURE` - The signature request has been sent to the user and is awaiting signature
+        * `SIGNED` - The signature request was successfully signed.
+      type: string
+      x-extensible-enum:
+        - WAIT_FOR_SIGNATURE
+        - SIGNED
 
     QtspClausesMetadata:
       type: object
@@ -318,11 +336,7 @@ components:
     ClausesSignature:
       properties:
         type:
-          type: string
-          x-extensible-enum:
-            - COORDS
-            - UNIQUE_NAME
-          description: base64 of coords object or fieldName string
+          $ref: "#/components/schemas/ClausesSignatureType"
         attrs:
           type: string
           description: uniqueName or base64(Coords) base64({x,y,w,h,page})
@@ -330,6 +344,12 @@ components:
       required:
         - type
         - attrs
+
+    ClausesSignatureType:
+      type: string
+      x-extensible-enum:
+        - COORDS
+        - UNIQUE_NAME
 
     DocumentSignature:
       type: object
