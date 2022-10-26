@@ -13,6 +13,7 @@ import * as t from "io-ts";
 import { Container } from "@azure/cosmos";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 
+import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   AddUploadDocument,
   GetUploadDocument,
@@ -20,7 +21,7 @@ import {
   uploadDocumentNotFoundError,
   UpsertUploadDocument,
 } from "../../../signature-request/upload-document";
-import { EntityNotFoundError } from "../../../error";
+
 import { container } from "./database";
 
 const containerId = "upload-documents";
@@ -55,8 +56,8 @@ const uploadDocumentModelTE = TE.fromEither(uploadDocumentModel);
 
 export const addUploadDocument: AddUploadDocument = (request) =>
   pipe(
-    NewUploadDocument.decode(request),
-    E.mapLeft(() => uploadDocumentNotFoundError),
+    request,
+    validate(NewUploadDocument, "Upload Document not found"),
     TE.fromEither,
     TE.chain((newDocument) =>
       pipe(
@@ -65,8 +66,7 @@ export const addUploadDocument: AddUploadDocument = (request) =>
           pipe(
             model.create(newDocument),
             TE.mapLeft(
-              (): Error =>
-                new EntityNotFoundError("Error creating the Upload Document")
+              (): Error => new Error("Error creating the Upload Document")
             )
           )
         )
@@ -76,8 +76,8 @@ export const addUploadDocument: AddUploadDocument = (request) =>
 
 export const getUploadDocument: GetUploadDocument = (id) =>
   pipe(
-    NonEmptyString.decode(id),
-    E.mapLeft(() => new EntityNotFoundError("Invalid Upload Document Id")),
+    id,
+    validate(NonEmptyString, "Invalid Upload Document Id"),
     TE.fromEither,
     TE.chain((id) =>
       pipe(
@@ -94,8 +94,8 @@ export const getUploadDocument: GetUploadDocument = (id) =>
 
 export const upsertUploadDocument: UpsertUploadDocument = (request) =>
   pipe(
-    NewUploadDocument.decode(request),
-    E.mapLeft(() => uploadDocumentNotFoundError),
+    request,
+    validate(NewUploadDocument, "Upload document is not valid"),
     TE.fromEither,
     TE.chain((newDocument) =>
       pipe(
@@ -104,8 +104,7 @@ export const upsertUploadDocument: UpsertUploadDocument = (request) =>
           pipe(
             model.upsert(newDocument),
             TE.mapLeft(
-              (): Error =>
-                new EntityNotFoundError("Error creating the Upload Document")
+              (): Error => new Error("Error upserting the Upload Document")
             )
           )
         )
