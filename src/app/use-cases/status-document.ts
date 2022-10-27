@@ -17,15 +17,11 @@ export const dispatchOnDocument =
   (document: Document): E.Either<ActionNotAllowedError, Document> => {
     switch (document.status) {
       case "WAIT_FOR_UPLOAD":
-        return pipe(action, whenWaitForUpload(document));
+        return pipe(action, whenWaitForUploadOrReady(document));
       case "VALIDATION_IN_PROGRESS":
         return pipe(action, whenValidationInProgress(document));
       case "READY":
-        return E.left(
-          new ActionNotAllowedError(
-            "This operation is prohibited if the document is in READY status!"
-          )
-        );
+        return pipe(action, whenWaitForUploadOrReady(document));
       case "VALIDATION_ERROR":
         return pipe(action, whenValidationError(document));
       default:
@@ -33,7 +29,7 @@ export const dispatchOnDocument =
     }
   };
 
-const whenWaitForUpload =
+const whenWaitForUploadOrReady =
   (document: Document) =>
   (action: DocumentAction): E.Either<ActionNotAllowedError, Document> => {
     // eslint-disable-next-line sonarjs/no-small-switch

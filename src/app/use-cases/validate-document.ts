@@ -12,14 +12,17 @@ import {
   UpsertSignatureRequest,
 } from "../../signature-request/signature-request";
 
-import { EntityNotFoundError } from "../../error";
+import { ActionNotAllowedError, EntityNotFoundError } from "../../error";
 import {
   Document,
   DocumentList,
   IsDocumentUploaded,
 } from "../../signature-request/document";
 
-import { GetDocumentPayload } from "./get-document";
+import {
+  MoveUploadDocumentFromBlob,
+  UploadDocument,
+} from "../../signature-request/upload-document";
 import { dispatchOnDocument, DocumentAction } from "./status-document";
 
 const documentNotFoundError = new EntityNotFoundError("Document not found");
@@ -48,6 +51,13 @@ export const changeDocumentStatus =
       request.documents,
       A.findIndex((document) => document.id === documentId),
       E.fromOption(() => documentNotFoundError),
+      E.filterOrElse(
+        () => request.status === "DRAFT",
+        (): Error =>
+          new ActionNotAllowedError(
+            "Document status can only be changed if the signature request is in the DRAFT state"
+          )
+      ),
       E.chainW((index) =>
         pipe(
           request.documents,
@@ -66,35 +76,52 @@ export const changeDocumentStatus =
       E.chainW(validate(DocumentList, "Unable to validate document list"))
     );
 
-export type ValidateDocumentPayload = GetDocumentPayload & {
-  documentUrl: string;
-};
-
 export const makeValidateDocument =
   (
     getSignatureRequest: GetSignatureRequest,
     upsertSignatureRequest: UpsertSignatureRequest,
-    isDocumentUploaded: IsDocumentUploaded
+    isDocumentUploaded: IsDocumentUploaded,
+    moveDocumentUrlToValidatedBlobStorage: MoveUploadDocumentFromBlob
   ) =>
-  (payload: ValidateDocumentPayload) =>
+  (payload: UploadDocument) =>
     pipe(
-      isDocumentUploaded(payload.documentId),
-      TE.filterOrElse(
-        identity,
-        () => new Error("Unable to find the uploaded document")
-      ),
+      payload.url,
+      TE.fromNullable(new Error("Url not found in document")),
       TE.chain(() =>
-        getSignatureRequest(payload.signatureRequestId, payload.subscriptionId)
-      ),
-      TE.chainW(TE.fromOption(() => signatureRequestNotFoundError)),
-      TE.chainEitherKW((request) =>
         pipe(
-          request,
-          addUrlToDocument(payload.documentId, payload.documentUrl),
-          E.map((documents) => ({ ...request, documents }))
+          isDocumentUploaded(payload.id),
+          TE.filterOrElse(
+            identity,
+            () => new Error("Unable to find the uploaded document")
+          ),
+          TE.chain(() =>
+            moveDocumentUrlToValidatedBlobStorage(
+              payload.url as string,
+              payload.signatureRequestDocumentId
+            )
+          ),
+          TE.chain((validatedUrl) =>
+            pipe(
+              getSignatureRequest(
+                payload.signatureRequestId,
+                payload.signatureRequestSubscriptionId
+              ),
+              TE.chainW(TE.fromOption(() => signatureRequestNotFoundError)),
+              TE.chainEitherKW((request) =>
+                pipe(
+                  request,
+                  addUrlToDocument(
+                    payload.signatureRequestDocumentId,
+                    validatedUrl
+                  ),
+                  E.map((documents) => ({ ...request, documents }))
+                )
+              ),
+              TE.chain(upsertSignatureRequest)
+            )
+          )
         )
-      ),
-      TE.chain(upsertSignatureRequest)
+      )
     );
 /*
  * Dispatches an action on a document within a signature request and then updates the document status on DB.
@@ -105,14 +132,17 @@ export const makeChangeDocumentStatus =
     upsertSignatureRequest: UpsertSignatureRequest
   ) =>
   (action: DocumentAction) =>
-  (payload: ValidateDocumentPayload) =>
+  (payload: UploadDocument) =>
     pipe(
-      getSignatureRequest(payload.signatureRequestId, payload.subscriptionId),
+      getSignatureRequest(
+        payload.signatureRequestId,
+        payload.signatureRequestSubscriptionId
+      ),
       TE.chainW(TE.fromOption(() => signatureRequestNotFoundError)),
       TE.chainEitherKW((request) =>
         pipe(
           request,
-          changeDocumentStatus(payload.documentId, action),
+          changeDocumentStatus(payload.signatureRequestDocumentId, action),
           E.map((documents) => ({ ...request, documents }))
         )
       ),
