@@ -39,12 +39,16 @@ export type AddUploadDocument = (
   request: UploadDocument
 ) => TaskEither<Error, UploadDocument>;
 
-export type MoveUploadDocument = (
+export type DeleteUploadDocument = (
+  documentId: UploadDocument["id"]
+) => TaskEither<Error, string>;
+
+export type MoveUploadDocumentFromBlob = (
   sourceDocumentUrl: string,
   destinationDocumentId: UploadDocument["signatureRequestDocumentId"]
 ) => TaskEither<Error, string>;
 
-export type DeleteUploadDocument = (
+export type DeleteUploadDocumentFromBlob = (
   documentId: UploadDocument["id"]
 ) => TaskEither<Error, boolean>;
 

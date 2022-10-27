@@ -6,7 +6,9 @@ import * as TE from "fp-ts/TaskEither";
 import {
   BaseModel,
   CosmosdbModel,
+  CosmosErrors,
   CosmosResource,
+  toCosmosErrorResponse,
 } from "@pagopa/io-functions-commons/dist/src/utils/cosmosdb_model";
 
 import * as t from "io-ts";
@@ -16,6 +18,7 @@ import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { validate } from "@pagopa/handler-kit/lib/validation";
 import {
   AddUploadDocument,
+  DeleteUploadDocument,
   GetUploadDocument,
   UploadDocument,
   uploadDocumentNotFoundError,
@@ -45,6 +48,14 @@ class UploadDocumentModel extends CosmosdbModel<
   constructor(container: Container) {
     super(container, NewUploadDocument, RetrievedUploadDocument);
   }
+  delete = (id: NonEmptyString): TE.TaskEither<CosmosErrors, string> =>
+    pipe(
+      TE.tryCatch(
+        () => this.container.item(id, id).delete(),
+        toCosmosErrorResponse
+      ),
+      TE.map((_) => _.item.id)
+    );
 }
 
 const uploadDocumentModel = pipe(
@@ -106,6 +117,29 @@ export const upsertUploadDocument: UpsertUploadDocument = (request) =>
             TE.mapLeft(
               (): Error => new Error("Error upserting the Upload Document")
             )
+          )
+        )
+      )
+    )
+  );
+
+export const deleteUploadDocument: DeleteUploadDocument = (id) =>
+  pipe(
+    id,
+    validate(NonEmptyString, "Invalid Upload Document Id"),
+    TE.fromEither,
+    TE.chain((id) =>
+      pipe(
+        uploadDocumentModelTE,
+        TE.chain((model) =>
+          pipe(
+            id,
+            model.delete,
+            TE.mapLeft((e): Error => {
+              // eslint-disable-next-line no-console
+              console.log(e);
+              return uploadDocumentNotFoundError;
+            })
           )
         )
       )

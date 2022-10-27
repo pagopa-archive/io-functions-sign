@@ -20,7 +20,7 @@ import {
 } from "../../signature-request/document";
 
 import {
-  MoveUploadDocument,
+  MoveUploadDocumentFromBlob,
   UploadDocument,
 } from "../../signature-request/upload-document";
 import { dispatchOnDocument, DocumentAction } from "./status-document";
@@ -81,7 +81,7 @@ export const makeValidateDocument =
     getSignatureRequest: GetSignatureRequest,
     upsertSignatureRequest: UpsertSignatureRequest,
     isDocumentUploaded: IsDocumentUploaded,
-    moveDocumentUrlToValidatedBlobStorage: MoveUploadDocument
+    moveDocumentUrlToValidatedBlobStorage: MoveUploadDocumentFromBlob
   ) =>
   (payload: UploadDocument) =>
     pipe(
