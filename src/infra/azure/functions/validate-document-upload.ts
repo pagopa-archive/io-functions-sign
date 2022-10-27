@@ -38,7 +38,7 @@ import {
 } from "../cosmos/upload-document";
 import { makeDeleteUploadedDocument } from "../../../app/use-cases/delete-uploaded-document";
 
-const issuerContainerClient = (cfg: Config) =>
+const issuerUploadedContainerClient = (cfg: Config) =>
   createContainerClient(
     cfg.storage.connectionString,
     cfg.storage.issuerUploadedBlobContainerName
@@ -55,7 +55,7 @@ const unableToConnectError = new Error(
 );
 const isDocumentUploadedToBlobStorage = pipe(
   config,
-  E.map(issuerContainerClient),
+  E.map(issuerUploadedContainerClient),
   E.map(makeIsDocumentUploaded),
   E.getOrElse(() => (_) => TE.left(unableToConnectError))
 );
@@ -71,7 +71,7 @@ const moveDocumentUrlToValidatedBlobStorage = pipe(
 
 const deleteDocumentUploadedFromBlobStorage = pipe(
   config,
-  E.map(issuerContainerClient),
+  E.map(issuerUploadedContainerClient),
   E.map(makeDeleteDocumentUploaded),
   E.getOrElse(() => (_documentID) => TE.left(unableToConnectError))
 );
