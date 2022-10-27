@@ -14,7 +14,8 @@ import {
 
 export const StorageConfig = t.type({
   connectionString: t.string,
-  issuerBlobContainerName: t.string,
+  issuerUploadedBlobContainerName: t.string,
+  issuerValidatedBlobContainerName: t.string,
   webJobs: WebJobsStorageConfig,
 });
 
@@ -26,9 +27,13 @@ export const getStorageConfigFromEnvironment: RE.ReaderEither<
   StorageConfig
 > = sequenceS(RE.Apply)({
   connectionString: readFromNodeEnv("StorageAccountConnectionString"),
-  issuerBlobContainerName: pipe(
-    readFromNodeEnv("IssuerBlobContainerName"),
-    RE.orElse(() => RE.right("documents"))
+  issuerUploadedBlobContainerName: pipe(
+    readFromNodeEnv("IssuerUploadedBlobContainerName"),
+    RE.orElse(() => RE.right("uploaded-documents"))
+  ),
+  issuerValidatedBlobContainerName: pipe(
+    readFromNodeEnv("IssuerValidatedBlobContainerName"),
+    RE.orElse(() => RE.right("validated-documents"))
   ),
   webJobs: getWebJobsStorageConfigFromEnvironment,
 });

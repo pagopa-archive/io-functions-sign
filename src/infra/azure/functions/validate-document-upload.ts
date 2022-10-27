@@ -11,36 +11,69 @@ import { validate } from "@pagopa/handler-kit/lib/validation";
 import * as E from "fp-ts/Either";
 import * as A from "fp-ts/Array";
 
-import { SignatureRequestId } from "../../../signature-request/signature-request";
-import { SubscriptionId } from "../../../signature-request/subscription";
-import { DocumentId } from "../../../signature-request/document";
+import {
+  DocumentId,
+  documentNotFoundError,
+} from "../../../signature-request/document";
 import {
   makeChangeDocumentStatus,
   makeValidateDocument,
-  ValidateDocumentPayload,
 } from "../../../app/use-cases/validate-document";
 import {
   getSignatureRequest,
   upsertSignatureRequest,
 } from "../cosmos/signature-request";
 
-import { config } from "../../../app/config";
+import { Config, config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
-import { makeIsDocumentUploaded } from "../storage/document";
+import {
+  makeDeleteDocumentUploaded,
+  makeIsDocumentUploaded,
+  makeMoveUploadDocument,
+} from "../storage/document";
+import {
+  getUploadDocument,
+  upsertUploadDocument,
+} from "../cosmos/upload-document";
+import { makeDeleteUploadedDocument } from "../../../app/use-cases/delete-uploaded-document";
 
+const issuerUploadedContainerClient = (cfg: Config) =>
+  createContainerClient(
+    cfg.storage.connectionString,
+    cfg.storage.issuerUploadedBlobContainerName
+  );
+
+const issuerValidatedContainerClient = (cfg: Config) =>
+  createContainerClient(
+    cfg.storage.connectionString,
+    cfg.storage.issuerValidatedBlobContainerName
+  );
+
+const unableToConnectError = new Error(
+  "Unable to connect to Blob Storage Service"
+);
 const isDocumentUploadedToBlobStorage = pipe(
   config,
-  E.map((config) =>
-    createContainerClient(
-      config.storage.connectionString,
-      config.storage.issuerBlobContainerName
-    )
-  ),
+  E.map(issuerUploadedContainerClient),
   E.map(makeIsDocumentUploaded),
+  E.getOrElse(() => (_) => TE.left(unableToConnectError))
+);
+
+const moveDocumentUrlToValidatedBlobStorage = pipe(
+  config,
+  E.map(issuerValidatedContainerClient),
+  E.map(makeMoveUploadDocument),
   E.getOrElse(
-    () => (_) => TE.left(new Error("Unable to connect to Blob Storage Service"))
+    () => (_sourceDocumentUrl, _documentId) => TE.left(unableToConnectError)
   )
+);
+
+const deleteDocumentUploadedFromBlobStorage = pipe(
+  config,
+  E.map(issuerUploadedContainerClient),
+  E.map(makeDeleteDocumentUploaded),
+  E.getOrElse(() => (_documentID) => TE.left(unableToConnectError))
 );
 
 /*
@@ -52,7 +85,8 @@ const isDocumentUploadedToBlobStorage = pipe(
 const validateDocument = makeValidateDocument(
   getSignatureRequest,
   upsertSignatureRequest,
-  isDocumentUploadedToBlobStorage
+  isDocumentUploadedToBlobStorage,
+  moveDocumentUrlToValidatedBlobStorage
 );
 
 const updateDocumentStatus = makeChangeDocumentStatus(
@@ -60,28 +94,29 @@ const updateDocumentStatus = makeChangeDocumentStatus(
   upsertSignatureRequest
 );
 
+const removeUploadedDocumentReferences = makeDeleteUploadedDocument(
+  getUploadDocument,
+  deleteDocumentUploadedFromBlobStorage,
+  upsertUploadDocument
+);
+
 export const run = pipe(
   createHandler(
-    flow(
-      azure.fromBlobStorage(
-        t.type({
-          signatureRequestId: SignatureRequestId,
-          subscriptionId: SubscriptionId,
-        })
-      ),
-      TE.fromEither
-    ),
+    flow(azure.fromBlobStorage(t.type({})), TE.fromEither),
     (blob) =>
       pipe(
         pipe(blob.uri, split("/"), last),
         validate(DocumentId, "Unable to validate the document id"),
         TE.fromEither,
-        TE.map(
-          (documentId): ValidateDocumentPayload => ({
-            ...blob.metadata,
-            documentId,
-            documentUrl: blob.uri,
-          })
+        TE.chain((documentId) =>
+          pipe(
+            getUploadDocument(documentId),
+            TE.chain(TE.fromOption((): Error => documentNotFoundError)),
+            TE.map((uploadedDocument) => ({
+              ...uploadedDocument,
+              url: blob.uri,
+            }))
+          )
         ),
         TE.chain((payload) =>
           pipe(
@@ -91,7 +126,8 @@ export const run = pipe(
               pipe(payload, updateDocumentStatus("MARK_AS_READY")),
             ],
             A.sequence(TE.ApplicativeSeq),
-            TE.altW(() => updateDocumentStatus("MARK_AS_INVALID")(payload))
+            TE.altW(() => updateDocumentStatus("MARK_AS_INVALID")(payload)),
+            TE.chain(() => removeUploadedDocumentReferences(payload))
           )
         )
       ),
