@@ -20,7 +20,7 @@ export const UploadDocument = t.intersection([
   }),
   t.partial({
     url: t.string,
-    validated: t.boolean,
+    deleted: t.boolean,
   }),
   Timestamps,
 ]);

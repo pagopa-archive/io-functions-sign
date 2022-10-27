@@ -28,6 +28,7 @@ import { Config, config } from "../../../app/config";
 
 import { createContainerClient } from "../storage/client";
 import {
+  makeDeleteDocumentUploaded,
   makeIsDocumentUploaded,
   makeMoveUploadDocument,
 } from "../storage/document";
@@ -35,6 +36,7 @@ import {
   getUploadDocument,
   upsertUploadDocument,
 } from "../cosmos/upload-document";
+import { makeDeleteUploadedDocument } from "../../../app/use-cases/delete-uploaded-document";
 
 const issuerContainerClient = (cfg: Config) =>
   createContainerClient(
@@ -67,6 +69,13 @@ const moveDocumentUrlToValidatedBlobStorage = pipe(
   )
 );
 
+const deleteDocumentUploadedFromBlobStorage = pipe(
+  config,
+  E.map(issuerContainerClient),
+  E.map(makeDeleteDocumentUploaded),
+  E.getOrElse(() => (_documentID) => TE.left(unableToConnectError))
+);
+
 /*
  * Validates the documents uploaded by the issuer by populating the database with the url in case of success.
  * When all the documents have been uploaded and validated, it is necessary to communicate to other services
@@ -83,6 +92,12 @@ const validateDocument = makeValidateDocument(
 const updateDocumentStatus = makeChangeDocumentStatus(
   getSignatureRequest,
   upsertSignatureRequest
+);
+
+const removeUploadedDocumentReferences = makeDeleteUploadedDocument(
+  getUploadDocument,
+  deleteDocumentUploadedFromBlobStorage,
+  upsertUploadDocument
 );
 
 export const run = pipe(
@@ -112,15 +127,7 @@ export const run = pipe(
             ],
             A.sequence(TE.ApplicativeSeq),
             TE.altW(() => updateDocumentStatus("MARK_AS_INVALID")(payload)),
-            TE.chain(() =>
-              pipe(
-                {
-                  ...payload,
-                  validated: true,
-                },
-                upsertUploadDocument
-              )
-            )
+            TE.chain(() => removeUploadedDocumentReferences(payload))
           )
         )
       ),
