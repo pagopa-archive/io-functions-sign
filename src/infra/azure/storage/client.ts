@@ -66,7 +66,11 @@ export const blobDelete = (blobClient: BlobClient) =>
   pipe(
     TE.tryCatch(
       () => blobClient.deleteIfExists(),
+      () => new Error("Unable to delete blob!")
+    ),
+    TE.filterOrElse(
+      (response) => response.succeeded === true,
       () => new Error("The specified blob does not exists")
     ),
-    TE.map((response) => response.succeeded)
+    TE.map(() => blobClient.name)
   );

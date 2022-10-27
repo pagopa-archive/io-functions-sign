@@ -20,6 +20,7 @@ export const UploadDocument = t.intersection([
   }),
   t.partial({
     url: t.string,
+    validated: t.boolean,
   }),
   Timestamps,
 ]);
@@ -38,10 +39,6 @@ export type AddUploadDocument = (
   request: UploadDocument
 ) => TaskEither<Error, UploadDocument>;
 
-export type DeleteUploadDocument = (
-  documentId: UploadDocument["id"]
-) => TaskEither<Error, string>;
-
 export type MoveUploadDocumentFromBlob = (
   sourceDocumentUrl: string,
   destinationDocumentId: UploadDocument["signatureRequestDocumentId"]
@@ -49,7 +46,7 @@ export type MoveUploadDocumentFromBlob = (
 
 export type DeleteUploadDocumentFromBlob = (
   documentId: UploadDocument["id"]
-) => TaskEither<Error, boolean>;
+) => TaskEither<Error, string>;
 
 export const uploadDocumentNotFoundError = new EntityNotFoundError(
   `Upload document not found`
