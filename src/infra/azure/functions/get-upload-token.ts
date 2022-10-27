@@ -64,7 +64,7 @@ const getDocumentUploadToken = pipe(
   E.map((config) =>
     createContainerClient(
       config.storage.connectionString,
-      config.storage.issuerBlobContainerName
+      config.storage.issuerUploadedBlobContainerName
     )
   ),
   E.map(makeBlobStorageGetDocumentUploadToken),

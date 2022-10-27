@@ -41,7 +41,7 @@ import { makeDeleteUploadedDocument } from "../../../app/use-cases/delete-upload
 const issuerContainerClient = (cfg: Config) =>
   createContainerClient(
     cfg.storage.connectionString,
-    cfg.storage.issuerBlobContainerName
+    cfg.storage.issuerUploadedBlobContainerName
   );
 
 const issuerValidatedContainerClient = (cfg: Config) =>
