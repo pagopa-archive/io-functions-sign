@@ -470,9 +470,7 @@ components:
         dossier_id:
           $ref: "#/components/schemas/Id"
         signer_id:
-          allOf:
-            - $ref: "#/components/schemas/Id"
-            - example: "01BX5ZZKBKACTAV9WEVGEMMVS0"
+          $ref: "#/components/schemas/Id"
         expires_at:
           $ref: "#/components/schemas/Timestamp"
         notify_user_via_io_message:
@@ -573,6 +571,8 @@ components:
         id:
           $ref: "#/components/schemas/Id"
         dossier_id:
+          $ref: "#/components/schemas/Id"
+        signer_id:
           $ref: "#/components/schemas/Id"
         expires_at:
           $ref: "#/components/schemas/Timestamp"
