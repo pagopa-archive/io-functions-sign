@@ -135,11 +135,7 @@ export const deleteUploadDocument: DeleteUploadDocument = (id) =>
           pipe(
             id,
             model.delete,
-            TE.mapLeft((e): Error => {
-              // eslint-disable-next-line no-console
-              console.log(e);
-              return uploadDocumentNotFoundError;
-            })
+            TE.mapLeft((): Error => uploadDocumentNotFoundError)
           )
         )
       )
