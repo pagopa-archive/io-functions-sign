@@ -233,18 +233,18 @@ paths:
         default:
           $ref: "#/components/responses/Unexpected"
 
-  /notifications:
-    post:
+  /signature-requests/{req_id}/notification:
+    put:
       operationId: sendNotification
       tags:
         - Signature Request
       summary: Send a signature request notification to user via IO message
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SendNotificationBody"
+      parameters:
+        - in: path
+          name: req_id
+          required: true
+          schema:
+            $ref: "#/components/schemas/Id"
       responses:
         "201":
           description: The notification detail
