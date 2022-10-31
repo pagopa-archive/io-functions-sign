@@ -48,6 +48,10 @@ export type DeleteUploadDocumentFromBlob = (
   documentId: UploadDocument["id"]
 ) => TaskEither<Error, string>;
 
+export type DownloadUploadDocumentFromBlob = (
+  documentId: UploadDocument["id"]
+) => TaskEither<Error, Buffer>;
+
 export const uploadDocumentNotFoundError = new EntityNotFoundError(
   `Upload document not found`
 );

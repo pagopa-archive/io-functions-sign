@@ -29,6 +29,7 @@ import { Config, config } from "../../../app/config";
 import { createContainerClient } from "../storage/client";
 import {
   makeDeleteDocumentUploaded,
+  makeDownloadDocumentUploaded,
   makeIsDocumentUploaded,
   makeMoveUploadDocument,
 } from "../storage/document";
@@ -76,6 +77,13 @@ const deleteDocumentUploadedFromBlobStorage = pipe(
   E.getOrElse(() => (_documentID) => TE.left(unableToConnectError))
 );
 
+const downloadDocumentUploadedFromBlobStorage = pipe(
+  config,
+  E.map(issuerUploadedContainerClient),
+  E.map(makeDownloadDocumentUploaded),
+  E.getOrElse(() => (_documentID) => TE.left(unableToConnectError))
+);
+
 /*
  * Validates the documents uploaded by the issuer by populating the database with the url in case of success.
  * When all the documents have been uploaded and validated, it is necessary to communicate to other services
@@ -86,7 +94,8 @@ const validateDocument = makeValidateDocument(
   getSignatureRequest,
   upsertSignatureRequest,
   isDocumentUploadedToBlobStorage,
-  moveDocumentUrlToValidatedBlobStorage
+  moveDocumentUrlToValidatedBlobStorage,
+  downloadDocumentUploadedFromBlobStorage
 );
 
 const updateDocumentStatus = makeChangeDocumentStatus(

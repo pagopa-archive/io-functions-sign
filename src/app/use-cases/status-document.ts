@@ -53,6 +53,8 @@ const whenValidationInProgress =
       case "MARK_AS_READY":
         return E.right({ ...document, status: "READY" });
       case "MARK_AS_INVALID":
+        // eslint-disable-next-line functional/immutable-data
+        delete document.url;
         return E.right({ ...document, status: "VALIDATION_ERROR" });
       default:
         return E.left(

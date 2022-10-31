@@ -20,10 +20,12 @@ import {
 } from "../../signature-request/document";
 
 import {
+  DownloadUploadDocumentFromBlob,
   MoveUploadDocumentFromBlob,
   UploadDocument,
 } from "../../signature-request/upload-document";
 import { dispatchOnDocument, DocumentAction } from "./status-document";
+import { getPdfMetadata } from "./validate-pdf";
 
 const documentNotFoundError = new EntityNotFoundError("Document not found");
 export const addUrlToDocument =
@@ -81,7 +83,8 @@ export const makeValidateDocument =
     getSignatureRequest: GetSignatureRequest,
     upsertSignatureRequest: UpsertSignatureRequest,
     isDocumentUploaded: IsDocumentUploaded,
-    moveDocumentUrlToValidatedBlobStorage: MoveUploadDocumentFromBlob
+    moveDocumentUrlToValidatedBlobStorage: MoveUploadDocumentFromBlob,
+    downloadDocumentUploadedFromBlobStorage: DownloadUploadDocumentFromBlob
   ) =>
   (payload: UploadDocument) =>
     pipe(
@@ -93,6 +96,13 @@ export const makeValidateDocument =
           TE.filterOrElse(
             identity,
             () => new Error("Unable to find the uploaded document")
+          ),
+          TE.chain(() =>
+            pipe(
+              payload.id,
+              downloadDocumentUploadedFromBlobStorage,
+              TE.chain(getPdfMetadata)
+            )
           ),
           TE.chain(() =>
             moveDocumentUrlToValidatedBlobStorage(
