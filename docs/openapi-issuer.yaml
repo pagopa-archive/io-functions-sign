@@ -648,18 +648,13 @@ components:
             notification:
               type: object
               properties:
-                notified_via_io_message:
-                  type: boolean
-                  default: false
                 io_message_id:
                   type: string
               required:
-                - notified_via_io_message
-
+                - io_message_id
           required:
             - status
             - qr_code_url
-            - notification
 
     SignatureRequestDetailView:
       oneOf:
