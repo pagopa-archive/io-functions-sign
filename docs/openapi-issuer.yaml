@@ -69,6 +69,35 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         default:
           $ref: "#/components/responses/Unexpected"
+  /notification:
+    post:
+      operationId: sendNotification
+      tags:
+        - Notification
+      summary: Send a signature request notification to user via IO message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendNotificationBody"
+      responses:
+        "201":
+          description: The notification detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationDetailView"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        default:
+          $ref: "#/components/responses/Unexpected"
 
   /signers:
     post:
@@ -473,9 +502,6 @@ components:
           $ref: "#/components/schemas/Id"
         expires_at:
           $ref: "#/components/schemas/Timestamp"
-        notify_user_via_io_message:
-          type: boolean
-          default: false
       required:
         - dossier_id
         - signer_id
@@ -618,6 +644,9 @@ components:
             qr_code_url:
               type: string
               format: uri
+            notified_via_io_message:
+              type: boolean
+              default: false
           required:
             - status
             - qr_code_url
@@ -637,3 +666,19 @@ components:
     UploadUrl:
       type: string
       format: uri
+
+    SendNotificationBody:
+      type: object
+      properties:
+        signature_request_id:
+          $ref: "#/components/schemas/Id"
+      required:
+        - signature_request_id
+
+    NotificationDetailView:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+      required:
+        - id
