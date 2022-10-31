@@ -233,7 +233,7 @@ paths:
         default:
           $ref: "#/components/responses/Unexpected"
 
-  /notification:
+  /notifications:
     post:
       operationId: sendNotification
       tags:
@@ -645,12 +645,21 @@ components:
             qr_code_url:
               type: string
               format: uri
-            notified_via_io_message:
-              type: boolean
-              default: false
+            notification:
+              type: object
+              properties:
+                notified_via_io_message:
+                  type: boolean
+                  default: false
+                io_message_id:
+                  type: string
+              required:
+                - notified_via_io_message
+
           required:
             - status
             - qr_code_url
+            - notification
 
     SignatureRequestDetailView:
       oneOf:
@@ -679,7 +688,7 @@ components:
     NotificationDetailView:
       type: object
       properties:
-        id:
-          $ref: "#/components/schemas/Id"
+        io_message_id:
+          type: string
       required:
-        - id
+        - io_message_id
