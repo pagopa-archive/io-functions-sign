@@ -9,6 +9,8 @@ paths:
     get:
       operationId: getSignatureRequestById
       summary: Get a Signature Request By Id
+      tags:
+        - Signature Request
       parameters:
         - in: path
           name: id
@@ -43,6 +45,8 @@ paths:
     get:
       operationId: getQtspClausesMetadata
       summary: Get clauses list and MRC from QTSP
+      tags:
+        - QTSP Clauses
       responses:
         "200":
           description: The QTSP clauses list
@@ -55,10 +59,46 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /qtsp/clauses/filled_document:
+    post:
+      operationId: createFilledDocument
+      summary: Create a filled document for QTSP
+      tags:
+        - QTSP Clauses
+      parameters:
+        - in: header
+          name: FiscalCode
+          schema:
+            type: string
+            description: User's fiscal code.
+            format: FiscalCode
+            x-import: "@pagopa/ts-commons/lib/strings"
+            example: SPNDNL80R13C555X
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFilledDocumentBody"
+      responses:
+        "201":
+          description: Filled document created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilledDocumentDetailView"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
   /signatures/{id}:
     get:
       operationId: getSignatureById
       summary: Get a Signature By Id
+      tags:
+        - Signature
       parameters:
         - in: path
           name: id
@@ -93,6 +133,8 @@ paths:
     post:
       operationId: createSignature
       summary: Create a Signature from SignatureRequest
+      tags:
+        - Signature
       requestBody:
         required: true
         content:
@@ -302,7 +344,7 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        filled_document_url:
+        document_url:
           type: string
           format: uri
         privacy_url:
@@ -315,7 +357,7 @@ components:
           format: uri
       required:
         - clauses
-        - filled_document_url
+        - document_url
         - privacy_url
         - privacy_text
         - terms_and_conditions_url
@@ -460,3 +502,30 @@ components:
         - spid_saml_assertion
         - document_signatures
         - qtsp_clauses
+
+    CreateFilledDocumentBody:
+      type: object
+      properties:
+        document_url:
+          type: string
+          format: url
+        email:
+          $ref: "#/components/schemas/Email"
+        name:
+          type: string
+        surname:
+          type: string
+      required:
+        - document_url
+        - email
+        - name
+        - surname
+
+    FilledDocumentDetailView:
+      type: object
+      properties:
+        filled_document_url:
+          type: string
+          format: url
+      required:
+        - filled_document_url
