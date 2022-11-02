@@ -672,14 +672,6 @@ components:
       type: string
       format: uri
 
-    SendNotificationBody:
-      type: object
-      properties:
-        signature_request_id:
-          $ref: "#/components/schemas/Id"
-      required:
-        - signature_request_id
-
     NotificationDetailView:
       type: object
       properties:
