@@ -163,7 +163,6 @@ components:
           $ref: "#/components/schemas/Timestamp"
       required:
         - id
-        - status
         - metadata
         - created_at
         - updated_at
@@ -190,16 +189,26 @@ components:
         coordinates:
           type: object
           properties:
-            x: { type: number, minimum: 0 }
-            y: { type: number, minimum: 0 }
+            bottom_left:
+              type: object
+              properties:
+                x: { type: number, minimum: 0 }
+                y: { type: number, minimum: 0 }
+            top_right:
+              type: object
+              properties:
+                x: { type: number, minimum: 0 }
+                y: { type: number, minimum: 0 }
+          required:
+            - bottom_left
+            - top_right
         page:
           type: number
           minimum: 0
-        size:
-          type: object
-          properties:
-            w: { type: number, minimum: 0 }
-            h: { type: number, minimum: 0 }
+      required:
+        - coordinates
+        - page
+
     Clause:
       type: object
       properties:
@@ -293,20 +302,23 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        mrc_document_url:
+        document_url:
           type: string
           format: uri
-        privacy_document_url:
+        privacy_url:
           type: string
-          format: uri
-        tos_document_url:
+          format: url
+        privacy_text:
+          type: string
+        terms_and_conditions_url:
           type: string
           format: uri
       required:
         - clauses
-        - mrc_document_url
-        - privacy_document_url
-        - tos_document_url
+        - document_url
+        - privacy_url
+        - privacy_text
+        - terms_and_conditions_url
 
     QtspClause:
       type: object
@@ -361,14 +373,14 @@ components:
           type: string
           format: base64url
           description: Signature of document digest concatenated with document clauses
-        clauses:
+        signature_fields:
           type: array
           items:
-            $ref: "#/components/schemas/ClausesSignature"
+            $ref: "#/components/schemas/SignatureField"
       required:
         - document_id
         - signature
-        - clauses
+        - signature_fields
 
     QtspClauses:
       type: object
@@ -379,17 +391,20 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        filled_mrc_document_url:
+        filled_document_url:
           type: string
           format: uri
         signature:
           type: string
           format: base64url
           description: Signature of MRC digest concatenated with QTSP accepted clauses
+        tos_signature_timestamp:
+          $ref: "#/components/schemas/Timestamp"
       required:
         - accepted_clauses
-        - filled_mrc_document_url
+        - filled_document_url
         - signature
+        - tos_signature_timestamp
 
     CreateSignatureBody:
       type: object
@@ -437,8 +452,6 @@ components:
             $ref: "#/components/schemas/DocumentSignature"
         qtsp_clauses:
           $ref: "#/components/schemas/QtspClausesMetadata"
-        timestamp:
-          $ref: "#/components/schemas/Timestamp"
       required:
         - id
         - signature_request_id
@@ -447,4 +460,3 @@ components:
         - spid_saml_assertion
         - document_signatures
         - qtsp_clauses
-        - timestamp
