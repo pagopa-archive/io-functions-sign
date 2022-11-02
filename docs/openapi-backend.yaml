@@ -249,7 +249,7 @@ components:
             $ref: "#/components/schemas/QtspClause"
           minItems: 1
           uniqueItems: true
-        document_url:
+        filled_document_url:
           type: string
           format: uri
         privacy_url:
@@ -262,7 +262,7 @@ components:
           format: uri
       required:
         - clauses
-        - document_url
+        - filled_document_url
         - privacy_url
         - privacy_text
         - terms_and_conditions_url
