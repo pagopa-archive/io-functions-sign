@@ -3,6 +3,7 @@ import { PDFDocument } from "pdf-lib";
 import * as TE from "fp-ts/TaskEither";
 
 import { pipe } from "fp-ts/function";
+import { toError } from "fp-ts/lib/Either";
 
 export const getPdfMetadata = (buffer: Buffer) =>
   pipe(
@@ -11,6 +12,6 @@ export const getPdfMetadata = (buffer: Buffer) =>
         PDFDocument.load(buffer, {
           updateMetadata: false,
         }),
-      () => new Error("This is not a valid PDF")
+      toError
     )
   );

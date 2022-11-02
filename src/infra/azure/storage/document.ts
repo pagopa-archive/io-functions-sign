@@ -2,6 +2,7 @@ import * as R from "fp-ts/Reader";
 import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/lib/function";
 import { ContainerClient } from "@azure/storage-blob";
+import { toError } from "fp-ts/lib/Either";
 import { IsDocumentUploaded } from "../../../signature-request/document";
 import {
   DeleteUploadDocumentFromBlob,
@@ -33,8 +34,5 @@ export const makeDownloadDocumentUploaded: R.Reader<
   DownloadUploadDocumentFromBlob
 > = (client) => (documentId) =>
   pipe(client, selectBlob(documentId), (blob) =>
-    TE.tryCatch(
-      () => blob.downloadToBuffer(),
-      () => new Error("The blob cannot be downloaded.")
-    )
+    TE.tryCatch(() => blob.downloadToBuffer(), toError)
   );
