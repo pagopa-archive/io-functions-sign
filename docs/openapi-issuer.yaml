@@ -194,7 +194,7 @@ paths:
         default:
           $ref: "#/components/responses/Unexpected"
 
-  /signature-requests/{req_id}/documents/{doc_id}/upload-url:
+  /signature-requests/{req_id}/documents/{doc_id}/upload_url:
     get:
       operationId: getDocumentUploadUrl
       tags:
@@ -459,6 +459,7 @@ components:
         documents_metadata:
           $ref: "#/components/schemas/DocumentMetadataList"
       required:
+        - title
         - documents_metadata
 
     SetSignatureRequestStatusBody:
@@ -481,6 +482,7 @@ components:
           $ref: "#/components/schemas/Timestamp"
       required:
         - id
+        - title
         - documents_metadata
         - created_at
         - updated_at
