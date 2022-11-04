@@ -5,6 +5,32 @@ info:
 security:
   - FunctionsKey: []
 paths:
+  /signers:
+    post:
+      operationId: getSignerByFiscalCode
+      tags:
+        - Signer
+      summary: Get Signer By Fiscal Code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetSignerByFiscalCodeBody"
+      responses:
+        "201":
+          description: The Signer detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignerDetailView"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        default:
+          $ref: "#/components/responses/Unexpected"
+
   /signature-requests/{id}:
     get:
       operationId: getSignatureRequestById
@@ -21,13 +47,9 @@ paths:
             example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
           required: true
         - in: header
-          name: FiscalCode
+          name: signer_id
           schema:
-            type: string
-            description: User's fiscal code.
-            format: FiscalCode
-            x-import: "@pagopa/ts-commons/lib/strings"
-            example: SPNDNL80R13C555X
+            $ref: "#/components/schemas/Id"
           required: true
       responses:
         "200":
@@ -67,13 +89,9 @@ paths:
         - QTSP Clauses
       parameters:
         - in: header
-          name: FiscalCode
+          name: signer_id
           schema:
-            type: string
-            description: User's fiscal code.
-            format: FiscalCode
-            x-import: "@pagopa/ts-commons/lib/strings"
-            example: SPNDNL80R13C555X
+            $ref: "#/components/schemas/Id"
           required: true
       requestBody:
         required: true
@@ -109,13 +127,9 @@ paths:
             example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
           required: true
         - in: header
-          name: FiscalCode
+          name: signer_id
           schema:
-            type: string
-            description: User's fiscal code.
-            format: FiscalCode
-            x-import: "@pagopa/ts-commons/lib/strings"
-            example: SPNDNL80R13C555X
+            $ref: "#/components/schemas/Id"
           required: true
       responses:
         "200":
@@ -143,13 +157,9 @@ paths:
               $ref: "#/components/schemas/CreateSignatureBody"
       parameters:
         - in: header
-          name: FiscalCode
+          name: signer_id
           schema:
-            type: string
-            description: User's fiscal code.
-            format: FiscalCode
-            x-import: "@pagopa/ts-commons/lib/strings"
-            example: SPNDNL80R13C555X
+            $ref: "#/components/schemas/Id"
           required: true
       responses:
         "201":
@@ -192,11 +202,41 @@ components:
       x-import: "@pagopa/ts-commons/lib/dates"
       example: "2018-10-13T00:00:00.000Z"
 
+    GetSignerByFiscalCodeBody:
+      type: object
+      properties:
+        fiscal_code:
+          $ref: "#/components/schemas/FiscalCode"
+      required:
+        - fiscal_code
+
+    SignerDetailView:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+      required:
+        - id
+
+    FiscalCode:
+      type: string
+      description: User's fiscal code.
+      format: FiscalCode
+      x-import: "@pagopa/ts-commons/lib/strings"
+      example: SPNDNL80R13C555X
+
     Document:
       type: object
       properties:
         id:
           $ref: "#/components/schemas/Id"
+        status:
+          type: string
+          enum:
+            - WAIT_FOR_UPLOAD
+            - WAIT_FOR_VALIDATION
+            - READY
+            - REJECTED
         metadata:
           $ref: "#/components/schemas/DocumentMetadata"
         created_at:
@@ -205,6 +245,7 @@ components:
           $ref: "#/components/schemas/Timestamp"
       required:
         - id
+        - status
         - metadata
         - created_at
         - updated_at
@@ -219,13 +260,15 @@ components:
           items:
             $ref: "#/components/schemas/SignatureField"
 
-    SignatureFieldAttributes:
+    ExistingSignatureFieldAttrs:
       type: object
       properties:
         unique_name:
           type: string
+      required:
+        - unique_name
 
-    SignatureFieldToBeCreatedAttributes:
+    SignatureFieldToBeCreatedAttrs:
       type: object
       properties:
         coordinates:
@@ -280,8 +323,8 @@ components:
         attrs:
           type: object
           oneOf:
-            - $ref: "#/components/schemas/SignatureFieldAttributes"
-            - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttributes"
+            - $ref: "#/components/schemas/ExistingSignatureFieldAttrs"
+            - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttrs"
         clause:
           $ref: "#/components/schemas/Clause"
       required:
@@ -311,29 +354,54 @@ components:
       properties:
         id:
           $ref: "#/components/schemas/Id"
+        status:
+          type: string
+          x-extensible-enum:
+            - DRAFT
+            - READY
+            - WAIT_FOR_SIGNATURE
+            - WAIT_FOR_QTSP
+            - SIGNED
+        dossier_id:
+          $ref: "#/components/schemas/Id"
+        signer_id:
+          $ref: "#/components/schemas/Id"
         expires_at:
           $ref: "#/components/schemas/Timestamp"
-        status:
-          $ref: "#/components/schemas/ForwardedSignatureRequestStatus"
         documents:
           type: array
           items:
-            $ref: "#/components/schemas/DocumentUploaded"
+            $ref: "#/components/schemas/DocumentDetailView"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        qr_code_url:
+          type: string
+          format: uri
       required:
         - id
-        - expires_at
         - status
+        - dossier_id
+        - signer_id
+        - expires_at
         - documents
+        - created_at
+        - updated_at
 
-    ForwardedSignatureRequestStatus:
-      description: |
-        Signature request status:
-        * `WAIT_FOR_SIGNATURE` - The signature request has been sent to the user and is awaiting signature
-        * `SIGNED` - The signature request was successfully signed.
-      type: string
-      x-extensible-enum:
-        - WAIT_FOR_SIGNATURE
-        - SIGNED
+    DocumentDetailView:
+      allOf:
+        - $ref: "#/components/schemas/Document"
+        - type: object
+          properties:
+            uploaded_at:
+              $ref: "#/components/schemas/Timestamp"
+            url:
+              type: string
+              format: uri
+          required:
+            - uploaded_at
+            - url
 
     QtspClausesMetadata:
       type: object
@@ -355,6 +423,10 @@ components:
         terms_and_conditions_url:
           type: string
           format: uri
+        nonce:
+          type: string
+          format: base64
+
       required:
         - clauses
         - document_url
@@ -513,13 +585,13 @@ components:
           $ref: "#/components/schemas/Email"
         name:
           type: string
-        surname:
+        family_name:
           type: string
       required:
         - document_url
         - email
         - name
-        - surname
+        - family_name
 
     FilledDocumentDetailView:
       type: object

@@ -131,6 +131,13 @@ components:
       properties:
         id:
           $ref: "#/components/schemas/Id"
+        status:
+          type: string
+          enum:
+            - WAIT_FOR_UPLOAD
+            - WAIT_FOR_VALIDATION
+            - READY
+            - REJECTED
         metadata:
           $ref: "#/components/schemas/DocumentMetadata"
         created_at:
@@ -139,6 +146,7 @@ components:
           $ref: "#/components/schemas/Timestamp"
       required:
         - id
+        - status
         - metadata
         - created_at
         - updated_at
@@ -153,13 +161,15 @@ components:
           items:
             $ref: "#/components/schemas/SignatureField"
 
-    SignatureFieldAttributes:
+    ExistingSignatureFieldAttrs:
       type: object
       properties:
         unique_name:
           type: string
+      required:
+        - unique_name
 
-    SignatureFieldToBeCreatedAttributes:
+    SignatureFieldToBeCreatedAttrs:
       type: object
       properties:
         coordinates:
@@ -214,8 +224,8 @@ components:
         attrs:
           type: object
           oneOf:
-            - $ref: "#/components/schemas/SignatureFieldAttributes"
-            - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttributes"
+            - $ref: "#/components/schemas/ExistingSignatureFieldAttrs"
+            - $ref: "#/components/schemas/SignatureFieldToBeCreatedAttrs"
         clause:
           $ref: "#/components/schemas/Clause"
       required:
@@ -246,29 +256,54 @@ components:
       properties:
         id:
           $ref: "#/components/schemas/Id"
+        status:
+          type: string
+          x-extensible-enum:
+            - DRAFT
+            - READY
+            - WAIT_FOR_SIGNATURE
+            - WAIT_FOR_QTSP
+            - SIGNED
+        dossier_id:
+          $ref: "#/components/schemas/Id"
+        signer_id:
+          $ref: "#/components/schemas/Id"
         expires_at:
           $ref: "#/components/schemas/Timestamp"
-        status:
-          $ref: "#/components/schemas/ForwardedSignatureRequestStatus"
         documents:
           type: array
           items:
-            $ref: "#/components/schemas/DocumentUploaded"
+            $ref: "#/components/schemas/DocumentDetailView"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        qr_code_url:
+          type: string
+          format: uri
       required:
         - id
-        - expires_at
         - status
+        - dossier_id
+        - signer_id
+        - expires_at
         - documents
+        - created_at
+        - updated_at
 
-    ForwardedSignatureRequestStatus:
-      description: |
-        Signature request status:
-        * `WAIT_FOR_SIGNATURE` - The signature request has been sent to the user and is awaiting signature
-        * `SIGNED` - The signature request was successfully signed.
-      type: string
-      x-extensible-enum:
-        - WAIT_FOR_SIGNATURE
-        - SIGNED
+    DocumentDetailView:
+      allOf:
+        - $ref: "#/components/schemas/Document"
+        - type: object
+          properties:
+            uploaded_at:
+              $ref: "#/components/schemas/Timestamp"
+            url:
+              type: string
+              format: uri
+          required:
+            - uploaded_at
+            - url
 
     QtspClausesMetadata:
       type: object
@@ -290,6 +325,10 @@ components:
         terms_and_conditions_url:
           type: string
           format: uri
+        nonce:
+          type: string
+          format: base64
+
       required:
         - clauses
         - document_url
