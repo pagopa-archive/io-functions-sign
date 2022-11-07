@@ -384,13 +384,14 @@ components:
           type: string
           format: base64url
           description: Signature of MRC digest concatenated with QTSP accepted clauses
-        tos_signature_timestamp:
-          $ref: "#/components/schemas/Timestamp"
+        nonce:
+          type: string
+          format: base64
       required:
         - accepted_clauses
         - filled_document_url
         - signature
-        - tos_signature_timestamp
+        - nonce
 
     CreateSignatureBody:
       type: object
