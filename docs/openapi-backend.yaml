@@ -1,36 +1,13 @@
 openapi: 3.0.3
 info:
-  title: IO Sign - User API
+  title: IO Sign - Backend API
   version: 0.0.1
+servers:
+  - url: https://app-backend.io.italia.it/api/v1/sign
+    description: Production
 security:
-  - FunctionsKey: []
+  - Bearer: []
 paths:
-  /signers:
-    post:
-      operationId: getSignerByFiscalCode
-      tags:
-        - Signer
-      summary: Get Signer By Fiscal Code
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GetSignerByFiscalCodeBody"
-      responses:
-        "201":
-          description: The Signer detail
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignerDetailView"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        default:
-          $ref: "#/components/responses/Unexpected"
-
   /signature-requests/{id}:
     get:
       operationId: getSignatureRequestById
@@ -45,11 +22,6 @@ paths:
             description: Entity Id
             format: ulid
             example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
-          required: true
-        - in: header
-          name: signer_id
-          schema:
-            $ref: "#/components/schemas/Id"
           required: true
       responses:
         "200":
@@ -87,12 +59,6 @@ paths:
       summary: Create a filled document for QTSP
       tags:
         - QTSP Clauses
-      parameters:
-        - in: header
-          name: signer_id
-          schema:
-            $ref: "#/components/schemas/Id"
-          required: true
       requestBody:
         required: true
         content:
@@ -111,38 +77,6 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /signatures/{id}:
-    get:
-      operationId: getSignatureById
-      summary: Get a Signature By Id
-      tags:
-        - Signature
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            description: Entity Id
-            format: ulid
-            example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
-          required: true
-        - in: header
-          name: signer_id
-          schema:
-            $ref: "#/components/schemas/Id"
-          required: true
-      responses:
-        "200":
-          description: The Signature Request detail
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignatureDetailView"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
   /signatures:
     post:
       operationId: createSignature
@@ -155,19 +89,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateSignatureBody"
-      parameters:
-        - in: header
-          name: signer_id
-          schema:
-            $ref: "#/components/schemas/Id"
-          required: true
       responses:
         "201":
           description: Signature created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SignatureDetailView"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
@@ -175,11 +99,10 @@ paths:
 
 components:
   securitySchemes:
-    FunctionsKey:
+    Bearer:
       type: apiKey
-      name: X-Functions-Key
+      name: Authorization
       in: header
-
   responses:
     NotFound:
       $ref: "https://raw.githubusercontent.com/pagopa/io-functions-sign/v1.0.0-RELEASE/openapi-issuer.yaml#/components/responses/NotFound"
@@ -195,35 +118,13 @@ components:
       description: Entity Id
       format: ulid
       example: 01ARZ3NDEKTSV4RRFFQ69G5FAV
+
     Timestamp:
       type: string
       format: UTCISODateFromString
       description: A date-time field in ISO-8601 format and UTC timezone.
       x-import: "@pagopa/ts-commons/lib/dates"
       example: "2018-10-13T00:00:00.000Z"
-
-    GetSignerByFiscalCodeBody:
-      type: object
-      properties:
-        fiscal_code:
-          $ref: "#/components/schemas/FiscalCode"
-      required:
-        - fiscal_code
-
-    SignerDetailView:
-      type: object
-      properties:
-        id:
-          $ref: "#/components/schemas/Id"
-      required:
-        - id
-
-    FiscalCode:
-      type: string
-      description: User's fiscal code.
-      format: FiscalCode
-      x-import: "@pagopa/ts-commons/lib/strings"
-      example: SPNDNL80R13C555X
 
     Document:
       type: object
@@ -330,6 +231,7 @@ components:
       required:
         - unique_name
         - clause
+
     DocumentUploaded:
       allOf:
         - $ref: "#/components/schemas/Document"
@@ -442,40 +344,10 @@ components:
       required:
         - text
 
-    Email:
-      type: string
-      description: User's email.
-      format: EmailString
-      x-import: "@pagopa/ts-commons/lib/strings"
-      example: me@example.com
-
-    publicKey:
+    PublicKeyDigest:
       type: string
       format: base64url
-      description: PEM public key encoded in base64
-
-    SamlAssertion:
-      type: string
-      format: base64url
-      description: SPID SAML assertion encoded in base64
-
-    ClausesSignature:
-      properties:
-        type:
-          $ref: "#/components/schemas/ClausesSignatureType"
-        attrs:
-          type: string
-          description: uniqueName or base64(Coords) base64({x,y,w,h,page})
-      description: accepted signature clause
-      required:
-        - type
-        - attrs
-
-    ClausesSignatureType:
-      type: string
-      x-extensible-enum:
-        - COORDS
-        - UNIQUE_NAME
+      description: Hash of PEM public key encoded in base64
 
     DocumentSignature:
       type: object
@@ -526,12 +398,8 @@ components:
       properties:
         signature_request_id:
           $ref: "#/components/schemas/Id"
-        email:
-          $ref: "#/components/schemas/Email"
-        public_key:
-          $ref: "#/components/schemas/publicKey"
-        spid_saml_assertion:
-          $ref: "#/components/schemas/SamlAssertion"
+        public_key_digest:
+          $ref: "#/components/schemas/PublicKeyDigest"
         document_signatures:
           type: array
           items:
@@ -542,37 +410,7 @@ components:
           $ref: "#/components/schemas/QtspClauses"
       required:
         - signature_request_id
-        - email
-        - public_key
-        - spid_saml_assertion
-        - document_signatures
-        - qtsp_clauses
-
-    SignatureDetailView:
-      type: object
-      properties:
-        id:
-          $ref: "#/components/schemas/Id"
-        signature_request_id:
-          $ref: "#/components/schemas/Id"
-        email:
-          $ref: "#/components/schemas/Email"
-        public_key:
-          $ref: "#/components/schemas/publicKey"
-        spid_saml_assertion:
-          $ref: "#/components/schemas/SamlAssertion"
-        document_signatures:
-          type: array
-          items:
-            $ref: "#/components/schemas/DocumentSignature"
-        qtsp_clauses:
-          $ref: "#/components/schemas/QtspClausesMetadata"
-      required:
-        - id
-        - signature_request_id
-        - email
-        - public_key
-        - spid_saml_assertion
+        - public_key_digest
         - document_signatures
         - qtsp_clauses
 
@@ -582,17 +420,8 @@ components:
         document_url:
           type: string
           format: url
-        email:
-          $ref: "#/components/schemas/Email"
-        name:
-          type: string
-        family_name:
-          type: string
       required:
         - document_url
-        - email
-        - name
-        - family_name
 
     FilledDocumentDetailView:
       type: object
